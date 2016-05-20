@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <limits.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -28,6 +29,7 @@ struct arguments {
   void (*executePointer)(struct arguments args); 
 };
 
+void decode(uint32_t dInstruction, struct arguments decodedArgs);
 
 int main(int argc, char **argv) {
   
@@ -65,4 +67,51 @@ int main(int argc, char **argv) {
 
   return EXIT_SUCCESS;
 }
+
+void decode(uint32_t dInstruction, struct arguments decodedArgs){
+  // set mask to bit 27
+  uint32_t mask = 0x08000000;
+  if ((dInstruction & mask) != 0){
+    // Decode Branch instruction
+    
+    return;
+  }
+
+  // set mask to bit 26
+  mask = 0x04000000;
+  if ((dInstruction & mask) != 0){
+    // Decode Single Data Transfer
+
+    return;
+  }
+
+  // set mask to bit 25
+  mask = 0x02000000;
+  if ((dInstruction & mask) != 0){
+    // Decode Data Processing (I = 1)
+
+    return;
+  }
+
+  // set mask to bit 4
+  mask = 0x00000010;
+  if ((dInstruction & mask) == 0){
+    // Decode Data Processing (I = 0 Constant Shift)
+
+    return;
+  }
+
+  // set mask to bit 7
+  mask = 0x00000080;
+  if ((dInstruction & mask) != 0){
+    // Decode Multiply
+
+    return;
+  } else {
+    // Decode Data Processing (I = 0 Shift by Register)
+
+    return;
+  }
+}
+
 
