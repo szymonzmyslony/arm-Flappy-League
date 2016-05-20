@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #define NUMBER_OF_REGISTERS   17
 #define BYTES_IN_MEMORY       65536
@@ -13,8 +14,8 @@ struct processor {
   uint32_t registers[NUMBER_OF_REGISTERS];	 
   uint8_t memory[BYTES_IN_MEMORY];
   bool end;
-  int counter = 0; // counter to detewrmine whether to decode and execute
-}
+  int counter; // counter to detewrmine whether to decode and execute
+};
 
 struct arguments {
   uint8_t dRegIndex;
@@ -24,11 +25,12 @@ struct arguments {
   uint16_t operand2;
   uint8_t cond;
   uint32_t offset;
-  void *executePointer(struct arguments args) = NULL; 
-}
+  void (*executePointer)(struct arguments args); 
+};
 
 
 int main(int argc, char **argv) {
+  
   struct processor arm;
   struct arguments decodedArgs;
 
@@ -58,8 +60,9 @@ int main(int argc, char **argv) {
       arm.counter++;
     }
   }
-
+  
   // print register states
 
   return EXIT_SUCCESS;
 }
+
