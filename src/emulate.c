@@ -9,12 +9,21 @@
 #define PC                    15
 // index of CPSR in registers array
 #define CPSR                  16
+// bit flag indexes
+#define Vbit                  28
+#define Cbit                  29
+#define Zbit                  30
+#define Nbit                  31
+// masks
+#define MASK15_12                0x0000F000
+#define MASK19_16                0x000F0000
+#define MASK24_21                0x01E00000
 
 struct processor {
   uint32_t registers[NUMBER_OF_REGISTERS];	 
   uint8_t memory[BYTES_IN_MEMORY];
   bool end;
-  int counter; // counter to detewrmine whether to decode and execute
+  int counter; // counter to determine whether to decode and execute
 };
 
 struct arguments {
@@ -25,7 +34,7 @@ struct arguments {
   uint16_t operand2;
   uint8_t cond;
   uint32_t offset;
-  void (*executePointer)(struct arguments args); 
+  void (*executePointer)(struct arguments args)(struct processor arm); 
 };
 
 
@@ -66,3 +75,10 @@ int main(int argc, char **argv) {
   return EXIT_SUCCESS;
 }
 
+// ====================== Helper Functions ====================================
+
+//Sets a single bit in a given position
+int setBit(int word, bool set, int position) {
+  //Clears the bit at the given position and then sets it
+  word = (word & ~(1 << position)) | (set << position);
+}
