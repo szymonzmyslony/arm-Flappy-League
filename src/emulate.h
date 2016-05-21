@@ -1,6 +1,6 @@
 #ifndef EMULATE_H
 #define EMULATE_H
 
-int setBit(int word, bool set, int position);
+uint32_t setBit(uint32_t word, bool set, uint8_t position);
 
 #endif
