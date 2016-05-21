@@ -2,7 +2,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <emulate.h>
+#include "emulate.h"
 
 #define NUMBER_OF_REGISTERS   17
 #define BYTES_IN_MEMORY       65536
@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
     dInstruction = fetch(dInstruction, arm);
 
     // Increment counter but avoid overflow of counter
-    if (counter < 3){
+    if (arm.counter < 3){
       arm.counter++;
     }
   }
