@@ -16,9 +16,9 @@
 #define Zbit                  30
 #define Nbit                  31
 // masks
-#define MASK15_12                0x0000F000
-#define MASK19_16                0x000F0000
-#define MASK24_21                0x01E00000
+#define MASK15_12             0x0000F000
+#define MASK19_16             0x000F0000
+#define MASK24_21             0x01E00000
 
 struct processor {
   uint32_t registers[NUMBER_OF_REGISTERS];	 
@@ -78,8 +78,8 @@ int main(int argc, char **argv) {
 
 // ====================== Helper Functions ====================================
 
-//Sets a single bit in a given position
-int setBit(int word, bool set, int position) {
+// Returns a given word except with a single bit set in the given position
+uint32_t setBit(uint32_t word, bool set, uint8_t position) {
   //Clears the bit at the given position and then sets it
-  word = (word & ~(1 << position)) | (set << position);
+  return (word & ~(1 << position)) | (set << position);
 }
