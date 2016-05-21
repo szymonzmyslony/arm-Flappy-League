@@ -34,7 +34,7 @@ struct arguments {
   uint16_t operand2;
   uint8_t cond;
   uint32_t offset;
-  void (*executePointer)(struct arguments args)(struct processor arm); 
+  void (*executePointer)(struct arguments args, struct processor arm); 
 };
 
 
