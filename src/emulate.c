@@ -2,6 +2,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <emulate.h>
 
 #define NUMBER_OF_REGISTERS   17
 #define BYTES_IN_MEMORY       65536
