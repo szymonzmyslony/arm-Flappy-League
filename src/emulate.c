@@ -2,6 +2,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <assert.h>
 #include "emulate.h"
 
 #define NUMBER_OF_REGISTERS   17
@@ -102,7 +103,7 @@ void decodeDP(int dInstruction, struct arguments decodedArgs) {
       case 12: decodedArgs.executePointer = &opDPorr; break;
       case 13: decodedArgs.executePointer = &opDPmov; break;
       //No such other opcode!
-      case default: assert(false);
+      default: assert(false); break;
     }
   } else {
     switch(opCode) {
@@ -117,7 +118,7 @@ void decodeDP(int dInstruction, struct arguments decodedArgs) {
       case 12: decodedArgs.executePointer = &opDPorrWithFlags; break;
       case 13: decodedArgs.executePointer = &opDPmov; break;
       //No such other opcode!
-      case default: assert(false);
+      default: assert(false); break;
     }
   }
 
@@ -183,7 +184,7 @@ void opDPsubWithFlags(struct arguments decodedArgs, struct processor arm) {
   setFlagsDP(arm.registers[decodedArgs.dRegIndex], arm);
   // Update flags for carry out
   bool borrow = !(decodedArgs.operand2 > arm.registers[decodedArgs.nRegIndex]);
-  setBit(arm.register[CPSR], borrow, Cbit);
+  setBit(arm.registers[CPSR], borrow, Cbit);
 }
 
 // - Subtract (operand2 - Rn)
@@ -198,7 +199,7 @@ void opDPrsbWithFlags(struct arguments decodedArgs, struct processor arm) {
   setFlagsDP(arm.registers[decodedArgs.dRegIndex], arm);
   // Update flags for carry out
   bool borrow = !(arm.registers[decodedArgs.nRegIndex] > decodedArgs.operand2);
-  setBit(arm.register[CPSR], borrow, Cbit);
+  setBit(arm.registers[CPSR], borrow, Cbit);
 }
 
 // - Add
@@ -212,25 +213,26 @@ void opDPaddWithFlags(struct arguments decodedArgs, struct processor arm) {
   
   setFlagsDP(arm.registers[decodedArgs.dRegIndex], arm);
   // Update flags for carry out
-  bool overflow = res < arm.registers[decodedArgs.nRegIndex]
-                  || res < decodedArgs.operand2;
-  setBit(arm.register[CPSR], borrow, Cbit);
+  bool overflow = arm.registers[decodedArgs.dRegIndex] 
+                   < arm.registers[decodedArgs.nRegIndex]
+                 || arm.registers[decodedArgs.dRegIndex] < decodedArgs.operand2;
+  setBit(arm.registers[CPSR], overflow, Cbit);
 }
 
 // --- Testing operations
 void opDPtst(struct arguments decodedArgs, struct processor arm) {
   uint32_t res = arm.registers[decodedArgs.nRegIndex] & decodedArgs.operand2;
-  setFlagsDP(decodedArgs.dRegIndex, res, arm);
+  setFlagsDP(res, arm);
 }
 
 void opDPteq(struct arguments decodedArgs, struct processor arm) {
   uint32_t res = arm.registers[decodedArgs.nRegIndex] ^ decodedArgs.operand2;
-  setFlagsDP(decodedArgs.dRegIndex, res, arm);
+  setFlagsDP(res, arm);
 }
 
 void opDPcmp(struct arguments decodedArgs, struct processor arm) {
   uint32_t res = arm.registers[decodedArgs.nRegIndex] - decodedArgs.operand2;
-  setFlagsDP(decodedArgs.dRegIndex, res, arm);
+  setFlagsDP(res, arm);
 }
 
 //Replaces the test operations when the S flag = 0, as nothing changes
@@ -244,12 +246,12 @@ void opDPNothing(struct arguments decodedArgs, struct processor arm) {}
 void setFlagsDP(uint32_t value, struct processor arm) {
   //Set the Z flag
   bool allZero = value == 0;
-  arm.register[CPSR] = setBit(arm.register[CPSR], allZero, Zbit);
+  arm.registers[CPSR] = setBit(arm.registers[CPSR], allZero, Zbit);
   
   //Set the N flag
   uint32_t bit31 = value << 31;
   bool bit31set = (value & bit31) == bit31;
-  arm.register[CPSR] = setBIt(arm.register[CPSR], bit31set, Nbit);
+  arm.registers[CPSR] = setBit(arm.registers[CPSR], bit31set, Nbit);
 }
 
 // ====================== Helper Functions ====================================
