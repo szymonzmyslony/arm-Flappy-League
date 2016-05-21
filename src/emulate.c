@@ -69,6 +69,9 @@ int main(int argc, char **argv) {
 }
 
 void decode(uint32_t dInstruction, struct arguments decodedArgs){
+  // set cond parameter to condition code
+  decodedArgs.cond = (dInstruction >> 28);
+  
   // set mask to bit 27
   uint32_t mask = 0x08000000;
   if ((dInstruction & mask) != 0){
