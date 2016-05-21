@@ -23,7 +23,7 @@
 #define MASK24_21             0x01E00000
 
 struct processor {
-  uint32_t registers[NUMBER_OF_REGISTERS];	 
+  uint32_t registers[NUMBER_OF_REGISTERS];   
   uint8_t memory[BYTES_IN_MEMORY];
   bool end;
   int counter; // counter to determine whether to decode and execute
@@ -81,10 +81,10 @@ int main(int argc, char **argv) {
 // ======================= Decode Data Processing =============================
 
 void decodeDP(int dInstruction, struct arguments decodedArgs) {
-	// - decode operation
+  // - decode operation
   uint32_t mask = MASK24_21;
   //Remove the trailing 0s from the extracted opcode.
-	uint8_t opCode = (dInstruction & mask) >> 21;
+  uint8_t opCode = (dInstruction & mask) >> 21;
   
   uint32_t sMask = 1 << Sbit;
   bool sFlag = (dInstruction & sMask) == sMask;
@@ -121,32 +121,32 @@ void decodeDP(int dInstruction, struct arguments decodedArgs) {
     }
   }
 
-	// - decode Rn
+  // - decode Rn
   mask = MASK19_16;
-	decodedArgs.nRegIndex = (dInstruction & mask) >> 16;
+  decodedArgs.nRegIndex = (dInstruction & mask) >> 16;
   
   // - decode Rd
-	mask = MASK15_12;
-	decodedArgs.dRegIndex = (dInstruction & mask) >> 12;	
+  mask = MASK15_12;
+  decodedArgs.dRegIndex = (dInstruction & mask) >> 12;  
 }
 
 // ====================== Execute Data Processing =============================
 // --- Logical Operations
 // - And
 void opDPand(struct arguments decodedArgs, struct processor arm) {
-	uint32_t res = arm.registers[decodedArgs.nRegIndex] & decodedArgs.operand2;
+  uint32_t res = arm.registers[decodedArgs.nRegIndex] & decodedArgs.operand2;
   arm.registers[decodedArgs.dRegIndex] = res;
 }
 
 void opDPandWithFlags(struct arguments decodedArgs, struct processor arm) {
-	opDPand(decodedArgs, arm);
+  opDPand(decodedArgs, arm);
   setFlagsDP(arm.registers[decodedArgs.dRegIndex], arm);
 }
 
 // - Eor
 void opDPeor(struct arguments decodedArgs, struct processor arm) {
   uint32_t res = arm.registers[decodedArgs.nRegIndex] ^ decodedArgs.operand2;
-	arm.registers[decodedArgs.dRegIndex] = res;
+  arm.registers[decodedArgs.dRegIndex] = res;
 }
 
 void opDPeorWithFlags(struct arguments decodedArgs, struct processor arm) {
@@ -156,25 +156,25 @@ void opDPeorWithFlags(struct arguments decodedArgs, struct processor arm) {
 
 // - Or
 void opDPorr(struct arguments decodedArgs, struct processor arm) {
-	uint32_t res = arm.registers[decodedArgs.nRegIndex] | decodedArgs.operand2;
-	arm.registers[decodedArgs.dRegIndex] = res;
+  uint32_t res = arm.registers[decodedArgs.nRegIndex] | decodedArgs.operand2;
+  arm.registers[decodedArgs.dRegIndex] = res;
 }
 
 void opDPorrWithFlags(struct arguments decodedArgs, struct processor arm) {
-	opDPorr(decodedArgs, arm);
+  opDPorr(decodedArgs, arm);
   setFlagsDP(arm.registers[decodedArgs.dRegIndex], arm);
 }
 
 // - Move
 void opDPmov(struct arguments decodedArgs, struct processor arm) {
-	arm.registers[decodedArgs.dRegIndex] = decodedArgs.operand2;
+  arm.registers[decodedArgs.dRegIndex] = decodedArgs.operand2;
 }
 
 // --- Arithmetic Operations
 // - Subtract (Rn - operand2)
 void opDPsub(struct arguments decodedArgs, struct processor arm) {
   uint32_t res = arm.registers[decodedArgs.nRegIndex] - decodedArgs.operand2;
-	arm.registers[decodedArgs.dRegIndex] = res;
+  arm.registers[decodedArgs.dRegIndex] = res;
 }
 
 void opDPsubWithFlags(struct arguments decodedArgs, struct processor arm) {
@@ -189,7 +189,7 @@ void opDPsubWithFlags(struct arguments decodedArgs, struct processor arm) {
 // - Subtract (operand2 - Rn)
 void opDPrsb(struct arguments decodedArgs, struct processor arm) {
   uint32_t res = decodedArgs.operand2 - arm.registers[decodedArgs.nRegIndex];
-	arm.registers[decodedArgs.dRegIndex] = res;
+  arm.registers[decodedArgs.dRegIndex] = res;
 }
   
 void opDPrsbWithFlags(struct arguments decodedArgs, struct processor arm) {
@@ -204,7 +204,7 @@ void opDPrsbWithFlags(struct arguments decodedArgs, struct processor arm) {
 // - Add
 void opDPadd(struct arguments decodedArgs, struct processor arm) {
   uint32_t res = decodedArgs.operand2 + arm.registers[decodedArgs.nRegIndex];
-	arm.registers[decodedArgs.dRegIndex] = res;
+  arm.registers[decodedArgs.dRegIndex] = res;
 }
 
 void opDPaddWithFlags(struct arguments decodedArgs, struct processor arm) {
@@ -220,17 +220,17 @@ void opDPaddWithFlags(struct arguments decodedArgs, struct processor arm) {
 // --- Testing operations
 void opDPtst(struct arguments decodedArgs, struct processor arm) {
   uint32_t res = arm.registers[decodedArgs.nRegIndex] & decodedArgs.operand2;
-	setFlagsDP(decodedArgs.dRegIndex, res, arm);
+  setFlagsDP(decodedArgs.dRegIndex, res, arm);
 }
 
 void opDPteq(struct arguments decodedArgs, struct processor arm) {
   uint32_t res = arm.registers[decodedArgs.nRegIndex] ^ decodedArgs.operand2;
-	setFlagsDP(decodedArgs.dRegIndex, res, arm);
+  setFlagsDP(decodedArgs.dRegIndex, res, arm);
 }
 
 void opDPcmp(struct arguments decodedArgs, struct processor arm) {
   uint32_t res = arm.registers[decodedArgs.nRegIndex] - decodedArgs.operand2;
-	setFlagsDP(decodedArgs.dRegIndex, res, arm);
+  setFlagsDP(decodedArgs.dRegIndex, res, arm);
 }
 
 //Replaces the test operations when the S flag = 0, as nothing changes
@@ -242,14 +242,14 @@ void opDPNothing(struct arguments decodedArgs, struct processor arm) {}
 // the opDP__ functions for arithmetic operations, or stays as the result from 
 // the barrel shifter in the case of operations.
 void setFlagsDP(uint32_t value, struct processor arm) {
-	//Set the Z flag
+  //Set the Z flag
   bool allZero = value == 0;
-	arm.register[CPSR] = setBit(arm.register[CPSR], allZero, Zbit);
+  arm.register[CPSR] = setBit(arm.register[CPSR], allZero, Zbit);
   
-	//Set the N flag
+  //Set the N flag
   uint32_t bit31 = value << 31;
   bool bit31set = (value & bit31) == bit31;
-	arm.register[CPSR] = setBIt(arm.register[CPSR], bit31set, Nbit);
+  arm.register[CPSR] = setBIt(arm.register[CPSR], bit31set, Nbit);
 }
 
 // ====================== Helper Functions ====================================
