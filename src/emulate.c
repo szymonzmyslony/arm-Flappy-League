@@ -46,12 +46,14 @@ struct arguments {
   uint8_t sRegIndex;
   uint8_t nRegIndex;
   uint8_t mRegIndex;
+  uint8_t opCode;
   uint32_t operand2;
   uint8_t cond;
   uint32_t offset;
   void (*executePointer)(struct arguments *args, struct processor *arm); 
   bool aFlag;
   bool sFlag;
+  bool lFlag;
   bool iFlag;
 };
 
