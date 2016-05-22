@@ -60,7 +60,7 @@ struct arguments {
  void loadFile(char name[],struc processor *pointer){	  
 	FILE *myFile;
 	myFile = fopen(name, "r");
-	fread(*pointer.memory, 4, BYTES_IN_MEMORY, myFile);
+	fread(*(pointer->memory), 4, BYTES_IN_MEMORY, myFile);
 	//library funtion that reads binary words
 	
 	
@@ -69,12 +69,12 @@ struct arguments {
   
   
   //decode branching 
-  void decodeDP(int dInstruction, struct arguments *decoded) {
+  void decodeDP(int dInstruction, struct arguments *decodedArgs) {
   // - decode operation
-  decodedArgs.executePointer = &execBranching;
+  decodedArgs->executePointer = &execBranching;
   //decode offset (still unsgined)
   uint32_t mask = MASK0_23;
-  decoded->offset = (dInstruction & mask)
+  decodedArgs->offset = (dInstruction & mask)
   
   
   
@@ -85,14 +85,14 @@ struct arguments {
   //execute branching
   void execBranching(struct arguments decodedArgs, struct processor *	arm) {
 		
-   bool negative = (decodedArgs.offset>>(numberofelements-1));
-   uint32_t trueoffset = ~decodedArgs.offset;
+   bool negative = ((decodedArgs->offset)>>(numberofelements-1));
+   uint32_t trueoffset = ~(decodedArgs->offset);
    trueoffset++; 
    if (negative){
-	arm->registers[PC] = arm.registers[PC]-trueoffset;
+	arm->registers[PC] = (arm->registers[PC]-trueoffset);
    }   
    else{
-	   arm->registers[PC] = arm.registers[PC]+trueoffset;
+	   arm->registers[PC] = (arm->registers[PC]+trueoffset);
 	   
 	   
    }
