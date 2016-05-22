@@ -56,6 +56,19 @@ int main(int argc, char **argv) {
   struct arguments decodedArgs;
 
   // load program from args and initialise processor and read from file
+  loadFile(argv[0], *arm);
+  
+  void loadFile(char name[],struc processor *pointer){	  
+	FILE *myFile;
+	myFile = fopen(name, "r");
+	fread(*pointer->memory, 4, BYTES_IN_MEMORY, myFile);
+	//library funtion that reads binary words
+	
+	
+  }
+  
+  
+  
 
 
   // points to appropriate execute function after decoding
@@ -86,8 +99,24 @@ int main(int argc, char **argv) {
   }
   
   // print register states
+	print(arm.registers, NUMBER_OF_REGISTERS)
+  
+  
 
   return EXIT_SUCCESS;
+}
+
+void print(uint32_t[] arr, uint32_t length){
+// funtion for printing array of given lenght
+	int i;
+	for(i=0; i<lenght; ++i){
+		printf("Register no %index holds value %value.\n", i+1, arr[i]);
+		
+	}
+
+
+
+
 }
 
 // Returns the instruction in the byte order as shown in the specification
@@ -98,6 +127,13 @@ uint32_t fetch(struct processor arm) {
          + (arm.processor[PC + 1] <<  8)
          +  arm.processor[PC];
 }
+
+
+
+
+
+
+
 
 // ====================== Helper Functions ====================================
 
