@@ -16,7 +16,14 @@
 #define Cbit                  29
 #define Zbit                  30
 #define Nbit                  31
+
+// masks for multiply
+#define Abit                  21
+#define Sbit                  20
+                  
 // masks
+#define MASK3_0               0x0000000F
+#define MASK11_8              0x00000F00
 #define MASK15_12             0x0000F000
 #define MASK19_16             0x000F0000
 #define MASK24_21             0x01E00000
@@ -36,6 +43,9 @@ struct arguments {
   uint16_t operand2;
   uint8_t cond;
   uint32_t offset;
+  bool aFlag;
+  bool sFlag;
+  bool iFlag;
   void (*executePointer)(struct arguments args, struct processor arm); 
 };
 
