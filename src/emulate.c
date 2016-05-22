@@ -28,11 +28,9 @@
 #define MASK15_12             0x0000F000
 #define MASK19_16             0x000F0000
 #define MASK24_21             0x01E00000
-#define MASK11_8              0x00000f00
 #define MASK11_7              0x00000f80
 #define MASK7_0               0x000000ff
 #define MASK6_5               0x00000060
-#define MASK3_0               0x0000000f
 
 // condition cases
 #define COND_eq                0
@@ -114,7 +112,7 @@ void execute(struct arguments *decodedArgs, struct processor *arm) {
   bool nSet = getBit(arm->registers[CPSR], Nbit);
   bool vSet = getBit(arm->registers[CPSR], Vbit);
   
-  switch(decodeArgs->cond) {
+  switch(decodedArgs->cond) {
     case COND_eq: executeFlag = zSet; break;
     case COND_ne: executeFlag = !zSet; break;
     case COND_ge: executeFlag = nSet == vSet; break;
@@ -125,7 +123,7 @@ void execute(struct arguments *decodedArgs, struct processor *arm) {
   }
   
   if(executeFlag) {
-    decodeArgs->executePointer(decodedArgs, arm);
+    decodedArgs->executePointer(decodedArgs, arm);
   }
 }
 
@@ -196,28 +194,29 @@ void resolveOperand2(uint16_t op, bool iFlag,
 // shifts value according to shift code by n bits
 // sets carry flag if sFlag provided is true
 uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t n, 
-        struct processor *arm, bool SFlag){
+        struct processor *arm, bool sFlag){
+  bool carry;
   switch (shiftCode){
     case 0x00:
       // set carry bit
-      bool carry =  ((((0x00000001 << (sizeof(uint32_t) - n)) & value) != 0) && 
+      carry =  ((((0x00000001 << (sizeof(uint32_t) - n)) & value) != 0) && 
               sFlag);
       arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       
       return (value << n);
     case 0x01:
       // set carry bit
-      bool carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
+      carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
       arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       return (value >> n);
     case 0x02:
       // set carry bit
-      bool carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
+      carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
       arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       return arithShiftRight32(value, n);
     case 0x03:
       // set carry bit
-      bool carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
+      carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
       arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       return rotateRight32(value, n);
     default:
