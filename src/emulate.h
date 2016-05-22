@@ -6,6 +6,8 @@ struct processor;
 struct arguments;
 
 // Main flow
+void execute(struct arguments *decodedArgs, struct processor *arm);
+void decode(uint32_t dInstruction, struct arguments *decodedArgs);
 uint32_t fetch(struct processor arm);
 void decode(uint32_t dInstruction, struct arguments *decodedArgs);
 
@@ -18,6 +20,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs);
 // Single Data Transfter
 
 // Helper functions
+bool getBit(uint32_t word, uint8_t position);
 uint32_t setBit(uint32_t word, bool set, uint8_t position);
 
 void resolveOperand2(uint16_t op, bool iFlag, struct arguments *decodedArgs,

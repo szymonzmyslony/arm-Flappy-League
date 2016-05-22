@@ -29,11 +29,18 @@
 #define MASK15_12             0x0000F000
 #define MASK19_16             0x000F0000
 #define MASK24_21             0x01E00000
-#define MASK11_8              0x00000f00
 #define MASK11_7              0x00000f80
 #define MASK7_0               0x000000ff
 #define MASK6_5               0x00000060
-#define MASK3_0               0x0000000f
+
+// condition cases
+#define COND_eq                0
+#define COND_ne                1
+#define COND_ge               10
+#define COND_lt               11
+#define COND_gt               12
+#define COND_le               13
+#define COND_al               14
 
 struct processor {
   uint32_t registers[NUMBER_OF_REGISTERS];	 
@@ -47,12 +54,14 @@ struct arguments {
   uint8_t sRegIndex;
   uint8_t nRegIndex;
   uint8_t mRegIndex;
+  uint8_t opCode;
   uint32_t operand2;
   uint8_t cond;
   uint32_t offset;
   void (*executePointer)(struct arguments *args, struct processor *arm); 
   bool aFlag;
   bool sFlag;
+  bool lFlag;
   bool iFlag;
 };
 
@@ -71,12 +80,12 @@ int main(int argc, char **argv) {
     
     // execute instruction
     if (arm.counter >= 2) {
-      execute(decodedArgs, arm);
+      execute(&decodedArgs, &arm);
     }
 
     // decode instruction
     if (arm.counter >= 1) {
-      decode(dInstruction, decodedArgs);
+      decode(dInstruction, &decodedArgs);
     }
 
     // fetch instruction
@@ -150,6 +159,29 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   }
 }
 
+// Calls the function in executePointer if the condition in cond is passed
+void execute(struct arguments *decodedArgs, struct processor *arm) {
+  
+  bool executeFlag;
+  bool zSet = getBit(arm->registers[CPSR], Zbit);
+  bool nSet = getBit(arm->registers[CPSR], Nbit);
+  bool vSet = getBit(arm->registers[CPSR], Vbit);
+  
+  switch(decodedArgs->cond) {
+    case COND_eq: executeFlag = zSet; break;
+    case COND_ne: executeFlag = !zSet; break;
+    case COND_ge: executeFlag = nSet == vSet; break;
+    case COND_lt: executeFlag = nSet != vSet; break;
+    case COND_gt: executeFlag = !zSet && (nSet == vSet); break;
+    case COND_le: executeFlag = zSet || (nSet != vSet); break;
+    case COND_al: executeFlag = true; break;
+  }
+  
+  if(executeFlag) {
+    decodedArgs->executePointer(decodedArgs, arm);
+  }
+}
+
 // Returns the instruction in the byte order as shown in the specification
 // and increments the program counter
 uint32_t fetch(struct processor arm) {
@@ -160,6 +192,11 @@ uint32_t fetch(struct processor arm) {
 }
 
 // ====================== Helper Functions ====================================
+
+// Returns the value of a bit in a given position in a word
+bool getBit(uint32_t word, uint8_t position) {
+  return (word & (1 << position)) != 0;
+}
 
 // Returns a given word except with a single bit set in the given position
 uint32_t setBit(uint32_t word, bool set, uint8_t position) {
@@ -212,28 +249,29 @@ void resolveOperand2(uint16_t op, bool iFlag,
 // shifts value according to shift code by n bits
 // sets carry flag if sFlag provided is true
 uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t n, 
-        struct processor *arm, bool SFlag){
+        struct processor *arm, bool sFlag){
+  bool carry;
   switch (shiftCode){
     case 0x00:
       // set carry bit
-      bool carry =  ((((0x00000001 << (sizeof(uint32_t) - n)) & value) != 0) && 
+      carry =  ((((0x00000001 << (sizeof(uint32_t) - n)) & value) != 0) && 
               sFlag);
       arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       
       return (value << n);
     case 0x01:
       // set carry bit
-      bool carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
+      carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
       arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       return (value >> n);
     case 0x02:
       // set carry bit
-      bool carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
+      carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
       arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       return arithShiftRight32(value, n);
     case 0x03:
       // set carry bit
-      bool carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
+      carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
       arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       return rotateRight32(value, n);
     default:
