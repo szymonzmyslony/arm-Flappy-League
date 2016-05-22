@@ -34,6 +34,15 @@
 #define MASK6_5               0x00000060
 #define MASK3_0               0x0000000f
 
+// condition cases
+#define COND_eq                0
+#define COND_ne                1
+#define COND_ge               10
+#define COND_lt               11
+#define COND_gt               12
+#define COND_le               13
+#define COND_al               14
+
 struct processor {
   uint32_t registers[NUMBER_OF_REGISTERS];	 
   uint8_t memory[BYTES_IN_MEMORY];
@@ -70,12 +79,12 @@ int main(int argc, char **argv) {
     
     // execute instruction
     if (arm.counter >= 2) {
-      execute(decodedArgs, arm);
+      execute(&decodedArgs, &arm);
     }
 
     // decode instruction
     if (arm.counter >= 1) {
-      decode(dInstruction, decodedArgs);
+      decode(dInstruction, &decodedArgs);
     }
 
     // fetch instruction
@@ -95,6 +104,29 @@ int main(int argc, char **argv) {
   return EXIT_SUCCESS;
 }
 
+// Calls the function in executePointer if the condition in cond is passed
+void execute(struct arguments *decodedArgs, struct processor *arm) {
+  
+  bool executeFlag;
+  bool zSet = getBit(arm->registers[CPSR], Zbit);
+  bool nSet = getBit(arm->registers[CPSR], Nbit);
+  bool vSet = getBit(arm->registers[CPSR], Vbit);
+  
+  switch(decodeArgs->cond) {
+    case COND_eq: executeFlag = zSet; break;
+    case COND_ne: executeFlag = !zSet; break;
+    case COND_ge: executeFlag = nSet == vSet; break;
+    case COND_lt: executeFlag = nSet != vSet; break;
+    case COND_gt: executeFlag = !zSet && (nSet == vSet); break;
+    case COND_le: executeFlag = zSet || (nSet != vSet); break;
+    case COND_al: executeFlag = true; break;
+  }
+  
+  if(executeFlag) {
+    decodeArgs->executePointer(decodedArgs, arm);
+  }
+}
+
 // Returns the instruction in the byte order as shown in the specification
 // and increments the program counter
 uint32_t fetch(struct processor arm) {
@@ -105,6 +137,11 @@ uint32_t fetch(struct processor arm) {
 }
 
 // ====================== Helper Functions ====================================
+
+// Returns the value of a bit in a given position in a word
+bool getBit(uint32_t word, uint8_t position) {
+  return (word & (1 << position)) != 0;
+}
 
 // Returns a given word except with a single bit set in the given position
 uint32_t setBit(uint32_t word, bool set, uint8_t position) {
