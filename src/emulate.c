@@ -30,7 +30,7 @@
 #define MASK24_21             0x01E00000
 
 struct processor {
-  uint32_t registers[NUMBER_OF_REGISTERS];   
+  uint32_t registers[NUMBER_OF_REGISTERS];
   uint8_t memory[BYTES_IN_MEMORY];
   bool end;
   int counter; // counter to determine whether to decode and execute
@@ -107,10 +107,10 @@ void decodeDP(int dInstruction, struct arguments *decodedArgs) {
   uint32_t mask = MASK24_21;
   //Remove the trailing 0s from the extracted opcode.
   uint8_t opCode = (dInstruction & mask) >> 21;
-  
+
   uint32_t sMask = 1 << Sbit;
   decodedArgs->sFlag = (dInstruction & sMask) == sMask;
-  
+
   if(sFlag) {
     switch(opCode) {
       case  0: decodedArgs->executePointer = &opDPand; break;
@@ -146,10 +146,10 @@ void decodeDP(int dInstruction, struct arguments *decodedArgs) {
   // - decode Rn
   mask = MASK19_16;
   decodedArgs->nRegIndex = (dInstruction & mask) >> 16;
-  
+
   // - decode Rd
   mask = MASK15_12;
-  decodedArgs->dRegIndex = (dInstruction & mask) >> 12;  
+  decodedArgs->dRegIndex = (dInstruction & mask) >> 12;
 }
 
 // ====================== Execute Data Processing =============================
@@ -201,7 +201,7 @@ void opDPsub(struct arguments *decodedArgs, struct processor *arm) {
 
 void opDPsubWithFlags(struct arguments *decodedArgs, struct processor *arm) {
   opDPsub(decodedArgs, arm);
-  
+
   setFlagsDP(arm->registers[decodedArgs->dRegIndex], arm);
   // Update flags for carry out
   bool borrow = !(decodedArgs->operand2 > arm->registers[decodedArgs->nRegIndex]);
@@ -213,10 +213,10 @@ void opDPrsb(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t res = decodedArgs->operand2 - arm->registers[decodedArgs->nRegIndex];
   arm->registers[decodedArgs->dRegIndex] = res;
 }
-  
+
 void opDPrsbWithFlags(struct arguments *decodedArgs, struct processor *arm) {
   opDPrsb(decodedArgs, arm);
-  
+
   setFlagsDP(arm->registers[decodedArgs->dRegIndex], arm);
   // Update flags for carry out
   bool borrow = !(arm->registers[decodedArgs->nRegIndex] > decodedArgs->operand2);
@@ -231,7 +231,7 @@ void opDPadd(struct arguments *decodedArgs, struct processor *arm) {
 
 void opDPaddWithFlags(struct arguments *decodedArgs, struct processor *arm) {
   opDPadd(decodedArgs, arm);
-  
+
   setFlagsDP(arm->registers[decodedArgs->dRegIndex], arm);
   // Update flags for carry out
   bool overflow = arm->registers[decodedArgs->dRegIndex] 
@@ -268,7 +268,7 @@ void setFlagsDP(uint32_t value, struct processor *arm) {
   //Set the Z flag
   bool allZero = value == 0;
   arm->registers[CPSR] = setBit(arm->registers[CPSR], allZero, Zbit);
-  
+
   //Set the N flag
   uint32_t bit31 = 1 << 31;
   bool bit31set = (value & bit31) == bit31;
