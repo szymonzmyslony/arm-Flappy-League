@@ -6,6 +6,7 @@
 
 #define NUMBER_OF_REGISTERS   17
 #define BYTES_IN_MEMORY       65536
+#define INSTRUCTION_BYTES      4
 // index of Program Counter in registers array
 #define PC                    15
 // index of CPSR in registers array
@@ -63,7 +64,10 @@ int main(int argc, char **argv) {
     }
 
     // fetch instruction
-    dInstruction = fetch(dInstruction, arm);
+    dInstruction = fetch(arm);
+    
+    // increment program counter 
+    arm.registers[PC] += INSTRUCTION_BYTES;
 
     // Increment counter but avoid overflow of counter
     if (arm.counter < 3){
@@ -74,6 +78,15 @@ int main(int argc, char **argv) {
   // print register states
 
   return EXIT_SUCCESS;
+}
+
+// Returns the instruction in the byte order as shown in the specification
+// and increments the program counter
+uint32_t fetch(struct processor arm) {
+  return   (arm.processor[PC + 3] << 24) 
+         + (arm.processor[PC + 2] << 16)
+         + (arm.processor[PC + 1] <<  8)
+         +  arm.processor[PC];
 }
 
 // ====================== Helper Functions ====================================
