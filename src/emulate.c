@@ -93,10 +93,10 @@ int main(int argc, char **argv) {
 // Returns the instruction in the byte order as shown in the specification
 // and increments the program counter
 uint32_t fetch(struct processor arm) {
-  return   (arm.processor[PC + 3] << 24) 
-         + (arm.processor[PC + 2] << 16)
-         + (arm.processor[PC + 1] <<  8)
-         +  arm.processor[PC];
+  return   (arm.memory[arm.registers[PC] + 3] << 24) 
+         + (arm.memory[arm.registers[PC] + 2] << 16)
+         + (arm.memory[arm.registers[PC] + 1] <<  8)
+         +  arm.memory[arm.registers[PC]];
 }
 
 // ====================== Helper Functions ====================================
