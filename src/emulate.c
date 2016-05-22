@@ -55,9 +55,6 @@ struct arguments {
   bool iFlag;
 };
 
-void resolveOperand2(uint16_t op, bool iFlag,
-        struct arguments *decodedArgs, struct processor *arm);
-
 int main(int argc, char **argv) {
   
   struct processor arm;
@@ -147,26 +144,44 @@ void resolveOperand2(uint16_t op, bool iFlag,
     // if bit 4 = 0 then integer shift
     if ((0x00000010 & op) == 0){
       decodedArgs->operand2 = shift((MASK6_5 & op) >> 5, arm->registers[reg], 
-              ((MASK11_7 & op) >> 7));
+              ((MASK11_7 & op) >> 7), arm);
     // if bit 4 = 1 then register shift
     } else {
       uint16_t rotateAmount = arm->registers[(MASK11_8 & op) >> 8];
       decodedArgs->operand2 = shift((MASK6_5 & op) >> 5, arm->registers[reg], 
-              rotateAmount);
+              rotateAmount, arm);
     }
   }
 }
 
 // shifts value according to shift code by n bits
-uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t n){
+// should only be called in execute as it sets carry flag
+uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t n, 
+        struct processor *arm){
   switch (shiftCode){
     case 0x00:
+      if (((0x00000001 << (sizeof(uint32_t) - n)) & value) != 0){
+        // set carry bit
+        arm->registers[CPSR] &= 0x80000000;
+      }
       return (value << n);
     case 0x01:
+      if (((0x00000001 << (n - 1)) & value) != 0){
+        // set carry bit
+        arm->registers[CPSR] &= 0x80000000;
+      }
       return (value >> n);
     case 0x02:
+      if (((0x00000001 << (n - 1)) & value) != 0){
+        // set carry bit
+        arm->registers[CPSR] &= 0x80000000;
+      }
       return arithShiftRight32(value, n);
     case 0x03:
+      if (((0x00000001 << (n - 1)) & value) != 0){
+        // set carry bit
+        arm->registers[CPSR] &= 0x80000000;
+      }
       return rotateRight32(value, n);
     default:
       fprintf(stderr, "Invalid shift code %d to shift %d by %d", shiftCode,
