@@ -91,67 +91,69 @@ int main(int argc, char **argv) {
 }
 
 // ======================= Decode Multiply ====================================
-void decodeMul(int dInstruction, struct arguments decodedArgs) {
+void decodeMul(int dInstruction, struct arguments *decodedArgs) {
   //Decode Rd
   uint32_t dMask = MASK19_16;
-  decodedArgs.dRegIndex = (dInstruction & dMask) >> 16;
+  decodedArgs->dRegIndex = (dInstruction & dMask) >> 16;
 
   //Decode Rn
   uint32_t nMask = MASK15_12;
-  decodedArgs.nRegIndex = (dInstruction & nMask) >> 12;
+  decodedArgs->nRegIndex = (dInstruction & nMask) >> 12;
 
   //Decode Rs
   uint32_t sMask = MASK11_8;
-  decodedArgs.sRegIndex = (dInstruction & sMask) >> 8;
+  decodedArgs->sRegIndex = (dInstruction & sMask) >> 8;
 
   //Decode Rm
   uint32_t mMask = MASK3_0;
-  decodedArgs.sRegIndex = (dInstruction & mMask);
+  decodedArgs->mRegIndex = (dInstruction & mMask);
 
   //Set sFlag
-  uint32_t sMask = 1 << Sbit;
-  bool sFlag = (dInstruction & sMask) == sMask;
-  decodedArgs.sFlag = sFlag;
+  uint32_t sBitMask = 1 << Sbit;
+  bool sFlag = (dInstruction & sBitMask) == sBitMask;
+  decodedArgs->sFlag = sFlag;
 
   //Set aFlag
   uint32_t aMask = 1 << Abit;
-  decodedArgs.aFlag = (dInstruction & aMask) == aMask;
+  decodedArgs->aFlag = (dInstruction & aMask) == aMask;
   
-  decodedArgs.executePointer = &mul; 
+  decodedArgs->executePointer = &mul; 
 }
 
 
 
 // ======================= Execute Multiply ===================================
-void mul(struct arguments decodedArgs, struct processor arm) {
-  uint32_t res = arm.registers[decodedArgs.mIndedx] * arm.registers[decodedArgs.sIndex];
-  if (decodedArgs.aFlag == true) {
-    res = res + arm.registers[decodedArgs.nIndex];
+void mul(struct arguments *decodedArgs, struct processor *arm) {
+  uint32_t res = arm->registers[decodedArgs->mRegIndex] * arm->registers[decodedArgs->sRegIndex];
+  if (decodedArgs->aFlag == true) {
+    res = res + arm->registers[decodedArgs->nRegIndex];
   }
-  if (decodedArgs.sFlag == true) {
+  if (decodedArgs->sFlag == true) {
     setFlagsMul(res, arm);
   }
-  arm.registers[decodedArgs.dIndex] = res;
+  *(arm->registers[decodedArgs->dRegIndex]) = res;
 }
 
+
+// ======================= Set Flags ==========================================
 void setFlagsMul(uint32_t value, struct processor arm) {
   //Set N flag
   uint32_t bit31 = 1 << 31;
   bool bit31set = (value & bit31) == bit31;
-  arm.registers[CPSR] = setBit(arm.registers[CPSR], bit31set, Nbit);
+  *(arm->registers[CPSR]) = setBit(arm->registers[CPSR], bit31set, Nbit);
 
   //Set Z flag
   bool allZero = value == 0;
-  arm.registers[CPSR] = setBit(arm.registers[CPSR], allZero, Zbit);
+  *(arm->registers[CPSR]) = setBit(arm->registers[CPSR], allZero, Zbit);
 }
 
 // Returns the instruction in the byte order as shown in the specification
 // and increments the program counter
-uint32_t fetch(struct processor arm) {
-  return   (arm.memory[arm.registers[PC] + 3] << 24) 
-          + (arm.memory[arm.registers[PC] + 2] << 16)
-          + (arm.memory[arm.registers[PC] + 1] <<  8)
-          +  arm.memory[arm.registers[PC]];
+uint32_t fetch(struct processor *arm) {
+  return   (arm->memory[arm->registers[PC] + 3] << 24) 
+          + (arm->memory[arm->registers[PC] + 2] << 16)
+          + (arm->memory[arm->registers[PC] + 1] <<  8)
+          +  arm->memory[arm->registers[PC]];
 }
 
 // ====================== Helper Functions ====================================
