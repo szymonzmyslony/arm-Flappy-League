@@ -160,28 +160,26 @@ uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t n,
         struct processor *arm, bool SFlag){
   switch (shiftCode){
     case 0x00:
-      if ((((0x00000001 << (sizeof(uint32_t) - n)) & value) != 0) && sFlag){
-        // set carry bit
-        arm->registers[CPSR] &= 0x80000000;
-      }
+      // set carry bit
+      bool carry =  ((((0x00000001 << (sizeof(uint32_t) - n)) & value) != 0) && 
+              sFlag);
+      arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
+      
       return (value << n);
     case 0x01:
-      if ((((0x00000001 << (n - 1)) & value) != 0) && sFlag){
-        // set carry bit
-        arm->registers[CPSR] &= 0x80000000;
-      }
+      // set carry bit
+      bool carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
+      arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       return (value >> n);
     case 0x02:
-      if ((((0x00000001 << (n - 1)) & value) != 0) && sFlag){
-        // set carry bit
-        arm->registers[CPSR] &= 0x80000000;
-      }
+      // set carry bit
+      bool carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
+      arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       return arithShiftRight32(value, n);
     case 0x03:
-      if ((((0x00000001 << (n - 1)) & value) != 0) && sFlag){
-        // set carry bit
-        arm->registers[CPSR] &= 0x80000000;
-      }
+      // set carry bit
+      bool carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
+      arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
       return rotateRight32(value, n);
     default:
       fprintf(stderr, "Invalid shift code %d to shift %d by %d", shiftCode,
