@@ -27,7 +27,7 @@
 #define MASK15_12             0x0000F000
 #define MASK19_16             0x000F0000
 #define MASK24_21             0x01E00000
-#define MASK0_23			  0x00111111
+#define MASK0_23			  0x00ffffff
 
 
 //offset
@@ -56,22 +56,18 @@ struct arguments {
 };
 
 
-int main(int argc, char **argv) {
-  
-  struct processor arm;
-  struct arguments decodedArgs;
 
-  // load program from args and initialise processor and read from file
-  loadFile(argv[0], *arm);
-  
-  void loadFile(char name[],struc processor *pointer){	  
+ void loadFile(char name[],struc processor *pointer){	  
 	FILE *myFile;
 	myFile = fopen(name, "r");
-	fread(*pointer->memory, 4, BYTES_IN_MEMORY, myFile);
+	fread(*pointer.memory, 4, BYTES_IN_MEMORY, myFile);
 	//library funtion that reads binary words
 	
 	
   }
+  
+  
+  
   //decode branching 
   void decodeDP(int dInstruction, struct arguments *decoded) {
   // - decode operation
@@ -88,11 +84,15 @@ int main(int argc, char **argv) {
   
   //execute branching
   void execBranching(struct arguments decodedArgs, struct processor *	arm) {
+		
    bool negative = (decodedArgs.offset>>(numberofelements-1));
+   uint32_t trueoffset = ~decodedArgs.offset;
+   trueoffset++; 
    if (negative){
-	arm->registers[PC] = arm.registers[PC]-decodedArgs.offset;
-   }else{
-	   arm->registers[PC] = arm.registers[PC]+decodedArgs.offset;
+	arm->registers[PC] = arm.registers[PC]-trueoffset;
+   }   
+   else{
+	   arm->registers[PC] = arm.registers[PC]+trueoffset;
 	   
 	   
    }
@@ -102,23 +102,23 @@ int main(int argc, char **argv) {
    
    
 }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 
 
+
+
+
+
+
+
+
+int main(int argc, char **argv) {
+  
+  struct processor arm;
+  struct arguments decodedArgs;
+
+  // load program from args and initialise processor and read from file
+  loadFile(argv[0], *arm);
+  
   // points to appropriate execute function after decoding
   uint32_t dInstruction; // instruction to be decoded next
 
@@ -154,11 +154,11 @@ int main(int argc, char **argv) {
   return EXIT_SUCCESS;
 }
 
-void print(uint32_t[] arr, uint32_t length){
+void print(int[] arr, int length){
 // funtion for printing array of given lenght
 	int i;
-	for(i=0; i<lenght; ++i){
-		printf("Register no %index holds value %value.\n", i+1, arr[i]);
+	for(i=0; i<length; ++i){
+		printf("Register no %d holds value %d.\n", i+1, arr[i]);
 		
 	}
 
