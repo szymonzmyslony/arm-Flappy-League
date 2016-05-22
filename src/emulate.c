@@ -27,6 +27,11 @@
 #define MASK15_12             0x0000F000
 #define MASK19_16             0x000F0000
 #define MASK24_21             0x01E00000
+#define MASK0_23			  0x00111111
+
+
+//offset
+#define numberofelements 24
 
 struct processor {
   uint32_t registers[NUMBER_OF_REGISTERS];	 
@@ -46,6 +51,7 @@ struct arguments {
   bool aFlag;
   bool sFlag;
   bool iFlag;
+ 
   void (*executePointer)(struct arguments args, struct processor arm); 
 };
 
@@ -66,6 +72,48 @@ int main(int argc, char **argv) {
 	
 	
   }
+  //decode branching 
+  void decodeDP(int dInstruction, struct arguments *decoded) {
+  // - decode operation
+  decodedArgs.executePointer = &execBranching;
+  //decode offset (still unsgined)
+  uint32_t mask = MASK0_23;
+  decoded->offset = (dInstruction & mask)
+  
+  
+  
+  
+  }
+  
+  
+  //execute branching
+  void execBranching(struct arguments decodedArgs, struct processor *	arm) {
+   bool negative = (decodedArgs.offset>>(numberofelements-1));
+   if (negative){
+	arm->registers[PC] = arm.registers[PC]-decodedArgs.offset;
+   }else{
+	   arm->registers[PC] = arm.registers[PC]+decodedArgs.offset;
+	   
+	   
+   }
+   
+   arm->counter=0;
+   
+   
+   
+}
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   
