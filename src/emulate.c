@@ -249,7 +249,7 @@ void setFlagsDP(uint32_t value, struct processor arm) {
   arm.registers[CPSR] = setBit(arm.registers[CPSR], allZero, Zbit);
   
   //Set the N flag
-  uint32_t bit31 = value << 31;
+  uint32_t bit31 = 1 << 31;
   bool bit31set = (value & bit31) == bit31;
   arm.registers[CPSR] = setBit(arm.registers[CPSR], bit31set, Nbit);
 }
