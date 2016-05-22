@@ -7,6 +7,7 @@
 
 #define NUMBER_OF_REGISTERS   17
 #define BYTES_IN_MEMORY       65536
+#define INSTRUCTION_BYTES      4
 // index of Program Counter in registers array
 #define PC                    15
 // index of CPSR in registers array
@@ -16,7 +17,14 @@
 #define Cbit                  29
 #define Zbit                  30
 #define Nbit                  31
+
+// masks for multiply
+#define Abit                  21
+#define Sbit                  20
+                  
 // masks
+#define MASK3_0               0x0000000F
+#define MASK11_8              0x00000F00
 #define MASK15_12             0x0000F000
 #define MASK19_16             0x000F0000
 #define MASK24_21             0x01E00000
@@ -40,12 +48,14 @@ struct arguments {
   uint8_t mRegIndex;
   uint32_t operand2;
   uint8_t cond;
-  uint8_t i;
   uint32_t offset;
   void (*executePointer)(struct arguments *args, struct processor *arm); 
+  bool aFlag;
+  bool sFlag;
+  bool iFlag;
 };
 
-void resolveOperand2(uint16_t op, uint8_t i,
+void resolveOperand2(uint16_t op, bool iFlag,
         struct arguments *decodedArgs, struct processor *arm);
 
 int main(int argc, char **argv) {
@@ -72,7 +82,10 @@ int main(int argc, char **argv) {
     }
 
     // fetch instruction
-    dInstruction = fetch(dInstruction, arm);
+    dInstruction = fetch(arm);
+    
+    // increment program counter 
+    arm.registers[PC] += INSTRUCTION_BYTES;
 
     // Increment counter but avoid overflow of counter
     if (arm.counter < 3){
@@ -83,6 +96,15 @@ int main(int argc, char **argv) {
   // print register states
 
   return EXIT_SUCCESS;
+}
+
+// Returns the instruction in the byte order as shown in the specification
+// and increments the program counter
+uint32_t fetch(struct processor arm) {
+  return   (arm.memory[arm.registers[PC] + 3] << 24) 
+         + (arm.memory[arm.registers[PC] + 2] << 16)
+         + (arm.memory[arm.registers[PC] + 1] <<  8)
+         +  arm.memory[arm.registers[PC]];
 }
 
 // ====================== Helper Functions ====================================
@@ -112,10 +134,10 @@ uint32_t arithShiftRight32(uint32_t val, uint16_t n){
 
 // Resolves operand2 into an integer to be used in execution
 // Should only be called during execution
-void resolveOperand2(uint16_t op, uint8_t i,
+void resolveOperand2(uint16_t op, bool iFlag,
         struct arguments *decodedArgs, struct processor *arm){
   // if i = 1 then immediate value
-  if (i == 1){
+  if (iFlag){
     uint32_t rotation = (((MASK11_8 & op) >> 8) * 2);
     decodedArgs->operand2 = rotateRight32((op & MASK7_0), rotation);
   // if i = 0 then shifted register
