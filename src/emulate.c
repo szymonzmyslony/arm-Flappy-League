@@ -253,7 +253,7 @@ void opDPcmp(struct arguments *decodedArgs, struct processor *arm) {
 
 // Set the Z, N flags for the Data Processing Instruction. The C flag is set in 
 // the opDP__ functions for arithmetic operations, or stays as the result from 
-// the barrel shifter in the case of operations.
+// the barrel shifter in the case of logical operations.
 void setFlagsDP(uint32_t value, struct processor *arm) {
   //Set the Z flag
   bool allZero = value == 0;
