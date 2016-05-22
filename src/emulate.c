@@ -96,9 +96,12 @@ int main(int argc, char **argv) {
   return EXIT_SUCCESS;
 }
 
-void decode(uint32_t dInstruction, struct arguments decodedArgs){
+void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   // set cond parameter to condition code
-  decodedArgs.cond = (dInstruction >> 28);
+  decodedArgs->cond = (dInstruction >> 28);
+  
+  // set sFlag
+  decodedArgs->sFlag = (dInstruction & (1 << 20));
   
   // set mask to bit 27
   uint32_t mask = 0x08000000;
@@ -111,6 +114,8 @@ void decode(uint32_t dInstruction, struct arguments decodedArgs){
   // set mask to bit 26
   mask = 0x04000000;
   if ((dInstruction & mask) != 0){
+    // set sFlag to false so that flags register is untouched
+    decodedArgs = false;
     // Decode Single Data Transfer
 
     return;
