@@ -29,11 +29,9 @@
 #define MASK15_12             0x0000F000
 #define MASK19_16             0x000F0000
 #define MASK24_21             0x01E00000
-#define MASK11_8              0x00000f00
 #define MASK11_7              0x00000f80
 #define MASK7_0               0x000000ff
 #define MASK6_5               0x00000060
-#define MASK3_0               0x0000000f
 
 struct processor {
   uint32_t registers[NUMBER_OF_REGISTERS];
