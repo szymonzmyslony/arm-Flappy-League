@@ -7,6 +7,7 @@ struct arguments;
 
 // Main flow
 void execute(struct arguments *decodedArgs, struct processor *arm);
+void decode(uint32_t dInstruction, struct arguments *decodedArgs);
 uint32_t fetch(struct processor arm);
 
 // Data Processing
