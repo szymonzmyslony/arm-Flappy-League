@@ -111,36 +111,19 @@ void decodeDP(int dInstruction, struct arguments *decodedArgs) {
   uint32_t sMask = 1 << Sbit;
   decodedArgs->sFlag = (dInstruction & sMask) == sMask;
 
-  if(sFlag) {
-    switch(opCode) {
-      case  0: decodedArgs->executePointer = &opDPand; break;
-      case  1: decodedArgs->executePointer = &opDPeor; break;
-      case  2: decodedArgs->executePointer = &opDPsub; break;
-      case  3: decodedArgs->executePointer = &opDPrsb; break;
-      case  4: decodedArgs->executePointer = &opDPadd; break;
-      case  8: decodedArgs->executePointer = &opDPtst; break;
-      case  9: decodedArgs->executePointer = &opDPteq; break;
-      case 10: decodedArgs->executePointer = &opDPcmp; break;
-      case 12: decodedArgs->executePointer = &opDPorr; break;
-      case 13: decodedArgs->executePointer = &opDPmov; break;
-      //No such other opcode!
-      default: assert(false); break;
-    }
-  } else {
-    switch(opCode) {
-      case  0: decodedArgs->executePointer = &opDPandWithFlags; break;
-      case  1: decodedArgs->executePointer = &opDPeorWithFlags; break;
-      case  2: decodedArgs->executePointer = &opDPsubWithFlags; break;
-      case  3: decodedArgs->executePointer = &opDPrsbWithFlags; break;
-      case  4: decodedArgs->executePointer = &opDPaddWithFlags; break;
-      case  8:
-      case  9:
-      case 10: decodedArgs->executePointer = &opDPNothing; break;
-      case 12: decodedArgs->executePointer = &opDPorrWithFlags; break;
-      case 13: decodedArgs->executePointer = &opDPmov; break;
-      //No such other opcode!
-      default: assert(false); break;
-    }
+  switch(opCode) {
+    case  0: decodedArgs->executePointer = &opDPand; break;
+    case  1: decodedArgs->executePointer = &opDPeor; break;
+    case  2: decodedArgs->executePointer = &opDPsub; break;
+    case  3: decodedArgs->executePointer = &opDPrsb; break;
+    case  4: decodedArgs->executePointer = &opDPadd; break;
+    case  8: decodedArgs->executePointer = &opDPtst; break;
+    case  9: decodedArgs->executePointer = &opDPteq; break;
+    case 10: decodedArgs->executePointer = &opDPcmp; break;
+    case 12: decodedArgs->executePointer = &opDPorr; break;
+    case 13: decodedArgs->executePointer = &opDPmov; break;
+    //No such other opcode!
+    default: assert(false); break;
   }
 
   // - decode Rn
@@ -158,33 +141,30 @@ void decodeDP(int dInstruction, struct arguments *decodedArgs) {
 void opDPand(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t res = arm->registers[decodedArgs->nRegIndex] & decodedArgs->operand2;
   arm->registers[decodedArgs->dRegIndex] = res;
-}
-
-void opDPandWithFlags(struct arguments *decodedArgs, struct processor *arm) {
-  opDPand(decodedArgs, arm);
-  setFlagsDP(arm->registers[decodedArgs->dRegIndex], arm);
+  
+  if(decodedArgs->sFlag) {    
+    setFlagsDP(res, arm);
+  }
 }
 
 // - Eor
 void opDPeor(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t res = arm->registers[decodedArgs->nRegIndex] ^ decodedArgs->operand2;
   arm->registers[decodedArgs->dRegIndex] = res;
-}
-
-void opDPeorWithFlags(struct arguments *decodedArgs, struct processor *arm) {
-  opDPeor(decodedArgs, arm);
-  setFlagsDP(arm->registers[decodedArgs->dRegIndex], arm);
+  
+  if(decodedArgs->sFlag) {    
+    setFlagsDP(res, arm);
+  }
 }
 
 // - Or
 void opDPorr(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t res = arm->registers[decodedArgs->nRegIndex] | decodedArgs->operand2;
   arm->registers[decodedArgs->dRegIndex] = res;
-}
-
-void opDPorrWithFlags(struct arguments *decodedArgs, struct processor *arm) {
-  opDPorr(decodedArgs, arm);
-  setFlagsDP(arm->registers[decodedArgs->dRegIndex], arm);
+  
+  if(decodedArgs->sFlag) {    
+    setFlagsDP(res, arm);
+  }
 }
 
 // - Move
@@ -197,67 +177,71 @@ void opDPmov(struct arguments *decodedArgs, struct processor *arm) {
 void opDPsub(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t res = arm->registers[decodedArgs->nRegIndex] - decodedArgs->operand2;
   arm->registers[decodedArgs->dRegIndex] = res;
-}
-
-void opDPsubWithFlags(struct arguments *decodedArgs, struct processor *arm) {
-  opDPsub(decodedArgs, arm);
-
-  setFlagsDP(arm->registers[decodedArgs->dRegIndex], arm);
-  // Update flags for carry out
-  bool borrow = !(decodedArgs->operand2 > arm->registers[decodedArgs->nRegIndex]);
-  setBit(arm->registers[CPSR], borrow, Cbit);
+  
+  if(decodedArgs->sFlag) {    
+    setFlagsDP(res, arm);
+    // Update flags for carry out
+    bool borrow = !(decodedArgs->operand2 > arm->registers[decodedArgs->nRegIndex]);
+    setBit(arm->registers[CPSR], borrow, Cbit);
+  }
 }
 
 // - Subtract (operand2 - Rn)
 void opDPrsb(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t res = decodedArgs->operand2 - arm->registers[decodedArgs->nRegIndex];
   arm->registers[decodedArgs->dRegIndex] = res;
-}
-
-void opDPrsbWithFlags(struct arguments *decodedArgs, struct processor *arm) {
-  opDPrsb(decodedArgs, arm);
-
-  setFlagsDP(arm->registers[decodedArgs->dRegIndex], arm);
-  // Update flags for carry out
-  bool borrow = !(arm->registers[decodedArgs->nRegIndex] > decodedArgs->operand2);
-  setBit(arm->registers[CPSR], borrow, Cbit);
+  
+  if(decodedArgs->sFlag) {    
+    setFlagsDP(res, arm);
+    // Update flags for carry out
+    bool borrow = !(arm->registers[decodedArgs->nRegIndex] > decodedArgs->operand2);
+    setBit(arm->registers[CPSR], borrow, Cbit);
+  }
 }
 
 // - Add
 void opDPadd(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t res = decodedArgs->operand2 + arm->registers[decodedArgs->nRegIndex];
   arm->registers[decodedArgs->dRegIndex] = res;
-}
-
-void opDPaddWithFlags(struct arguments *decodedArgs, struct processor *arm) {
-  opDPadd(decodedArgs, arm);
-
-  setFlagsDP(arm->registers[decodedArgs->dRegIndex], arm);
-  // Update flags for carry out
-  bool overflow = arm->registers[decodedArgs->dRegIndex] 
-                   < arm->registers[decodedArgs->nRegIndex]
-                 || arm->registers[decodedArgs->dRegIndex] < decodedArgs->operand2;
-  setBit(arm->registers[CPSR], overflow, Cbit);
+  
+  if(decodedArgs->sFlag) {    
+    setFlagsDP(res, arm);
+    // Update flags for carry out
+    bool overflow = arm->registers[decodedArgs->dRegIndex] 
+                     < arm->registers[decodedArgs->nRegIndex]
+                   || arm->registers[decodedArgs->dRegIndex] 
+                     < decodedArgs->operand2;
+    setBit(arm->registers[CPSR], overflow, Cbit);
+  }
 }
 
 // --- Testing operations
 void opDPtst(struct arguments *decodedArgs, struct processor *arm) {
+  if(decodedArgs->sFlag) {
+    return;
+  }
+  
   uint32_t res = arm->registers[decodedArgs->nRegIndex] & decodedArgs->operand2;
   setFlagsDP(res, arm);
 }
 
 void opDPteq(struct arguments *decodedArgs, struct processor *arm) {
+  if(decodedArgs->sFlag) {
+    return;
+  }
+  
   uint32_t res = arm->registers[decodedArgs->nRegIndex] ^ decodedArgs->operand2;
   setFlagsDP(res, arm);
 }
 
 void opDPcmp(struct arguments *decodedArgs, struct processor *arm) {
+  if(decodedArgs->sFlag) {
+    return;
+  }
+  
   uint32_t res = arm->registers[decodedArgs->nRegIndex] - decodedArgs->operand2;
   setFlagsDP(res, arm);
 }
-
-//Replaces the test operations when the S flag = 0, as nothing changes
-void opDPNothing(struct arguments *decodedArgs, struct processor *arm) {}
 
 // --- Helper Function
 
