@@ -115,6 +115,12 @@ int main(int argc, char **argv) {
   return EXIT_SUCCESS;
 }
 
+void loadFile(char name[],struct processor *pointer){	  
+  FILE *myFile;
+  myFile = fopen(name, "r");
+  fread(&(pointer->memory), 4, BYTES_IN_MEMORY, myFile);
+  //library funtion that reads binary words
+}
 
 void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   // set cond parameter to condition code
@@ -201,7 +207,16 @@ uint32_t fetch(struct processor arm) {
          + (arm.memory[arm.registers[PC] + 1] <<  8)
          +  arm.memory[arm.registers[PC]];
 }
+  
+void print(uint32_t arr[], uint32_t length){
+// funtion for printing array of given lenght
+  int i;
+  for(i=0; i<length; ++i){
+  printf("Register no %d holds value %d.\n", i+1, arr[i]);
+  }
+}
 
+// ================ Single Data Transfer Functions ============================
 void decodeSDT(uint32_t dInstruction, struct arguments *decodedArgs) {
 
   // set lFlag, works since sFlag is always set in decode main function
@@ -286,8 +301,11 @@ void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   } else {
     arm->registers[decodedArgs->nRegIndex] -= decodedArgs->offset;
   }
-}  
+}
 
+// ====================== Multiply Functions ==================================
+
+// ====================== Branching Functions =================================
 // decode branching 
 void decodeBranching(int dInstruction, struct arguments *decodedArgs) {
   // - decode operation
@@ -446,19 +464,3 @@ uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t n,
       return 0;
   }
 }
-
-void loadFile(char name[],struct processor *pointer){	  
-  FILE *myFile;
-  myFile = fopen(name, "r");
-  fread(&(pointer->memory), 4, BYTES_IN_MEMORY, myFile);
-  //library funtion that reads binary words
-}
-  
-void print(uint32_t arr[], uint32_t length){
-// funtion for printing array of given lenght
-  int i;
-  for(i=0; i<length; ++i){
-  printf("Register no %d holds value %d.\n", i+1, arr[i]);
-  }
-}
-
