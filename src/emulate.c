@@ -161,7 +161,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   mask = 0x02000000;
   if ((dInstruction & mask) != 0){
     // Decode Data Processing (I = 1)
-
+    decodeDP(dInstruction, decodedArgs);
     return;
   }
 
@@ -169,7 +169,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   mask = 0x00000010;
   if ((dInstruction & mask) == 0){
     // Decode Data Processing (I = 0 Constant Shift)
-
+    decodeDP(dInstruction, decodedArgs);
     return;
   }
 
@@ -181,7 +181,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
     return;
   } else {
     // Decode Data Processing (I = 0 Shift by Register)
-
+    decodeDP(dInstruction, decodedArgs);
     return;
   }
 }
