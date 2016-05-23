@@ -66,6 +66,19 @@ struct arguments {
 	
   }
   
+  void print(uint32_t arr[], uint32_t length){
+// funtion for printing array of given lenght
+	int i;
+	for(i=0; i<length; ++i){
+		printf("Register no %d holds value %d.\n", i+1, arr[i]);
+		
+	}
+
+
+
+
+}
+  
   
   
   //decode branching 
@@ -105,7 +118,11 @@ struct arguments {
 
 
 
-
+uint32_t fetch(struct processor *arm) {
+  return   (arm->memory[arm->registers[PC] + 3] << 24) 
+          + (arm->memory[arm->registers[PC] + 2] << 16)
+          + (arm->memory[arm->registers[PC] + 1] <<  8)
++  arm->memory[arm->registers[PC]];}
 
 
 
@@ -117,7 +134,7 @@ int main(int argc, char **argv) {
   struct arguments decodedArgs;
 
   // load program from args and initialise processor and read from file
-  loadFile(argv[0], *arm);
+  loadFile(argv[0], &arm);
   
   // points to appropriate execute function after decoding
   uint32_t dInstruction; // instruction to be decoded next
@@ -135,7 +152,7 @@ int main(int argc, char **argv) {
     }
 
     // fetch instruction
-    dInstruction = fetch(arm);
+    dInstruction = fetch(&arm);
     
     // increment program counter 
     arm.registers[PC] += INSTRUCTION_BYTES;
@@ -147,34 +164,18 @@ int main(int argc, char **argv) {
   }
   
   // print register states
-	print(arm.registers, NUMBER_OF_REGISTERS)
+	print(arm.registers, NUMBER_OF_REGISTERS);
   
   
 
   return EXIT_SUCCESS;
 }
 
-void print(int[] arr, int length){
-// funtion for printing array of given lenght
-	int i;
-	for(i=0; i<length; ++i){
-		printf("Register no %d holds value %d.\n", i+1, arr[i]);
-		
-	}
 
-
-
-
-}
 
 // Returns the instruction in the byte order as shown in the specification
 // and increments the program counter
-uint32_t fetch(struct processor arm) {
-  return   (arm.processor[PC + 3] << 24) 
-         + (arm.processor[PC + 2] << 16)
-         + (arm.processor[PC + 1] <<  8)
-         +  arm.processor[PC];
-}
+
 
 
 
