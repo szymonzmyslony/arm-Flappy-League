@@ -72,23 +72,7 @@ struct arguments {
   bool iFlag;
   bool pFlag;
   bool uFlag;
-
 };
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
 
 int main(int argc, char **argv) {
   
@@ -128,8 +112,6 @@ int main(int argc, char **argv) {
   // print register states
 	print(arm.registers, NUMBER_OF_REGISTERS);
   
-  
-
   return EXIT_SUCCESS;
 }
 
@@ -145,7 +127,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   uint32_t mask = 0x08000000;
   if ((dInstruction & mask) != 0){
     // Decode Branch instruction
-    
+    decodeBranching(dInstruction, decodedArgs);
     return;
   }
 
@@ -211,8 +193,6 @@ void execute(struct arguments *decodedArgs, struct processor *arm) {
   }
 }
 
-
-
 // Returns the instruction in the byte order as shown in the specification
 // and increments the program counter
 uint32_t fetch(struct processor arm) {
@@ -221,7 +201,6 @@ uint32_t fetch(struct processor arm) {
          + (arm.memory[arm.registers[PC] + 1] <<  8)
          +  arm.memory[arm.registers[PC]];
 }
-
 
 void decodeSDT(uint32_t dInstruction, struct arguments *decodedArgs) {
 
@@ -259,6 +238,7 @@ void execSDT(struct arguments *decodedArgs, struct processor *arm) {
   }
 }
 
+// For executing SDT load intruction, pre-increment
 void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t memAddress;
   if (decodedArgs->uFlag) {
@@ -270,6 +250,7 @@ void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
   arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
 }
 
+// For executing SDT load intruction, post-increment
 void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
@@ -282,6 +263,7 @@ void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   }
 }
 
+// For executing SDT store intruction, pre-increment
 void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t memAddress;
   if (decodedArgs->uFlag) {
@@ -293,6 +275,7 @@ void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
           memAddress, arm);
 }
 
+// For executing SDT store intruction, post-increment
 void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
@@ -303,6 +286,30 @@ void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   } else {
     arm->registers[decodedArgs->nRegIndex] -= decodedArgs->offset;
   }
+}  
+
+// decode branching 
+void decodeBranching(int dInstruction, struct arguments *decodedArgs) {
+  // - decode operation
+  decodedArgs->executePointer = &execBranching;
+  //decode offset (still unsgined)
+  uint32_t mask = MASK0_23;
+  decodedArgs->offset = (dInstruction & mask);
+}
+  
+  
+// execute branching
+void execBranching(struct arguments *decodedArgs, struct processor *arm) {
+  bool negative = ((decodedArgs->offset)>>(numberofelements-1));
+  uint32_t trueoffset = ~(decodedArgs->offset);
+  trueoffset++; 
+  if (negative){
+    arm->registers[PC] = (arm->registers[PC]-trueoffset);
+  }   
+  else{
+    arm->registers[PC] = (arm->registers[PC]+trueoffset);
+  }
+  arm->counter=0;
 }
 
 // ====================== Helper Functions ====================================
@@ -441,62 +448,17 @@ uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t n,
 }
 
 void loadFile(char name[],struct processor *pointer){	  
-	FILE *myFile;
-	myFile = fopen(name, "r");
-	fread(&(pointer->memory), 4, BYTES_IN_MEMORY, myFile);
-	//library funtion that reads binary words
-	
-	
-  }
+  FILE *myFile;
+  myFile = fopen(name, "r");
+  fread(&(pointer->memory), 4, BYTES_IN_MEMORY, myFile);
+  //library funtion that reads binary words
+}
   
-  void print(uint32_t arr[], uint32_t length){
+void print(uint32_t arr[], uint32_t length){
 // funtion for printing array of given lenght
-	int i;
-	for(i=0; i<length; ++i){
-		printf("Register no %d holds value %d.\n", i+1, arr[i]);
-		
-	}
-
-
-
-
-}
-  
-  
-  
-  //decode branching 
-  void decodeDP(int dInstruction, struct arguments *decodedArgs) {
-  // - decode operation
-  decodedArgs->executePointer = &execBranching;
-  //decode offset (still unsgined)
-  uint32_t mask = MASK0_23;
-  decodedArgs->offset = (dInstruction & mask);
-  
-  
-  
-  
+  int i;
+  for(i=0; i<length; ++i){
+  printf("Register no %d holds value %d.\n", i+1, arr[i]);
   }
-  
-  
-  //execute branching
-  void execBranching(struct arguments *decodedArgs, struct processor *	arm) {
-		
-   bool negative = ((decodedArgs->offset)>>(numberofelements-1));
-   uint32_t trueoffset = ~(decodedArgs->offset);
-   trueoffset++; 
-   if (negative){
-	arm->registers[PC] = (arm->registers[PC]-trueoffset);
-   }   
-   else{
-	   arm->registers[PC] = (arm->registers[PC]+trueoffset);
-	   
-	   
-   }
-   
-   arm->counter=0;
-   
-   
-   
 }
-
 

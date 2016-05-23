@@ -17,8 +17,8 @@ void loadFile(char name[], struct processor *pointer);
 // Data Processing
 
 // Branching
-void decodeDP(int dInstruction, struct arguments *decodedArgs);
-void execBranching(struct arguments *decodedArgs, struct processor *	arm);
+void decodeBranching(int dInstruction, struct arguments *decodedArgs);
+void execBranching(struct arguments *decodedArgs, struct processor *arm);
 
 
 // Multiply
