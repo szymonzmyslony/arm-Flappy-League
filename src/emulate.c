@@ -75,7 +75,6 @@ struct arguments {
   uint8_t opCode;
   uint32_t operand2;
   uint8_t cond;
-  uint8_t opCode;
   uint32_t offset;
   void (*executePointer)(struct arguments *args, struct processor *arm); 
   bool aFlag;
