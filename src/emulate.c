@@ -21,11 +21,13 @@
 #define Cbit                  29
 #define Zbit                  30
 #define Nbit                  31
-#define Abit                  21
-#define Sbit                  20
-#define numberofelements      24
+#define numberofelements 24
 //for ofset
 
+
+// masks for multiply
+#define Abit                  21
+#define Sbit                  20
                   
 // masks
 #define MASK3_0               0x0000000F
@@ -33,11 +35,23 @@
 #define MASK15_12             0x0000F000
 #define MASK19_16             0x000F0000
 #define MASK24_21             0x01E00000
-#define MASK0_23              0x00FFFFFF
+#define MASK0_23			        0x00ffffff
 #define MASK11_7              0x00000f80
-#define MASK11_0              0x00000FFF
-#define MASK7_0               0x000000FF
+#define MASK11_0              0x00000fff
+#define MASK7_0               0x000000ff
 #define MASK6_5               0x00000060
+
+// opcodes
+#define OPCODE_and             0
+#define OPCODE_eor             1
+#define OPCODE_sub             2
+#define OPCODE_rsb             3
+#define OPCODE_add             4
+#define OPCODE_tst             8
+#define OPCODE_teq             9
+#define OPCODE_cmp            10
+#define OPCODE_orr            12
+#define OPCODE_mov            13
 
 // condition cases
 #define COND_eq                0
@@ -48,9 +62,8 @@
 #define COND_le               13
 #define COND_al               14
 
-
 struct processor {
-  uint32_t registers[NUMBER_OF_REGISTERS];	 
+  uint32_t registers[NUMBER_OF_REGISTERS];
   uint8_t memory[BYTES_IN_MEMORY];
   bool end;
   int counter; // counter to determine whether to decode and execute
@@ -72,9 +85,7 @@ struct arguments {
   bool iFlag;
   bool pFlag;
   bool uFlag;
-
 };
-
 
 int main(int argc, char **argv) {
   
@@ -114,11 +125,15 @@ int main(int argc, char **argv) {
   // print register states
 	print(arm.registers, NUMBER_OF_REGISTERS);
   
-  
-
   return EXIT_SUCCESS;
 }
 
+void loadFile(char name[],struct processor *pointer){	  
+  FILE *myFile;
+  myFile = fopen(name, "r");
+  fread(&(pointer->memory), 4, BYTES_IN_MEMORY, myFile);
+  //library funtion that reads binary words
+}
 
 void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   // set cond parameter to condition code
@@ -131,7 +146,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   uint32_t mask = 0x08000000;
   if ((dInstruction & mask) != 0){
     // Decode Branch instruction
-    
+    decodeBranching(dInstruction, decodedArgs);
     return;
   }
 
@@ -148,7 +163,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   mask = 0x02000000;
   if ((dInstruction & mask) != 0){
     // Decode Data Processing (I = 1)
-
+    decodeDP(dInstruction, decodedArgs);
     return;
   }
 
@@ -156,7 +171,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   mask = 0x00000010;
   if ((dInstruction & mask) == 0){
     // Decode Data Processing (I = 0 Constant Shift)
-
+    decodeDP(dInstruction, decodedArgs);
     return;
   }
 
@@ -168,11 +183,10 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
     return;
   } else {
     // Decode Data Processing (I = 0 Shift by Register)
-
+    decodeDP(dInstruction, decodedArgs);
     return;
   }
 }
-
 
 // Calls the function in executePointer if the condition in cond is passed
 void execute(struct arguments *decodedArgs, struct processor *arm) {
@@ -197,8 +211,6 @@ void execute(struct arguments *decodedArgs, struct processor *arm) {
   }
 }
 
-
-
 // Returns the instruction in the byte order as shown in the specification
 // and increments the program counter
 uint32_t fetch(struct processor arm) {
@@ -207,7 +219,103 @@ uint32_t fetch(struct processor arm) {
          + (arm.memory[arm.registers[PC] + 1] <<  8)
          +  arm.memory[arm.registers[PC]];
 }
+  
+void print(uint32_t arr[], uint32_t length){
+// funtion for printing array of given lenght
+  int i;
+  for(i=0; i<length; ++i){
+  printf("Register no %d holds value %d.\n", i+1, arr[i]);
+  }
+}
 
+// ================ Single Data Transfer Functions ============================
+void decodeSDT(uint32_t dInstruction, struct arguments *decodedArgs) {
+
+  // set lFlag, works since sFlag is always set in decode main function
+  decodedArgs->lFlag = decodedArgs->sFlag;
+  // sFlag must then be set to false
+  decodedArgs->sFlag = false;
+
+  decodedArgs->pFlag = (dInstruction & (1 << 24));
+  decodedArgs->uFlag = (dInstruction & (1 << 23));
+  decodedArgs->iFlag = (dInstruction & (1 << 25));
+
+  decodedArgs->offset = (dInstruction & MASK11_0);
+  decodedArgs->nRegIndex = ((dInstruction & MASK19_16) >> 16);
+  decodedArgs->dRegIndex = ((dInstruction & MASK15_12) >> 12);
+
+  decodedArgs->executePointer = &execSDT;
+}
+
+void execSDT(struct arguments *decodedArgs, struct processor *arm) {
+  // account for pipeline
+  if (decodedArgs->nRegIndex == PC) {
+    decodedArgs->nRegIndex += 8;
+  }
+  //set offset
+  resolveSDTOffset(decodedArgs->offset, decodedArgs->iFlag, decodedArgs, arm);
+  if (decodedArgs->lFlag && decodedArgs->pFlag){
+    ldrSDTpre(decodedArgs, arm);
+  } else if (decodedArgs->lFlag && ~(decodedArgs->pFlag)){
+    ldrSDTpost(decodedArgs, arm);
+  } else if (~(decodedArgs->lFlag) && decodedArgs->pFlag){
+    strSDTpre(decodedArgs, arm);
+  } else {
+    strSDTpost(decodedArgs, arm);
+  }
+}
+
+// For executing SDT load intruction, pre-increment
+void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
+  uint32_t memAddress;
+  if (decodedArgs->uFlag) {
+    memAddress = arm->registers[decodedArgs->nRegIndex] + decodedArgs->offset;
+  } else {
+    memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
+  }
+  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
+  arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
+}
+
+// For executing SDT load intruction, post-increment
+void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
+  assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
+  uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
+  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
+  arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
+  if (decodedArgs->uFlag) {
+    arm->registers[decodedArgs->nRegIndex] += decodedArgs->offset;
+  } else {
+    arm->registers[decodedArgs->nRegIndex] -= decodedArgs->offset;
+  }
+}
+
+// For executing SDT store intruction, pre-increment
+void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
+  uint32_t memAddress;
+  if (decodedArgs->uFlag) {
+    memAddress = arm->registers[decodedArgs->nRegIndex] + decodedArgs->offset;
+  } else {
+    memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
+  }
+  storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
+          memAddress, arm);
+}
+
+// For executing SDT store intruction, post-increment
+void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
+  assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
+  uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
+  storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
+          memAddress, arm);
+  if (decodedArgs->uFlag) {
+    arm->registers[decodedArgs->nRegIndex] += decodedArgs->offset;
+  } else {
+    arm->registers[decodedArgs->nRegIndex] -= decodedArgs->offset;
+  }
+}
+
+// ====================== Multiply Functions ==================================
 // ======================= Decode Multiply ====================================
 void decodeMul(int dInstruction, struct arguments *decodedArgs) {
   //Decode Rd
@@ -239,7 +347,6 @@ void decodeMul(int dInstruction, struct arguments *decodedArgs) {
 }
 
 
-
 // ======================= Execute Multiply ===================================
 void mul(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t res = arm->registers[decodedArgs->mRegIndex] * arm->registers[decodedArgs->sRegIndex];
@@ -264,93 +371,136 @@ void setFlagsMul(uint32_t value, struct processor *arm) {
   bool allZero = value == 0;
   arm->registers[CPSR] = setBit(arm->registers[CPSR], allZero, Zbit);
 }
-
-// ======================= Decode SDT =========================================
-void decodeSDT(uint32_t dInstruction, struct arguments *decodedArgs) {
-
-  // set lFlag, works since sFlag is always set in decode main function
-  decodedArgs->lFlag = decodedArgs->sFlag;
-  // sFlag must then be set to false
-  decodedArgs->sFlag = false;
-
-  decodedArgs->pFlag = (dInstruction & (1 << 24));
-  decodedArgs->uFlag = (dInstruction & (1 << 23));
-  decodedArgs->iFlag = (dInstruction & (1 << 25));
-
-  decodedArgs->offset = (dInstruction & MASK11_0);
-  decodedArgs->nRegIndex = ((dInstruction & MASK19_16) >> 16);
-  decodedArgs->dRegIndex = ((dInstruction & MASK15_12) >> 12);
-
-  decodedArgs->executePointer = &execSDT;
+// ====================== Branching Functions =================================
+// decode branching 
+void decodeBranching(int dInstruction, struct arguments *decodedArgs) {
+  // - decode operation
+  decodedArgs->executePointer = &execBranching;
+  //decode offset (still unsgined)
+  uint32_t mask = MASK0_23;
+  decodedArgs->offset = (dInstruction & mask);
+}
+  
+  
+// execute branching
+void execBranching(struct arguments *decodedArgs, struct processor *arm) {
+  bool negative = ((decodedArgs->offset)>>(numberofelements-1));
+  uint32_t trueoffset = ~(decodedArgs->offset);
+  trueoffset++; 
+  if (negative){
+    arm->registers[PC] = (arm->registers[PC]-trueoffset);
+  }   
+  else{
+    arm->registers[PC] = (arm->registers[PC]+trueoffset);
+  }
+  arm->counter=0;
 }
 
+// ========================= Data Processing ==================================
 
-// ======================= Execute SDT ========================================
-void execSDT(struct arguments *decodedArgs, struct processor *arm) {
-  // account for pipeline
-  if (decodedArgs->nRegIndex == PC) {
-    decodedArgs->nRegIndex += 8;
-  }
-  //set offset
-  resolveSDTOffset(decodedArgs->offset, decodedArgs->iFlag, decodedArgs, arm);
-  if (decodedArgs->lFlag && decodedArgs->pFlag){
-    ldrSDTpre(decodedArgs, arm);
-  } else if (decodedArgs->lFlag && ~(decodedArgs->pFlag)){
-    ldrSDTpost(decodedArgs, arm);
-  } else if (~(decodedArgs->lFlag) && decodedArgs->pFlag){
-    strSDTpre(decodedArgs, arm);
-  } else {
-    strSDTpost(decodedArgs, arm);
-  }
+// Updates decodedArgs's opCode, nRegIndex, dRegIndex and executePointer
+void decodeDP(int dInstruction, struct arguments *decodedArgs) {
+  // - decode operation
+  uint32_t mask = MASK24_21;
+  //Remove the trailing 0s from the extracted opcode.
+  uint8_t opCode = (dInstruction & mask) >> 21;
+  decodedArgs->opCode = opCode;
+
+  // - decode Rn
+  mask = MASK19_16;
+  decodedArgs->nRegIndex = (dInstruction & mask) >> 16;
+
+  // - decode Rd
+  mask = MASK15_12;
+  decodedArgs->dRegIndex = (dInstruction & mask) >> 12;
+  
+  // Set next execute to Data Processing
+  decodedArgs->executePointer = &executeDP;
 }
 
-void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
-  uint32_t memAddress;
-  if (decodedArgs->uFlag) {
-    memAddress = arm->registers[decodedArgs->nRegIndex] + decodedArgs->offset;
-  } else {
-    memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
+void executeDP(struct arguments *decodedArgs, struct processor *arm) {
+  // Resolve operand2 based on the I flag
+  resolveOperand2(decodedArgs->operand2, decodedArgs->iFlag, decodedArgs, arm);
+  
+  // The contents of the source register and the evaluated operand2
+  uint32_t nRegContents = arm->registers[decodedArgs->nRegIndex];
+  uint32_t operand2 = decodedArgs->operand2;
+  
+  // The result to be loaded into Rd, unchanged if no value given
+  uint32_t res = arm->registers[decodedArgs->dRegIndex];
+  
+  // A pointer that points to the result which the ZN flags will update with
+  uint32_t *flagsRes = &res;
+  
+  switch(decodedArgs->opCode) {
+    // Rd is to be set
+    case OPCODE_and: res = nRegContents & operand2; break;
+    case OPCODE_eor: res = nRegContents ^ operand2; break;
+    case OPCODE_orr: res = nRegContents | operand2; break;
+    
+    case OPCODE_mov: res = operand2;                break;
+    
+    // Rd is to be set and the C flag is to be set
+    case OPCODE_sub: res = nRegContents - operand2; 
+                     if(decodedArgs->sFlag) {    
+                       bool borrow = !(operand2 > nRegContents);
+                       setBit(arm->registers[CPSR], borrow, Cbit);
+                     }
+      break;
+      
+    case OPCODE_rsb: res = operand2 - nRegContents;
+                     if(decodedArgs->sFlag) {    
+                       bool borrow = !(nRegContents > operand2);
+                       setBit(arm->registers[CPSR], borrow, Cbit);
+                     }
+      break;
+      
+    case OPCODE_add: res = operand2 + nRegContents;
+                     if(decodedArgs->sFlag) {    
+                       bool overflow = res < nRegContents || res < operand2;
+                       setBit(arm->registers[CPSR], overflow, Cbit);
+                     }
+      break;
+    // Rd is not to be set
+    default: if(!decodedArgs->sFlag) {
+               break;
+             }
+             
+             uint32_t testRes;
+             flagsRes = &testRes;
+             
+             switch(decodedArgs->opCode) {
+               case OPCODE_tst: testRes = nRegContents & operand2; break;
+               case OPCODE_teq: testRes = nRegContents ^ operand2; break;
+               case OPCODE_cmp: testRes = nRegContents - operand2; break;
+               //No such other opcode!
+               default: assert(false); break;
+             }
   }
-  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
-  arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
-}
-
-void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
-  assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
-  uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
-  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
-  arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
-  if (decodedArgs->uFlag) {
-    arm->registers[decodedArgs->nRegIndex] += decodedArgs->offset;
-  } else {
-    arm->registers[decodedArgs->nRegIndex] -= decodedArgs->offset;
-  }
-}
-
-void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
-  uint32_t memAddress;
-  if (decodedArgs->uFlag) {
-    memAddress = arm->registers[decodedArgs->nRegIndex] + decodedArgs->offset;
-  } else {
-    memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
-  }
-  storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
-          memAddress, arm);
-}
-
-void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
-  assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
-  uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
-  storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
-          memAddress, arm);
-  if (decodedArgs->uFlag) {
-    arm->registers[decodedArgs->nRegIndex] += decodedArgs->offset;
-  } else {
-    arm->registers[decodedArgs->nRegIndex] -= decodedArgs->offset;
+  
+  //Set Rd
+  arm->registers[decodedArgs->dRegIndex] = res;
+  // In the CPSR register, sets the Z and N flags if S is set
+  if(decodedArgs->sFlag) {
+    setFlagsZN(*flagsRes, arm);
   }
 }
 
 // ====================== Helper Functions ====================================
+
+// Set the Z, N flags for the Data Processing Instruction. The C flag is set in 
+// the opDP__ functions for arithmetic operations, or stays as the result from 
+// the barrel shifter in the case of logical operations.
+void setFlagsZN(uint32_t value, struct processor *arm) {
+  //Set the Z flag
+  bool allZero = value == 0;
+  arm->registers[CPSR] = setBit(arm->registers[CPSR], allZero, Zbit);
+
+  //Set the N flag
+  uint32_t bit31 = 1 << 31;
+  bool bit31set = (value & bit31) == bit31;
+  arm->registers[CPSR] = setBit(arm->registers[CPSR], bit31set, Nbit);
+}
 
 // Gets a 32bit value from memory in little endian fashion
 uint32_t getLittleFromMem32(uint32_t address, struct processor *arm) {
@@ -483,61 +633,6 @@ uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t n,
               value, n);
       return 0;
   }
-}
-
-void loadFile(char name[],struct processor *pointer){	  
-	FILE *myFile;
-	myFile = fopen(name, "r");
-	fread(&(pointer->memory), 4, BYTES_IN_MEMORY, myFile);
-	//library funtion that reads binary words
-	
-	
-  }
-  
-  void print(uint32_t arr[], uint32_t length){
-// funtion for printing array of given lenght
-	int i;
-	for(i=0; i<length; ++i){
-		printf("Register no %d holds value %d.\n", i+1, arr[i]);
-		
-	}
-}
-  
-  
-  
-  //decode branching 
-  void decodeDP(int dInstruction, struct arguments *decodedArgs) {
-  // - decode operation
-  decodedArgs->executePointer = &execBranching;
-  //decode offset (still unsgined)
-  uint32_t mask = MASK0_23;
-  decodedArgs->offset = (dInstruction & mask);
-  
-  
-  
-  
-  }
-  
-  
-  //execute branching
-  void execBranching(struct arguments *decodedArgs, struct processor *	arm) {
-		
-   bool negative = ((decodedArgs->offset)>>(numberofelements-1));
-   uint32_t trueoffset = ~(decodedArgs->offset);
-   trueoffset++; 
-   if (negative){
-	arm->registers[PC] = (arm->registers[PC]-trueoffset);
-   }   
-   else{
-	   arm->registers[PC] = (arm->registers[PC]+trueoffset);
-	   
-	   
-   }
-   
-   arm->counter=0;
-   
-   
-   
 }
 
 
