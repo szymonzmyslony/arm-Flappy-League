@@ -18,7 +18,7 @@ void loadFile(char name[], struct processor *pointer);
 
 // Branching
 void decodeDP(int dInstruction, struct arguments *decodedArgs);
-void execBranching(struct arguments decodedArgs, struct processor *	arm);
+void execBranching(struct arguments *decodedArgs, struct processor *	arm);
 
 
 // Multiply

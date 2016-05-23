@@ -69,7 +69,6 @@ struct arguments {
   bool iFlag;
 
  
-  void (*executePointer)(struct arguments args, struct processor arm); 
 };
 
 
@@ -111,7 +110,7 @@ int main(int argc, char **argv) {
     }
 
     // fetch instruction
-    dInstruction = fetch(&arm);
+    dInstruction = fetch(arm);
     
     // increment program counter 
     arm.registers[PC] += INSTRUCTION_BYTES;
@@ -259,7 +258,7 @@ uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t n,
 void loadFile(char name[],struct processor *pointer){	  
 	FILE *myFile;
 	myFile = fopen(name, "r");
-	fread(*(pointer->memory), 4, BYTES_IN_MEMORY, myFile);
+	fread(&(pointer->memory), 4, BYTES_IN_MEMORY, myFile);
 	//library funtion that reads binary words
 	
 	
@@ -286,7 +285,7 @@ void loadFile(char name[],struct processor *pointer){
   decodedArgs->executePointer = &execBranching;
   //decode offset (still unsgined)
   uint32_t mask = MASK0_23;
-  decodedArgs->offset = (dInstruction & mask)
+  decodedArgs->offset = (dInstruction & mask);
   
   
   
@@ -295,7 +294,7 @@ void loadFile(char name[],struct processor *pointer){
   
   
   //execute branching
-  void execBranching(struct arguments decodedArgs, struct processor *	arm) {
+  void execBranching(struct arguments *decodedArgs, struct processor *	arm) {
 		
    bool negative = ((decodedArgs->offset)>>(numberofelements-1));
    uint32_t trueoffset = ~(decodedArgs->offset);
