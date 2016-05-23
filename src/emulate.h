@@ -25,6 +25,7 @@ void decodeMul(int dInstruction, struct arguments *decodedArgs);
 void mul(struct arguments *decodedArgs, struct processor *arm);
 void setFlagsMul(uint32_t value, struct processor *arm);
 
+
 // Single Data Transfter
 void decodeSDT(uint32_t dInstruction, struct arguments *decodedArgs);
 void execSDT(struct arguments *decodedArgs, struct processor *arm);
