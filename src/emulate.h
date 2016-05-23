@@ -25,6 +25,8 @@ void strSDTpre(struct arguments *decodedArgs, struct processor *arm);
 void strSDTpost(struct arguments *decodedArgs, struct processor *arm);
 
 // Helper functions
+uint32_t getLittleFromMem32(uint32_t address, struct processor *arm);
+void storeBigEndy32(uint32_t value, uint32_t address, struct processor *arm);
 uint32_t switchEndy32(uint32_t value);
 bool getBit(uint32_t word, uint8_t position);
 uint32_t setBit(uint32_t word, bool set, uint8_t position);

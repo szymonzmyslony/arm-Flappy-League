@@ -74,6 +74,22 @@ int main(int argc, char **argv) {
   struct processor arm;
   struct arguments decodedArgs;
 
+  arm.registers[1] = 0x07542200;
+  arm.registers[0] = 0x00000304;
+  arm.memory[0x00000304] = 0x00;
+  arm.memory[0x00000305] = 0x00;
+  arm.memory[0x00000306] = 0x00;
+  arm.memory[0x00000307] = 0x00;
+  //storeBigEndy32(0x07040302, 0x00000304, &arm);
+  decode(0x06001004, &decodedArgs);
+  execSDT(&decodedArgs, &arm);
+
+  printf("Expected 07542200 in memory at 00000304, got %x%x%x%x\noffset %x\nnew reg: %x\n", 
+          arm.memory[0x00000304], arm.memory[0x00000305], 
+          arm.memory[0x00000306], arm.memory[0x00000307],
+          decodedArgs.offset,
+          arm.registers[0]);
+/*
   // load program from args and initialise processor and read from file
 
 
@@ -107,6 +123,7 @@ int main(int argc, char **argv) {
   // print register states
 
   return EXIT_SUCCESS;
+  */
 }
 
 void decode(uint32_t dInstruction, struct arguments *decodedArgs){
@@ -237,14 +254,14 @@ void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
   } else {
     memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
   }
-  uint32_t littleEndVal = arm->memory[memAddress];
+  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
   arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
 }
 
 void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
-  assert(decodedArgs->mRegIndex != decodedArgs->nRegIndex);
+  assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
-  uint32_t littleEndVal = arm->memory[memAddress];
+  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
   arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
   if (decodedArgs->uFlag) {
     arm->registers[decodedArgs->nRegIndex] += decodedArgs->offset;
@@ -260,15 +277,15 @@ void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
   } else {
     memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
   }
-  arm->memory[memAddress] = 
-          switchEndy32(arm->registers[decodedArgs->dRegIndex]);
+  storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
+          memAddress, arm);
 }
 
 void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
-  assert(decodedArgs->mRegIndex != decodedArgs->nRegIndex);
+  assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
-  arm->memory[memAddress] = 
-          switchEndy32(arm->registers[decodedArgs->dRegIndex]);
+  storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
+          memAddress, arm);
   if (decodedArgs->uFlag) {
     arm->registers[decodedArgs->nRegIndex] += decodedArgs->offset;
   } else {
@@ -277,8 +294,24 @@ void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
 }
 // ====================== Helper Functions ====================================
 
+// Gets a 32bit value from memory in little endian fashion
+uint32_t getLittleFromMem32(uint32_t address, struct processor *arm) {
+  uint32_t ret = arm->memory[address + 3] + (arm->memory[address + 2] << 8)
+          + (arm->memory[address + 1] << 16) + (arm->memory[address] << 24);
+  return ret;
+} 
+
+// Stores a big endian 32bit value in memory in a little endian fashion
+void storeBigEndy32(uint32_t value, uint32_t address, struct processor *arm) {
+  printf("\n%x\n", value);
+  arm->memory[address] = value;
+  arm->memory[address + 1] = value >> 8;
+  arm->memory[address + 2] = value >> 16;
+  arm->memory[address + 3] = value >> 24;
+}
+
 // Converts a 32bit unsigned int from little endian to big endian or reverse
-uint32_t switchEndy32(uint32_t value){
+uint32_t switchEndy32(uint32_t value) {
   uint8_t byte0 = value;
   uint8_t byte1 = value >> 8;
   uint8_t byte2 = value >> 16;
