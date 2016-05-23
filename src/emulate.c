@@ -316,8 +316,7 @@ void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
 }
 
 // ====================== Multiply Functions ==================================
-<<<<<<< HEAD
-// ======================= Decode Multiply ====================================
+// Decode Multiply
 void decodeMul(int dInstruction, struct arguments *decodedArgs) {
   //Decode Rd
   uint32_t dMask = MASK19_16;
@@ -348,7 +347,7 @@ void decodeMul(int dInstruction, struct arguments *decodedArgs) {
 }
 
 
-// ======================= Execute Multiply ===================================
+// Execute Multiply
 void mul(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t res = arm->registers[decodedArgs->mRegIndex] * arm->registers[decodedArgs->sRegIndex];
   if (decodedArgs->aFlag == true) {
@@ -361,7 +360,7 @@ void mul(struct arguments *decodedArgs, struct processor *arm) {
 }
 
 
-// ======================= Set Flags ==========================================
+// Set Flags
 void setFlagsMul(uint32_t value, struct processor *arm) {
   //Set N flag
   uint32_t bit31 = 1 << 31;
@@ -372,9 +371,7 @@ void setFlagsMul(uint32_t value, struct processor *arm) {
   bool allZero = value == 0;
   arm->registers[CPSR] = setBit(arm->registers[CPSR], allZero, Zbit);
 }
-=======
 
->>>>>>> master
 // ====================== Branching Functions =================================
 // decode branching 
 void decodeBranching(int dInstruction, struct arguments *decodedArgs) {
