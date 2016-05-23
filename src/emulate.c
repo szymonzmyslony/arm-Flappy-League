@@ -144,6 +144,9 @@ void decodeDP(int dInstruction, struct arguments *decodedArgs) {
 
 // ====================== Execute Data Processing =============================
 void executeDP(struct arguments *decodedArgs, struct processor *arm) {
+  // Resolve operand2 based on the I flag
+  resolveOperand2(decodedArgs->operand2, decodedArgs->iFlag, decodedArgs, arm);
+  
   // The contents of the source register and the evaluated operand2
   uint32_t nRegContents = arm->registers[decodedArgs->nRegIndex];
   uint32_t operand2 = decodedArgs->operand2;
