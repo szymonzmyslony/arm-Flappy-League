@@ -1,8 +1,10 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <assert.h>
 #include "emulate.h"
 
 #define NUMBER_OF_REGISTERS   17
@@ -33,6 +35,7 @@
 #define MASK24_21             0x01E00000
 #define MASK0_23			  0x00ffffff
 #define MASK11_7              0x00000f80
+#define MASK11_0              0x00000fff
 #define MASK7_0               0x000000ff
 #define MASK6_5               0x00000060
 
@@ -67,8 +70,9 @@ struct arguments {
   bool sFlag;
   bool lFlag;
   bool iFlag;
+  bool pFlag;
+  bool uFlag;
 
- 
 };
 
 
@@ -130,6 +134,60 @@ int main(int argc, char **argv) {
 }
 
 
+void decode(uint32_t dInstruction, struct arguments *decodedArgs){
+  // set cond parameter to condition code
+  decodedArgs->cond = (dInstruction >> 28);
+  
+  // set sFlag
+  decodedArgs->sFlag = (dInstruction & (1 << 20));
+  
+  // set mask to bit 27
+  uint32_t mask = 0x08000000;
+  if ((dInstruction & mask) != 0){
+    // Decode Branch instruction
+    
+    return;
+  }
+
+  // set mask to bit 26
+  mask = 0x04000000;
+  if ((dInstruction & mask) != 0){
+    // set sFlag to false so that flags register is untouched within decodeSDT
+    // Decode Single Data Transfer
+    decodeSDT(dInstruction, decodedArgs);
+    return;
+  }
+
+  // set mask to bit 25
+  mask = 0x02000000;
+  if ((dInstruction & mask) != 0){
+    // Decode Data Processing (I = 1)
+
+    return;
+  }
+
+  // set mask to bit 4
+  mask = 0x00000010;
+  if ((dInstruction & mask) == 0){
+    // Decode Data Processing (I = 0 Constant Shift)
+
+    return;
+  }
+
+  // set mask to bit 7
+  mask = 0x00000080;
+  if ((dInstruction & mask) != 0){
+    // Decode Multiply
+
+    return;
+  } else {
+    // Decode Data Processing (I = 0 Shift by Register)
+
+    return;
+  }
+}
+
+
 // Calls the function in executePointer if the condition in cond is passed
 void execute(struct arguments *decodedArgs, struct processor *arm) {
   
@@ -165,7 +223,114 @@ uint32_t fetch(struct processor arm) {
 }
 
 
+void decodeSDT(uint32_t dInstruction, struct arguments *decodedArgs) {
+
+  // set lFlag, works since sFlag is always set in decode main function
+  decodedArgs->lFlag = decodedArgs->sFlag;
+  // sFlag must then be set to false
+  decodedArgs->sFlag = false;
+
+  decodedArgs->pFlag = (dInstruction & (1 << 24));
+  decodedArgs->uFlag = (dInstruction & (1 << 23));
+  decodedArgs->iFlag = (dInstruction & (1 << 25));
+
+  decodedArgs->offset = (dInstruction & MASK11_0);
+  decodedArgs->nRegIndex = ((dInstruction & MASK19_16) >> 16);
+  decodedArgs->dRegIndex = ((dInstruction & MASK15_12) >> 12);
+
+  decodedArgs->executePointer = &execSDT;
+}
+
+void execSDT(struct arguments *decodedArgs, struct processor *arm) {
+  // account for pipeline
+  if (decodedArgs->nRegIndex == PC) {
+    decodedArgs->nRegIndex += 8;
+  }
+  //set offset
+  resolveSDTOffset(decodedArgs->offset, decodedArgs->iFlag, decodedArgs, arm);
+  if (decodedArgs->lFlag && decodedArgs->pFlag){
+    ldrSDTpre(decodedArgs, arm);
+  } else if (decodedArgs->lFlag && ~(decodedArgs->pFlag)){
+    ldrSDTpost(decodedArgs, arm);
+  } else if (~(decodedArgs->lFlag) && decodedArgs->pFlag){
+    strSDTpre(decodedArgs, arm);
+  } else {
+    strSDTpost(decodedArgs, arm);
+  }
+}
+
+void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
+  uint32_t memAddress;
+  if (decodedArgs->uFlag) {
+    memAddress = arm->registers[decodedArgs->nRegIndex] + decodedArgs->offset;
+  } else {
+    memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
+  }
+  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
+  arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
+}
+
+void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
+  assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
+  uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
+  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
+  arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
+  if (decodedArgs->uFlag) {
+    arm->registers[decodedArgs->nRegIndex] += decodedArgs->offset;
+  } else {
+    arm->registers[decodedArgs->nRegIndex] -= decodedArgs->offset;
+  }
+}
+
+void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
+  uint32_t memAddress;
+  if (decodedArgs->uFlag) {
+    memAddress = arm->registers[decodedArgs->nRegIndex] + decodedArgs->offset;
+  } else {
+    memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
+  }
+  storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
+          memAddress, arm);
+}
+
+void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
+  assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
+  uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
+  storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
+          memAddress, arm);
+  if (decodedArgs->uFlag) {
+    arm->registers[decodedArgs->nRegIndex] += decodedArgs->offset;
+  } else {
+    arm->registers[decodedArgs->nRegIndex] -= decodedArgs->offset;
+  }
+}
+
 // ====================== Helper Functions ====================================
+
+// Gets a 32bit value from memory in little endian fashion
+uint32_t getLittleFromMem32(uint32_t address, struct processor *arm) {
+  uint32_t ret = arm->memory[address + 3] + (arm->memory[address + 2] << 8)
+          + (arm->memory[address + 1] << 16) + (arm->memory[address] << 24);
+  return ret;
+} 
+
+// Stores a big endian 32bit value in memory in a little endian fashion
+void storeBigEndy32(uint32_t value, uint32_t address, struct processor *arm) {
+  printf("\n%x\n", value);
+  arm->memory[address] = value;
+  arm->memory[address + 1] = value >> 8;
+  arm->memory[address + 2] = value >> 16;
+  arm->memory[address + 3] = value >> 24;
+}
+
+// Converts a 32bit unsigned int from little endian to big endian or reverse
+uint32_t switchEndy32(uint32_t value) {
+  uint8_t byte0 = value;
+  uint8_t byte1 = value >> 8;
+  uint8_t byte2 = value >> 16;
+  uint8_t byte3 = value >> 24;
+  return (byte3 + (byte2 << 8) + (byte1 << 16) + (byte0 << 24));
+}
 
 // Returns the value of a bit in a given position in a word
 bool getBit(uint32_t word, uint8_t position) {
@@ -197,8 +362,11 @@ uint32_t arithShiftRight32(uint32_t val, uint16_t n){
 
 // Resolves operand2 into an integer to be used in execution
 // Should only be called during execution
+// also sets mRegIndex
+// assumes functionality according to iFlag in Data Processing 
+//     i.e. flag is true -> immediate, flag is false -> shifted register
 void resolveOperand2(uint16_t op, bool iFlag,
-        struct arguments *decodedArgs, struct processor *arm){
+        struct arguments *decodedArgs, struct processor *arm) {
   // if i = 1 then immediate value
   if (iFlag){
     uint32_t rotation = (((MASK11_8 & op) >> 8) * 2);
@@ -206,17 +374,34 @@ void resolveOperand2(uint16_t op, bool iFlag,
   // if i = 0 then shifted register
   } else {
     // get number of reg to be shifted
-    uint8_t reg = (MASK3_0 & op);
+    decodedArgs->mRegIndex = (MASK3_0 & op);
+
     // if bit 4 = 0 then integer shift
     if ((0x00000010 & op) == 0){
-      decodedArgs->operand2 = shift((MASK6_5 & op) >> 5, arm->registers[reg], 
+      decodedArgs->operand2 = shift((MASK6_5 & op) >> 5, 
+              arm->registers[decodedArgs->mRegIndex], 
               ((MASK11_7 & op) >> 7), arm, decodedArgs->sFlag);
     // if bit 4 = 1 then register shift
     } else {
       uint16_t rotateAmount = arm->registers[(MASK11_8 & op) >> 8];
-      decodedArgs->operand2 = shift((MASK6_5 & op) >> 5, arm->registers[reg], 
+      decodedArgs->operand2 = shift((MASK6_5 & op) >> 5,
+              arm->registers[decodedArgs->mRegIndex], 
               rotateAmount, arm, decodedArgs->sFlag);
     }
+  }
+}
+
+// Resolves offset into an integer to be used in execution
+void resolveSDTOffset(uint16_t offset, bool iFlag,
+        struct arguments *decodedArgs, struct processor *arm) {
+  if (iFlag) {
+    uint32_t tempOp = decodedArgs->operand2;
+    resolveOperand2(offset, ~iFlag, decodedArgs, arm);
+    decodedArgs->offset = decodedArgs->operand2;
+    decodedArgs->operand2 = tempOp;
+    // note that operand 2 is unaltered
+  } else {
+    decodedArgs->offset = offset;
   }
 }
 
