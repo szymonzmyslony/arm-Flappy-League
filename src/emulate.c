@@ -86,8 +86,6 @@ struct arguments {
 
 int main(int argc, char **argv) {
   
-  printf("working %s", argv[1]);
- 
   struct processor arm;
   struct arguments decodedArgs;
 
@@ -103,22 +101,20 @@ int main(int argc, char **argv) {
     
     // execute instruction
     if (arm.counter >= 2) {
-      printf("\nExec\n");
       execute(&decodedArgs, &arm);
       if (dInstruction == 0) {
         end = true;
       }
+      
     }
 
     // decode instruction
     if (arm.counter >= 1) {
-      printf("\nDecode\n");
       decode(dInstruction, &decodedArgs);
     }
 
     // fetch instruction
     dInstruction = fetch(arm);
-    printf("\nDINSTRUCTION: %x\n", dInstruction);
     
     // increment program counter 
     arm.registers[PC] += INSTRUCTION_BYTES;
@@ -157,6 +153,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   
   // set sFlag
   decodedArgs->sFlag = (dInstruction & (1 << 20));
+  decodedArgs->iFlag = (dInstruction & (1 << 25));
   
   // set mask to bit 27
   uint32_t mask = 0x08000000;
@@ -247,12 +244,12 @@ void initProcessor(struct processor *arm){
 
 // prints the non-zero values in an array of length, length
 void printMem(uint8_t arr[], uint32_t length){
-  printf("\nNon-Zero Memory\n");
+  printf("Non-zero memory:\n");
   for(uint32_t i=0; i < length; i+=4){
     // checks if memory is non-zero
     if(arr[i] || arr[i + 1] || arr[i + 2] || arr[i + 3]) {
-      printf("0x%08x: 0x%02x%02x%02x%02x\n", i, arr[i], arr[i + 1], arr[i + 3],
-              arr[i + 4]);
+      printf("0x%08x: 0x%02x%02x%02x%02x\n", i, arr[i], arr[i + 1], arr[i + 2],
+              arr[i + 3]);
     }
   }
 }
@@ -446,13 +443,14 @@ void decodeDP(int dInstruction, struct arguments *decodedArgs) {
   uint8_t opCode = (dInstruction & mask) >> 21;
   decodedArgs->opCode = opCode;
 
+  // - load undecoded operand2 into arguments
+  decodedArgs->operand2 = (dInstruction & MASK11_0);
+
   // - decode Rn
-  mask = MASK19_16;
-  decodedArgs->nRegIndex = (dInstruction & mask) >> 16;
+  decodedArgs->nRegIndex = (dInstruction & MASK19_16) >> 16;
 
   // - decode Rd
-  mask = MASK15_12;
-  decodedArgs->dRegIndex = (dInstruction & mask) >> 12;
+  decodedArgs->dRegIndex = (dInstruction & MASK15_12) >> 12;
   
   // Set next execute to Data Processing
   decodedArgs->executePointer = &executeDP;
