@@ -1,3 +1,5 @@
+
+
 #ifndef EMULATE_H
 #define EMULATE_H
 
@@ -19,6 +21,10 @@ void decodeBranching(int dInstruction, struct arguments *decodedArgs);
 void execBranching(struct arguments *decodedArgs, struct processor *arm);
 
 // Multiply
+void decodeMul(int dInstruction, struct arguments *decodedArgs);
+void mul(struct arguments *decodedArgs, struct processor *arm);
+void setFlagsMul(uint32_t value, struct processor *arm);
+
 
 // Single Data Transfter
 void decodeSDT(uint32_t dInstruction, struct arguments *decodedArgs);
@@ -49,3 +55,5 @@ void executeDP(struct arguments *decodedArgs, struct processor *arm);
 void decodeDP(int dInstruction, struct arguments *decodedArgs);
 
 #endif
+
+
