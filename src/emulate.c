@@ -74,22 +74,6 @@ int main(int argc, char **argv) {
   struct processor arm;
   struct arguments decodedArgs;
 
-  arm.registers[1] = 0x07542200;
-  arm.registers[0] = 0x00000304;
-  arm.memory[0x00000304] = 0x00;
-  arm.memory[0x00000305] = 0x00;
-  arm.memory[0x00000306] = 0x00;
-  arm.memory[0x00000307] = 0x00;
-  //storeBigEndy32(0x07040302, 0x00000304, &arm);
-  decode(0x06001004, &decodedArgs);
-  execSDT(&decodedArgs, &arm);
-
-  printf("Expected 07542200 in memory at 00000304, got %x%x%x%x\noffset %x\nnew reg: %x\n", 
-          arm.memory[0x00000304], arm.memory[0x00000305], 
-          arm.memory[0x00000306], arm.memory[0x00000307],
-          decodedArgs.offset,
-          arm.registers[0]);
-/*
   // load program from args and initialise processor and read from file
 
 
@@ -123,7 +107,6 @@ int main(int argc, char **argv) {
   // print register states
 
   return EXIT_SUCCESS;
-  */
 }
 
 void decode(uint32_t dInstruction, struct arguments *decodedArgs){
