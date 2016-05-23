@@ -12,14 +12,11 @@ uint32_t fetch(struct processor arm);
 void print(uint32_t arr[], uint32_t length);
 void loadFile(char name[], struct processor *pointer);
 
-
-
 // Data Processing
 
 // Branching
 void decodeBranching(int dInstruction, struct arguments *decodedArgs);
 void execBranching(struct arguments *decodedArgs, struct processor *arm);
-
 
 // Multiply
 
