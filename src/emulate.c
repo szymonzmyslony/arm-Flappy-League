@@ -1,5 +1,3 @@
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
@@ -35,7 +33,7 @@
 #define MASK15_12             0x0000F000
 #define MASK19_16             0x000F0000
 #define MASK24_21             0x01E00000
-#define MASK0_23			        0x00ffffff
+#define MASK0_23              0x00ffffff
 #define MASK11_7              0x00000f80
 #define MASK11_0              0x00000fff
 #define MASK7_0               0x000000ff
@@ -65,7 +63,6 @@
 struct processor {
   uint32_t registers[NUMBER_OF_REGISTERS];
   uint8_t memory[BYTES_IN_MEMORY];
-  bool end;
   int counter; // counter to determine whether to decode and execute
 };
 
@@ -89,29 +86,39 @@ struct arguments {
 
 int main(int argc, char **argv) {
   
+  printf("working %s", argv[1]);
+ 
   struct processor arm;
   struct arguments decodedArgs;
 
   // load program from args and initialise processor and read from file
-  loadFile(argv[0], &arm);
+  initProcessor(&arm);
+  loadFile(argv[1], &arm);
   
   // points to appropriate execute function after decoding
   uint32_t dInstruction; // instruction to be decoded next
+  bool end;
 
-  while (!arm.end) {
+  while (!end) {
     
     // execute instruction
     if (arm.counter >= 2) {
+      printf("\nExec\n");
       execute(&decodedArgs, &arm);
+      if (dInstruction == 0) {
+        end = true;
+      }
     }
 
     // decode instruction
     if (arm.counter >= 1) {
+      printf("\nDecode\n");
       decode(dInstruction, &decodedArgs);
     }
 
     // fetch instruction
     dInstruction = fetch(arm);
+    printf("\nDINSTRUCTION: %x\n", dInstruction);
     
     // increment program counter 
     arm.registers[PC] += INSTRUCTION_BYTES;
@@ -123,19 +130,28 @@ int main(int argc, char **argv) {
   }
   
   // print register states
-	print(arm.registers, NUMBER_OF_REGISTERS);
+  printReg(arm.registers, NUMBER_OF_REGISTERS);
+  printMem(arm.memory, BYTES_IN_MEMORY);
   
   return EXIT_SUCCESS;
+  
 }
 
 void loadFile(char name[],struct processor *pointer){	  
   FILE *myFile;
-  myFile = fopen(name, "r");
-  fread(&(pointer->memory), 4, BYTES_IN_MEMORY, myFile);
-  //library funtion that reads binary words
+  myFile = fopen(name, "rb");
+  // getting file length
+  fseek(myFile, 0L, SEEK_END);
+  long int sizeOfFile = ftell(myFile);
+  rewind(myFile);
+  assert(sizeOfFile <= BYTES_IN_MEMORY);
+
+  fread((pointer->memory), 1, BYTES_IN_MEMORY, myFile);
+  fclose(myFile);
 }
 
 void decode(uint32_t dInstruction, struct arguments *decodedArgs){
+
   // set cond parameter to condition code
   decodedArgs->cond = (dInstruction >> 28);
   
@@ -144,7 +160,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   
   // set mask to bit 27
   uint32_t mask = 0x08000000;
-  if ((dInstruction & mask) != 0){
+  if ((dInstruction & mask) != 0) {
     // Decode Branch instruction
     decodeBranching(dInstruction, decodedArgs);
     return;
@@ -152,7 +168,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
 
   // set mask to bit 26
   mask = 0x04000000;
-  if ((dInstruction & mask) != 0){
+  if ((dInstruction & mask) != 0) {
     // set sFlag to false so that flags register is untouched within decodeSDT
     // Decode Single Data Transfer
     decodeSDT(dInstruction, decodedArgs);
@@ -161,7 +177,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
 
   // set mask to bit 25
   mask = 0x02000000;
-  if ((dInstruction & mask) != 0){
+  if ((dInstruction & mask) != 0) {
     // Decode Data Processing (I = 1)
     decodeDP(dInstruction, decodedArgs);
     return;
@@ -169,7 +185,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
 
   // set mask to bit 4
   mask = 0x00000010;
-  if ((dInstruction & mask) == 0){
+  if ((dInstruction & mask) == 0) {
     // Decode Data Processing (I = 0 Constant Shift)
     decodeDP(dInstruction, decodedArgs);
     return;
@@ -177,7 +193,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
 
   // set mask to bit 7
   mask = 0x00000080;
-  if ((dInstruction & mask) != 0){
+  if ((dInstruction & mask) != 0) {
     // Decode Multiply
 
     return;
@@ -190,7 +206,6 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
 
 // Calls the function in executePointer if the condition in cond is passed
 void execute(struct arguments *decodedArgs, struct processor *arm) {
-  
   bool executeFlag;
   bool zSet = getBit(arm->registers[CPSR], Zbit);
   bool nSet = getBit(arm->registers[CPSR], Nbit);
@@ -219,12 +234,35 @@ uint32_t fetch(struct processor arm) {
          + (arm.memory[arm.registers[PC] + 1] <<  8)
          +  arm.memory[arm.registers[PC]];
 }
+
+// Initialise values to zero
+void initProcessor(struct processor *arm){
+  for (uint32_t i = 0; i < BYTES_IN_MEMORY; i++) {
+    arm->memory[i] = 0;
+  }
+  for (uint32_t i = 0; i < NUMBER_OF_REGISTERS; i++) {
+    arm->registers[i] = 0;
+  }
+}
+
+// prints the non-zero values in an array of length, length
+void printMem(uint8_t arr[], uint32_t length){
+  printf("\nNon-Zero Memory\n");
+  for(uint32_t i=0; i < length; i+=4){
+    // checks if memory is non-zero
+    if(arr[i] || arr[i + 1] || arr[i + 2] || arr[i + 3]) {
+      printf("0x%08x: 0x%02x%02x%02x%02x\n", i, arr[i], arr[i + 1], arr[i + 3],
+              arr[i + 4]);
+    }
+  }
+}
+
   
-void print(uint32_t arr[], uint32_t length){
-// funtion for printing array of given lenght
+void printReg(uint32_t arr[], uint32_t length){
+// function for printing length number of registers
   int i;
-  for(i=0; i<length; ++i){
-  printf("Register no %d holds value %d.\n", i+1, arr[i]);
+  for(i=0; i<length; ++i) {
+    printf("Register no %d holds value %d.\n", i+1, arr[i]);
   }
 }
 
@@ -349,7 +387,8 @@ void decodeMul(int dInstruction, struct arguments *decodedArgs) {
 
 // Execute Multiply
 void mul(struct arguments *decodedArgs, struct processor *arm) {
-  uint32_t res = arm->registers[decodedArgs->mRegIndex] * arm->registers[decodedArgs->sRegIndex];
+  uint32_t res = arm->registers[decodedArgs->mRegIndex] * 
+                 arm->registers[decodedArgs->sRegIndex];
   if (decodedArgs->aFlag == true) {
     res = res + arm->registers[decodedArgs->nRegIndex];
   }

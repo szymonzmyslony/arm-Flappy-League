@@ -11,7 +11,9 @@ struct arguments;
 void execute(struct arguments *decodedArgs, struct processor *arm);
 void decode(uint32_t dInstruction, struct arguments *decodedArgs);
 uint32_t fetch(struct processor arm);
-void print(uint32_t arr[], uint32_t length);
+void initProcessor(struct processor *arm);
+void printReg(uint32_t arr[], uint32_t length);
+void printMem(uint8_t arr[], uint32_t length);
 void loadFile(char name[], struct processor *pointer);
 
 // Data Processing
