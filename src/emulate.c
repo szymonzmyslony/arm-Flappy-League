@@ -114,7 +114,7 @@ int main(int argc, char **argv) {
     }
 
     // fetch instruction
-    dInstruction = fetch(arm);
+    dInstruction = fetch(&arm);
     
     // increment program counter 
     arm.registers[PC] += INSTRUCTION_BYTES;
@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
   
 }
 
-void loadFile(char name[],struct processor *pointer){	  
+void loadFile(char name[],struct processor *pointer) {	  
   FILE *myFile;
   myFile = fopen(name, "rb");
   // getting file length
@@ -225,11 +225,11 @@ void execute(struct arguments *decodedArgs, struct processor *arm) {
 
 // Returns the instruction in the byte order as shown in the specification
 // and increments the program counter
-uint32_t fetch(struct processor arm) {
-  return   (arm.memory[arm.registers[PC] + 3] << 24) 
-         + (arm.memory[arm.registers[PC] + 2] << 16)
-         + (arm.memory[arm.registers[PC] + 1] <<  8)
-         +  arm.memory[arm.registers[PC]];
+uint32_t fetch(struct processor *arm) {
+  return   (arm->memory[arm->registers[PC] + 3] << 24) 
+         + (arm->memory[arm->registers[PC] + 2] << 16)
+         + (arm->memory[arm->registers[PC] + 1] <<  8)
+         +  arm->memory[arm->registers[PC]];
 }
 
 // Initialise values to zero
@@ -240,6 +240,7 @@ void initProcessor(struct processor *arm){
   for (uint32_t i = 0; i < NUMBER_OF_REGISTERS; i++) {
     arm->registers[i] = 0;
   }
+  arm->counter = 0;
 }
 
 // prints the non-zero values in an array of length, length
@@ -482,21 +483,24 @@ void executeDP(struct arguments *decodedArgs, struct processor *arm) {
     case OPCODE_sub: res = nRegContents - operand2; 
                      if(decodedArgs->sFlag) {    
                        bool borrow = !(operand2 > nRegContents);
-                       setBit(arm->registers[CPSR], borrow, Cbit);
+                       arm->registers[CPSR] = 
+                         setBit(arm->registers[CPSR], borrow, Cbit);
                      }
       break;
       
     case OPCODE_rsb: res = operand2 - nRegContents;
                      if(decodedArgs->sFlag) {    
                        bool borrow = !(nRegContents > operand2);
-                       setBit(arm->registers[CPSR], borrow, Cbit);
+                       arm->registers[CPSR] = 
+                         setBit(arm->registers[CPSR], borrow, Cbit);
                      }
       break;
       
     case OPCODE_add: res = operand2 + nRegContents;
                      if(decodedArgs->sFlag) {    
                        bool overflow = res < nRegContents || res < operand2;
-                       setBit(arm->registers[CPSR], overflow, Cbit);
+                       arm->registers[CPSR] = 
+                         setBit(arm->registers[CPSR], overflow, Cbit);
                      }
       break;
     // Rd is not to be set
@@ -510,7 +514,13 @@ void executeDP(struct arguments *decodedArgs, struct processor *arm) {
              switch(decodedArgs->opCode) {
                case OPCODE_tst: testRes = nRegContents & operand2; break;
                case OPCODE_teq: testRes = nRegContents ^ operand2; break;
-               case OPCODE_cmp: testRes = nRegContents - operand2; break;
+               case OPCODE_cmp: testRes = nRegContents - operand2;
+                                if(decodedArgs->sFlag) {    
+                                  bool borrow = !(operand2 > nRegContents);
+                                  arm->registers[CPSR] = 
+                                    setBit(arm->registers[CPSR], borrow, Cbit);
+                                }
+                                break;
                //No such other opcode!
                default: assert(false); break;
              }
@@ -531,13 +541,14 @@ void executeDP(struct arguments *decodedArgs, struct processor *arm) {
 // the barrel shifter in the case of logical operations.
 void setFlagsZN(uint32_t value, struct processor *arm) {
   //Set the Z flag
-  bool allZero = value == 0;
+  bool allZero = (value == 0);
   arm->registers[CPSR] = setBit(arm->registers[CPSR], allZero, Zbit);
 
   //Set the N flag
   uint32_t bit31 = 1 << 31;
-  bool bit31set = (value & bit31) == bit31;
+  bool bit31set = ((value & bit31) == bit31);
   arm->registers[CPSR] = setBit(arm->registers[CPSR], bit31set, Nbit);
+  
 }
 
 // Gets a 32bit value from memory in little endian fashion
@@ -646,25 +657,31 @@ uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t n,
   switch (shiftCode){
     case 0x00:
       // set carry bit
-      carry =  ((((0x00000001 << (sizeof(uint32_t) - n)) & value) != 0) && 
-              sFlag);
-      arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
-      
+      carry =  (((0x00000001 << (sizeof(uint32_t) - n)) & value) != 0);
+      if (sFlag) {
+        arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
+      }
       return (value << n);
     case 0x01:
       // set carry bit
-      carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
-      arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
+      carry = (((0x00000001 << (n - 1)) & value) != 0);
+      if (sFlag) {
+        arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
+      }
       return (value >> n);
     case 0x02:
       // set carry bit
-      carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
-      arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
+      carry = (((0x00000001 << (n - 1)) & value) != 0);
+      if (sFlag) {
+        arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
+      }
       return arithShiftRight32(value, n);
     case 0x03:
       // set carry bit
-      carry = ((((0x00000001 << (n - 1)) & value) != 0) && sFlag);
-      arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
+      carry = (((0x00000001 << (n - 1)) & value) != 0);
+      if (sFlag) {
+        arm->registers[CPSR] = setBit(arm->registers[CPSR], carry, 31);
+      }
       return rotateRight32(value, n);
     default:
       fprintf(stderr, "Invalid shift code %d to shift %d by %d", shiftCode,
