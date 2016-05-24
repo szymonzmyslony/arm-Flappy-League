@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <string.h>
 #include "emulate.h"
 
 #define NUMBER_OF_REGISTERS   17
@@ -19,9 +20,7 @@
 #define Cbit                  29
 #define Zbit                  30
 #define Nbit                  31
-#define numberofelements 24
-//for ofset
-
+#define numberofelements      24
 
 // masks for multiply
 #define Abit                  21
@@ -59,6 +58,10 @@
 #define COND_gt               12
 #define COND_le               13
 #define COND_al               14
+
+//Output
+#define REG_PADDING            4
+#define DEC_PADDING           10
 
 struct processor {
   uint32_t registers[NUMBER_OF_REGISTERS];
@@ -256,12 +259,42 @@ void printMem(uint8_t arr[], uint32_t length){
 }
 
   
-void printReg(uint32_t arr[], uint32_t length){
+void printReg(uint32_t arr[], uint32_t length) {
 // function for printing length number of registers
   int i;
-  for(i=0; i<length; ++i) {
-    printf("Register no %d holds value %d.\n", i+1, arr[i]);
+
+  for(i = 0; i < length - 2; ++i) {
+    char regName[REG_PADDING + 1];
+    snprintf(regName, REG_PADDING + 1, "$%d      ", i + 1);
+    regName[REG_PADDING] = '\0';
+    
+    printSingleRegister(regName, arr[i]);
   }
+
+  printSingleRegister("PC  ", arr[PC]);     
+  printSingleRegister("CPSR", arr[CPSR]);
+}
+
+void printSingleRegister(char regName[], uint32_t num) {
+  printf("%s: ", regName);
+  printPaddedNum(num);
+  printf(" (0x%08x)\n", num);  
+}
+
+// Pads the left side of the number so that the whole string has NUM_PADDING
+// characters, and then prints the padded number.
+void printPaddedNum(uint32_t num) {
+  char decChar[DEC_PADDING + 1];
+  snprintf(decChar, DEC_PADDING, "%d", num);
+  char decDisplay[DEC_PADDING + 1];
+
+  for(int i = 0; i < DEC_PADDING; i++) {
+    uint32_t numSpaces = DEC_PADDING - strlen(decChar);
+    decDisplay[i] = i < numSpaces ? ' ' : decChar[i - numSpaces];
+  }
+  decDisplay[DEC_PADDING] = '\0';
+  
+  printf("%s", decDisplay);
 }
 
 // ================ Single Data Transfer Functions ============================
