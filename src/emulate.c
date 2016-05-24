@@ -61,7 +61,7 @@
 
 //Output
 #define REG_PADDING            4
-#define DEC_PADDING           10
+#define DEC_PADDING           11
 
 struct processor {
   uint32_t registers[NUMBER_OF_REGISTERS];
@@ -278,7 +278,7 @@ void printReg(uint32_t arr[], uint32_t length) {
 }
 
 void printSingleRegister(char regName[], uint32_t num) {
-  printf("%s: ", regName);
+  printf("%s:", regName);
   printPaddedNum(num);
   printf(" (0x%08x)\n", num);  
 }
@@ -287,7 +287,7 @@ void printSingleRegister(char regName[], uint32_t num) {
 // characters, and then prints the padded number.
 void printPaddedNum(uint32_t num) {
   char decChar[DEC_PADDING + 1];
-  snprintf(decChar, DEC_PADDING, "%d", num);
+  snprintf(decChar, DEC_PADDING + 1, "%d", num);
   char decDisplay[DEC_PADDING + 1];
 
   for(int i = 0; i < DEC_PADDING; i++) {
