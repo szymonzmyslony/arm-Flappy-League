@@ -263,9 +263,11 @@ void printReg(uint32_t arr[], uint32_t length) {
 // function for printing length number of registers
   int i;
 
-  for(i = 0; i < length - 2; ++i) {
+  printf("Registers:\n");
+  //Print registers 0-12
+  for(i = 0; i < 13; ++i) {
     char regName[REG_PADDING + 1];
-    snprintf(regName, REG_PADDING + 1, "$%d      ", i + 1);
+    snprintf(regName, REG_PADDING + 1, "$%d      ", i);
     regName[REG_PADDING] = '\0';
     
     printSingleRegister(regName, arr[i]);
