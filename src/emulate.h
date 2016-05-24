@@ -15,6 +15,8 @@ void initProcessor(struct processor *arm);
 void printReg(uint32_t arr[], uint32_t length);
 void printMem(uint8_t arr[], uint32_t length);
 void loadFile(char name[], struct processor *pointer);
+void printSingleRegister(char regName[], uint32_t num);
+void printPaddedNum(uint32_t num);
 
 // Data Processing
 
