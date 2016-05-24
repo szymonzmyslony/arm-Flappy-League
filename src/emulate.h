@@ -1,3 +1,5 @@
+
+
 #ifndef EMULATE_H
 #define EMULATE_H
 
@@ -9,19 +11,22 @@ struct arguments;
 void execute(struct arguments *decodedArgs, struct processor *arm);
 void decode(uint32_t dInstruction, struct arguments *decodedArgs);
 uint32_t fetch(struct processor arm);
-void print(uint32_t arr[], uint32_t length);
+void initProcessor(struct processor *arm);
+void printReg(uint32_t arr[], uint32_t length);
+void printMem(uint8_t arr[], uint32_t length);
 void loadFile(char name[], struct processor *pointer);
-
-
 
 // Data Processing
 
 // Branching
-void decodeDP(int dInstruction, struct arguments *decodedArgs);
-void execBranching(struct arguments *decodedArgs, struct processor *	arm);
-
+void decodeBranching(int dInstruction, struct arguments *decodedArgs);
+void execBranching(struct arguments *decodedArgs, struct processor *arm);
 
 // Multiply
+void decodeMul(int dInstruction, struct arguments *decodedArgs);
+void mul(struct arguments *decodedArgs, struct processor *arm);
+void setFlagsMul(uint32_t value, struct processor *arm);
+
 
 // Single Data Transfter
 void decodeSDT(uint32_t dInstruction, struct arguments *decodedArgs);
@@ -32,6 +37,7 @@ void strSDTpre(struct arguments *decodedArgs, struct processor *arm);
 void strSDTpost(struct arguments *decodedArgs, struct processor *arm);
 
 // Helper functions
+void setFlagsZN(uint32_t value, struct processor *arm);
 uint32_t getLittleFromMem32(uint32_t address, struct processor *arm);
 void storeBigEndy32(uint32_t value, uint32_t address, struct processor *arm);
 uint32_t switchEndy32(uint32_t value);
@@ -46,4 +52,10 @@ uint32_t arithShiftRight32(uint32_t val, uint16_t n);
 uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t,
         struct processor *arm, bool sFlag);
 
+// Decode Functions
+void executeDP(struct arguments *decodedArgs, struct processor *arm);
+void decodeDP(int dInstruction, struct arguments *decodedArgs);
+
 #endif
+
+
