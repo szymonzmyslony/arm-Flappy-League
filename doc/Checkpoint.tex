@@ -5,39 +5,39 @@
 \begin{document}
 
 \title{ARM Checkpoint Group 17 }
-\author{Uno Perwironegoro, Ben Gunton, Nimesh Subedi, Szymon Zmyslony}
+\author{Benjamin Gunton, Harjuno Perwironegoro, Nimesh Subedi, Szymon Zmyslony}
 
 \maketitle
 
 \section{Group Organisation}
 \subsection{Cracking the problem and starting the work}
-At the begging, each of us read the specification on his own. Upon that, we met
+At the beginning, each of us read the specification on our own. Upon that, we met
 in labs to discuss any parts that remained unclear. Having reached full understanding 
 of the problem we divided it up in few main parts:
 \begin{enumerate}  
 	\item function for reading the input file and saving it in the memory
-	\item setting up abstraction for processor and figuring out how to pass instructions
-	\item functions fetch, decode, and execute that would be called in main
+	\item setting up abstract structures for processor and figuring out how to pass instructions
+	\item fetch, decode, and execute functions that would be called in main
 	\item functions for decoding and executing specific instructions
-	\item printing registers
+	\item printing registers and non zero memory locations upon termination
 \end{enumerate}
-As part 2 and 3 would create a general frame for all the following parts, we coded it together in labs. Then, we divided up specific decoding and executing functions by main types (data processing, multiply, single data transfer, and branch instructions). Parts 1 and 5 were divided between two team members.
+As part 1 would create a general frame for all the following parts, we coded it together in labs. Then, we divided up specific decoding and executing functions by main types (data processing, multiply, single data transfer, and branch instructions). Parts 1 and 5 were divided between two team members.
 
 	\subsection{Communication}
-	Each member created his own branch using git and worked only on it. Master branch was updated only after spotting mistakes in general framework(parts 2 and 3). We communicate using facebook group chat which we use for clarifying  hard ideas and informing each other about changes in master. 
+	Each member created their own branch using git and worked only on it. Master branch was updated only after spotting mistakes in general framework(parts 2 and 3). We communicated using facebook group chat whenever we needed to discuss an idea or to inform each other about changes in master branch. 
 	\subsection{Evaluation}
-	We feel that our group has done pretty good job in communicating and coordinating work between each other. One major thing that we improved on the go is that data processing instruction seemed much harder than others so we divided it a little bit further. Although working on emulator has gone smoothly, it is possible that if one person started to do assembly part, we would be more efficient. 
+	We feel that our group has done pretty good job in communicating and coordinating work flow. One major amendment to our existing plan was made when we realized that data processing function was much harder than the other cycles which led us to divide it further among the team members. Although working on emulator has gone smoothly, it is possible that if one person started to do assembly part, we would be more efficient. 
 	
 	
 
 
 \section{Implementation Strategies}
 	\subsection{General structure of emulator}
-	We created two structures that would serve as abstractions for the processor and decoded instructions. First one, named processor stores an array of unsigned int for corresponding to registers and another array of bytes that corresponds to the memory. Moreover, we included a bool 'end' that represents whether processor should stop working and an int called counter to check whether to decode and execute instructions - in first cycle we only fetch instruction, in second cycle we fetch new instruction and decode previous one, and only in the third cycle can we perform all 3 operations. Moreover, offsetting PC also sets counter to zero. The second structure called arguments is passed to both decode(which sets appropriate fields) and execute(which uses appropriate fields) functions. It is important to note that fetch-decode-execute cycle is reversed inside the while loop because otherwise we would need one more integer and one more copy of struc arguments.  
+	We created two abstract structures that would serve as abstractions for the processor and decoded instructions. First one, named processor stores an array of unsigned int  corresponding to registers and another array of bytes that corresponds to the memory. Moreover, we included a bool, end, that represents whether processor should terminate and an int, counter, to check whether or not an operation should run in any given cycle: in the first cycle we only fetch instruction, in the second cycle we fetch new instruction and decode previous one, and only in the third cycle can we perform all 3 operations. Moreover, offsetting PC also sets counter to zero. The second structure called arguments is passed to both decode(which sets appropriate fields) and execute(which uses appropriate fields) functions. It is important to note that fetch-decode-execute cycle is reversed inside the while loop to make sure that it follows the pipeline format because otherwise we would need one more integer to keep track of where the and one more copy of struc arguments.  
 	 \subsection{Implementation for execute and decode}
-	 All our decode functions  take (int dInstruction, struct arguments *decodedArgs) and are of void return type. It is crucial to notice that arguments struct keeps track of a functions pointer  - void (*executePointer)(struct arguments *args, struct processor *arm). That function pointer represents the executing function that is to be called in next cycle. Execute functions are quite simple void functions that get all the needed parameters in arguments structure and set appropriate fields in processor structure.
+	 All our decode functions take (int dInstruction, struct arguments *decodedArgs) parameters and have void return type. It is crucial to notice that the struct arguments  keeps track of a function's pointer - void (*executePointer)(struct arguments *args, struct processor *arm). That function pointer represents the executing function that is to be called in next cycle. Execute functions are quite simple void functions that get all the needed parameters in arguments struct and set appropriate fields in processor structure.
 	\subsection{Remarks}
-	Funtion declaration are included in header file. All the masks and constant numbers(for example, register numbers) are set using #define in order to avoid magic numbers. 
+	Funtion declarations are included in header file. All the masks and constant numbers(for example, register numbers) are set using #define in order to avoid magic numbers. 
 	\subsection{Onto assembly}
 	We think that using a function pointer is a quite good idea to avoid further control flow statements and we can see that it is going to be very useful in assembly part.
 
