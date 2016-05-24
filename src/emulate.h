@@ -21,6 +21,7 @@ void loadFile(char name[], struct processor *pointer);
 // Branching
 void decodeBranching(int dInstruction, struct arguments *decodedArgs);
 void execBranching(struct arguments *decodedArgs, struct processor *arm);
+uint32_t signEx24to32(uint32_t val24);
 
 // Multiply
 void decodeMul(int dInstruction, struct arguments *decodedArgs);
@@ -45,7 +46,7 @@ bool getBit(uint32_t word, uint8_t position);
 uint32_t setBit(uint32_t word, bool set, uint8_t position);
 void resolveSDTOffset(uint16_t offset, bool iFlag,
         struct arguments *decodedArgs, struct processor *arm);
-void resolveOperand2(uint16_t op, bool iFlag, struct arguments *decodedArgs,
+void resolveOperand2(uint32_t op, bool iFlag, struct arguments *decodedArgs,
         struct processor *arm);
 uint32_t rotateRight32(uint32_t val, uint16_t n);
 uint32_t arithShiftRight32(uint32_t val, uint16_t n);

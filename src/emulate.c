@@ -192,7 +192,7 @@ void decode(uint32_t dInstruction, struct arguments *decodedArgs){
   mask = 0x00000080;
   if ((dInstruction & mask) != 0) {
     // Decode Multiply
-
+    decodeMul(dInstruction, decodedArgs);
     return;
   } else {
     // Decode Data Processing (I = 0 Shift by Register)
@@ -423,15 +423,23 @@ void decodeBranching(int dInstruction, struct arguments *decodedArgs) {
 // execute branching
 void execBranching(struct arguments *decodedArgs, struct processor *arm) {
   bool negative = ((decodedArgs->offset)>>(numberofelements-1));
-  uint32_t trueoffset = ~(decodedArgs->offset);
+  uint32_t trueoffset = ~(signEx24to32(decodedArgs->offset));
   trueoffset++; 
   if (negative){
-    arm->registers[PC] = (arm->registers[PC]-trueoffset);
-  }   
-  else{
-    arm->registers[PC] = (arm->registers[PC]+trueoffset);
+    arm->registers[PC] = ((arm->registers[PC])-(trueoffset<<2));
+  } else{
+    arm->registers[PC] = ((arm->registers[PC])+((decodedArgs->offset)<<2));
   }
   arm->counter=0;
+}
+
+// Extends sign of 24 bit signed int
+uint32_t signEx24to32(uint32_t val24){
+  if (val24>>(numberofelements-1)){
+    return (0xff000000 | val24);
+  } else {
+    return val24;
+  }
 }
 
 // ========================= Data Processing ==================================
@@ -609,11 +617,12 @@ uint32_t arithShiftRight32(uint32_t val, uint16_t n){
 // also sets mRegIndex
 // assumes functionality according to iFlag in Data Processing 
 //     i.e. flag is true -> immediate, flag is false -> shifted register
-void resolveOperand2(uint16_t op, bool iFlag,
+void resolveOperand2(uint32_t op, bool iFlag,
         struct arguments *decodedArgs, struct processor *arm) {
   // if i = 1 then immediate value
   if (iFlag){
-    uint32_t rotation = (((MASK11_8 & op) >> 8) * 2);
+    uint32_t rotation = ((MASK11_8 & op) >> 8);
+    rotation = (rotation << 1);
     decodedArgs->operand2 = rotateRight32((op & MASK7_0), rotation);
   // if i = 0 then shifted register
   } else {
