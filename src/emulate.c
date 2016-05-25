@@ -461,9 +461,9 @@ void execBranching(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t trueoffset = ~(signEx24to32(decodedArgs->offset));
   trueoffset++; 
   if (negative){
-    arm->registers[PC] = ((arm->registers[PC])-(trueoffset<<2));
+    arm->registers[PC] = ((arm->registers[PC])-(trueoffset<<2)-8);
   } else{
-    arm->registers[PC] = ((arm->registers[PC])+((decodedArgs->offset)<<2));
+    arm->registers[PC] = ((arm->registers[PC])+((decodedArgs->offset)<<2)-8);
   }
   arm->counter=0;
 }
