@@ -648,7 +648,6 @@ uint32_t getLittleFromMem32(uint32_t address, struct processor *arm) {
 
 // Stores a big endian 32bit value in memory in a little endian fashion
 void storeBigEndy32(uint32_t value, uint32_t address, struct processor *arm) {
-  printf("\n%x\n", value);
   arm->memory[address] = value;
   arm->memory[address + 1] = value >> 8;
   arm->memory[address + 2] = value >> 16;
