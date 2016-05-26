@@ -296,7 +296,12 @@ void printPaddedNum(uint32_t num) {
   }
   decDisplay[DEC_PADDING] = '\0';
   
-  printf("%s", decDisplay);
+  // For some reason, the test cases provided do not take into account the 
+  // '-' sign when padding large numbers. This code deals with that.
+  char minusPad[2] = { '\0', '\0' };
+  minusPad[0] = decDisplay[0] == '-'? ' ' : '\0';
+  
+  printf("%s%s", minusPad, decDisplay);
 }
 
 // ================ Single Data Transfer Functions ============================
