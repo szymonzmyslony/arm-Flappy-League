@@ -296,7 +296,12 @@ void printPaddedNum(uint32_t num) {
   }
   decDisplay[DEC_PADDING] = '\0';
   
-  printf("%s", decDisplay);
+  // For some reason, the test cases provided do not take into account the 
+  // '-' sign when padding large numbers. This code deals with that.
+  char minusPad[2] = { '\0', '\0' };
+  minusPad[0] = decDisplay[0] == '-'? ' ' : '\0';
+  
+  printf("%s%s", minusPad, decDisplay);
 }
 
 // ================ Single Data Transfer Functions ============================
@@ -344,6 +349,12 @@ void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
   } else {
     memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
   }
+  
+  if(outOfBounds(memAddress)) {
+    printOOBError(memAddress);
+    return;
+  }
+  
   uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
   arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
 }
@@ -352,6 +363,12 @@ void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
 void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
+  
+  if(outOfBounds(memAddress)) {
+    printOOBError(memAddress);
+    return;
+  }
+  
   uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
   arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
   if (decodedArgs->uFlag) {
@@ -369,6 +386,12 @@ void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
   } else {
     memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
   }
+  
+  if(outOfBounds(memAddress)) {
+    printOOBError(memAddress);
+    return;
+  }
+  
   storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
           memAddress, arm);
 }
@@ -377,6 +400,12 @@ void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
 void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
+  
+  if(outOfBounds(memAddress)) {
+    printOOBError(memAddress);
+    return;
+  }
+  
   storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
           memAddress, arm);
   if (decodedArgs->uFlag) {
@@ -584,6 +613,16 @@ void executeDP(struct arguments *decodedArgs, struct processor *arm) {
 }
 
 // ====================== Helper Functions ====================================
+// Returns whether the memory address is out of bounds
+bool outOfBounds(uint32_t memAddress) {
+  return memAddress > BYTES_IN_MEMORY;
+}
+
+// Prints an error message for out of bounds memory access
+void printOOBError(uint32_t memAddress) {
+  fprintf(stderr, "Error: Out of bounds memory access at address 0x%08x\n", 
+     memAddress);
+}
 
 // Set the Z, N flags for the Data Processing Instruction. The C flag is set in 
 // the opDP__ functions for arithmetic operations, or stays as the result from 
@@ -608,7 +647,6 @@ uint32_t getLittleFromMem32(uint32_t address, struct processor *arm) {
 
 // Stores a big endian 32bit value in memory in a little endian fashion
 void storeBigEndy32(uint32_t value, uint32_t address, struct processor *arm) {
-  printf("\n%x\n", value);
   arm->memory[address] = value;
   arm->memory[address + 1] = value >> 8;
   arm->memory[address + 2] = value >> 16;
