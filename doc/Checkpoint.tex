@@ -11,35 +11,36 @@
 
 \section{Group Organisation}
 \subsection{Cracking the problem and starting the work}
-At the beginning, each of us read the specification on our own. Upon that, we met
-in labs to discuss any parts that remained unclear. Having reached full understanding 
-of the problem we divided it up in few main parts:
+At the beginning, each of us read the specification on our own. After that, we met
+in labs to discuss any parts that remained unclear, and having reached a full understanding 
+of the problem we divided it up into a few main parts:
 \begin{enumerate}  
-	\item function for reading the input file and saving it in the memory
-	\item setting up abstract structures for processor and figuring out how to pass instructions
-	\item fetch, decode, and execute functions that would be called in main
-	\item functions for decoding and executing specific instructions
-	\item printing registers and non zero memory locations upon termination
+	\item Writing a function for reading the input file and saving it in the memory.
+	\item Setting up abstract structures for processor and figuring out how to pass instructions.
+	\item Writing fetch, decode, and execute functions to be called in main.
+	\item Writing functions for decoding and executing specific instructions.
+	\item Printing registers and non zero memory locations upon termination.
 \end{enumerate}
-As part 1 would create a general frame for all the following parts, we coded it together in labs. Then, we divided up specific decoding and executing functions by main types (data processing, multiply, single data transfer, and branch instructions). Parts 1 and 5 were divided between two team members.
+As part 2 and 3 would create a general framework for all the following parts, we coded a skeleton for it together in the labs. We then divided up specific decoding and executing functions by instruction types: data processing, multiply, single data transfer, and branch instructions based on everyone's workload to be completed independently. Parts 1 and 5 were divided between two team members.
 
 	\subsection{Communication}
-	Each member created their own branch using git and worked only on it. Master branch was updated only after spotting mistakes in general framework(parts 2 and 3). We communicated using facebook group chat whenever we needed to discuss an idea or to inform each other about changes in master branch. 
+	Each member created their own branch using git and individually worked on it. The master branch was updated only after spotting mistakes in the general framework (parts 2 and 3). We communicated using Facebook group chat whenever we needed to discuss an idea or to inform each other about changes in the master branch.  We also used online screen sharing tools to facilitate the debugging process. 
 	\subsection{Evaluation}
-	We feel that our group has done pretty good job in communicating and coordinating work flow. One major amendment to our existing plan was made when we realized that data processing function was much harder than the other cycles which led us to divide it further among the team members. Although working on emulator has gone smoothly, it is possible that if one person started to do assembly part, we would be more efficient. 
-	
+	We feel that our group has done a good job in communicating and coordinating the work flow. One major amendment to our existing plan was made when we realized that the data processing function was much harder than the other cycles which led us to divide it further among the team members. This was done by introducing a helper function for decoding Operand 2. Although working on emulator has gone smoothly, perhaps if someone had been working on the assembler, it could have been more efficient.	
 	
 
 
 \section{Implementation Strategies}
 	\subsection{General structure of emulator}
-	We created two abstract structures that would serve as abstractions for the processor and decoded instructions. First one, named processor stores an array of unsigned int  corresponding to registers and another array of bytes that corresponds to the memory. Moreover, we included a bool, end, that represents whether processor should terminate and an int, counter, to check whether or not an operation should run in any given cycle: in the first cycle we only fetch instruction, in the second cycle we fetch new instruction and decode previous one, and only in the third cycle can we perform all 3 operations. Moreover, offsetting PC also sets counter to zero. The second structure called arguments is passed to both decode(which sets appropriate fields) and execute(which uses appropriate fields) functions. It is important to note that fetch-decode-execute cycle is reversed inside the while loop to make sure that it follows the pipeline format because otherwise we would need one more integer to keep track of where the and one more copy of struc arguments.  
+	We created two abstract structures that would represent an ARM processor and decoded instructions. The first struct, \textit{processor}, stores an array of unsigned 32-bit ints  corresponding to registers and an another array of bytes that corresponds to the memory. We also included an int, \textit{counter}, to check whether or not an operation should run in any given cycle: in the first cycle we only fetch an instruction, in the second cycle we fetch a new instruction and decode the previous one, and only in the third cycle can we perform all 3 operations. However, offsetting the PC sets the counter to zero which means that the pipeline would be cleared and the previous instruction would be ignored. The second struct, \textit{arguments}, is passed to both decode and execute functions. Decode not only extracts the required data from the instructions, but also sets the appropriate fields in the given arguments struct. On the other hand, execute extracts the data from the given \textit{arguments} struct and uses them to produce the desired results. It is important to note that fetch-decode-execute cycle is reversed inside the while loop to make sure that it follows the pipeline format because otherwise we would need one more integer to keep track of the previous instruction and one more copy of struc arguments to deal with overwriting our struct between cycles.
+	  
 	 \subsection{Implementation for execute and decode}
-	 All our decode functions take (int dInstruction, struct arguments *decodedArgs) parameters and have void return type. It is crucial to notice that the struct arguments  keeps track of a function's pointer - void (*executePointer)(struct arguments *args, struct processor *arm). That function pointer represents the executing function that is to be called in next cycle. Execute functions are quite simple void functions that get all the needed parameters in arguments struct and set appropriate fields in processor structure.
+	 All of our decode functions take (int dInstruction, struct arguments *decodedArgs) parameters and have void return type. It is crucial to notice that the struct arguments  keeps track of a function's pointer - void (*executePointer)(struct arguments *args, struct processor *arm). The function pointer represents the executing function that is to be called during the next cycle. The execute functions are simple void functions that take all the needed parameters in \textit{arguments} struct and set the appropriate fields in the \textit{processor} struct.
+	 
 	\subsection{Remarks}
-	Funtion declarations are included in header file. All the masks and constant numbers(for example, register numbers) are set using #define in order to avoid magic numbers. 
-	\subsection{Onto assembly}
-	We think that using a function pointer is a quite good idea to avoid further control flow statements and we can see that it is going to be very useful in assembly part.
+	The function declarations are included in the header file. All the masks and constants; e.g. register numbers, are set using #define in order to avoid magic numbers. 
+	\subsection{On to assembly}
+	We think that using a function pointer is a good idea to avoid further control flow statements and we can see that it is going to be very useful in the following assembler part. It is important to note that we will reuse the file reading code for part II of our project.
 
 
 \end{document}
