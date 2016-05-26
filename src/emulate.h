@@ -19,6 +19,8 @@ void printSingleRegister(char regName[], uint32_t num);
 void printPaddedNum(uint32_t num);
 
 // Data Processing
+void executeDP(struct arguments *decodedArgs, struct processor *arm);
+void decodeDP(int dInstruction, struct arguments *decodedArgs);
 
 // Branching
 void decodeBranching(int dInstruction, struct arguments *decodedArgs);
@@ -54,10 +56,6 @@ uint32_t rotateRight32(uint32_t val, uint16_t n);
 uint32_t arithShiftRight32(uint32_t val, uint16_t n);
 uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t,
         struct processor *arm, bool sFlag);
-
-// Decode Functions
-void executeDP(struct arguments *decodedArgs, struct processor *arm);
-void decodeDP(int dInstruction, struct arguments *decodedArgs);
 
 #endif
 
