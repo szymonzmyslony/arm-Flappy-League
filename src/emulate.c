@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
     // execute instruction
     if (arm.counter >= 2) {
       execute(&decodedArgs, &arm);
-      if (dInstruction == 0) {
+      if ((dInstruction == 0) && (arm.counter != 0)) {
         end = true;
       }
       
@@ -637,7 +637,6 @@ void setFlagsZN(uint32_t value, struct processor *arm) {
   uint32_t bit31 = 1 << 31;
   bool bit31set = ((value & bit31) == bit31);
   arm->registers[CPSR] = setBit(arm->registers[CPSR], bit31set, Nbit);
-  
 }
 
 // Gets a 32bit value from memory in little endian fashion
