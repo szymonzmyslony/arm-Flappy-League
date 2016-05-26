@@ -325,10 +325,6 @@ void decodeSDT(uint32_t dInstruction, struct arguments *decodedArgs) {
 }
 
 void execSDT(struct arguments *decodedArgs, struct processor *arm) {
-  // account for pipeline
-  if (decodedArgs->nRegIndex == PC) {
-    decodedArgs->nRegIndex += 8;
-  }
   //set offset
   resolveSDTOffset(decodedArgs->offset, decodedArgs->iFlag, decodedArgs, arm);
   if (decodedArgs->lFlag && decodedArgs->pFlag){
@@ -362,8 +358,13 @@ void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
 
 // For executing SDT load intruction, post-increment
 void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
-  assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
+
+  if (decodedArgs->mRegIndex == decodedArgs->nRegIndex) {
+    fprintf(stderr, "Error: Invalid registers for post-incrementing load
+        to : %08x", memAddress);
+    return;
+  }
   
   if(outOfBounds(memAddress)) {
     printOOBError(memAddress);
@@ -399,9 +400,14 @@ void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
 
 // For executing SDT store intruction, post-increment
 void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
-  assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
-  
+
+  if (decodedArgs->mRegIndex == decodedArgs->nRegIndex) {
+    fprintf(stderr, "Error: Invalid registers for post-incrementing store 
+        to : %08x", memAddress);
+    return;
+  }
+
   if(outOfBounds(memAddress)) {
     printOOBError(memAddress);
     return;
@@ -715,7 +721,8 @@ void resolveOperand2(uint32_t op, bool iFlag,
               ((MASK11_7 & op) >> 7), arm, decodedArgs->sFlag);
     // if bit 4 = 1 then register shift
     } else {
-      uint16_t rotateAmount = arm->registers[(MASK11_8 & op) >> 8];
+      uint16_t rotateAmount = ((arm->registers[(MASK11_8 & op) >> 8])
+              & 0x000000FF);
       decodedArgs->operand2 = shift((MASK6_5 & op) >> 5,
               arm->registers[decodedArgs->mRegIndex], 
               rotateAmount, arm, decodedArgs->sFlag);
@@ -728,7 +735,7 @@ void resolveSDTOffset(uint16_t offset, bool iFlag,
         struct arguments *decodedArgs, struct processor *arm) {
   if (iFlag) {
     uint32_t tempOp = decodedArgs->operand2;
-    resolveOperand2(offset, ~iFlag, decodedArgs, arm);
+    resolveOperand2(offset, 0, decodedArgs, arm);
     decodedArgs->offset = decodedArgs->operand2;
     decodedArgs->operand2 = tempOp;
     // note that operand 2 is unaltered
