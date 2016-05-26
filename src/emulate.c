@@ -132,6 +132,10 @@ int main(int argc, char **argv) {
   printReg(arm.registers, NUMBER_OF_REGISTERS);
   printMem(arm.memory, BYTES_IN_MEMORY);
   
+  // free allocated memory
+  free(arm->memory);
+  free(arm->registers);
+  
   return EXIT_SUCCESS;
   
 }
@@ -237,12 +241,8 @@ uint32_t fetch(struct processor *arm) {
 
 // Initialise values to zero
 void initProcessor(struct processor *arm){
-  for (uint32_t i = 0; i < BYTES_IN_MEMORY; i++) {
-    arm->memory[i] = 0;
-  }
-  for (uint32_t i = 0; i < NUMBER_OF_REGISTERS; i++) {
-    arm->registers[i] = 0;
-  }
+  arm->memory = (uint8_t*)calloc(BYTES_IN_MEMORY * sizeof(uint8_t));
+  arm->registers = (uint32_t*)calloc(NUMBER_OF_REGISTERS * sizeof(uint32_t));
   arm->counter = 0;
 }
 
