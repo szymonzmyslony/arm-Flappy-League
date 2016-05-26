@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
 
   // load program from args and initialise processor and read from file
   initProcessor(&arm);
-  loadFile(argv[1], &arm);
+  loadFile(argv[1], &arm); //
   
   // points to appropriate execute function after decoding
   uint32_t dInstruction; // instruction to be decoded next
@@ -458,20 +458,24 @@ void decodeBranching(int dInstruction, struct arguments *decodedArgs) {
 // execute branching
 void execBranching(struct arguments *decodedArgs, struct processor *arm) {
   bool negative = ((decodedArgs->offset)>>(numberofelements-1));
-  uint32_t trueoffset = ~(signEx24to32(decodedArgs->offset));
+  
+  uint32_t trueoffset;
+  trueoffset = ((decodedArgs->offset)<<2);
+  trueoffset = ~(signEx24to32(trueoffset));
   trueoffset++; 
   if (negative){
-    arm->registers[PC] = ((arm->registers[PC])-(trueoffset<<2)-8);
+    arm->registers[PC] = ((arm->registers[PC])-(trueoffset)-2);
   } else{
-    arm->registers[PC] = ((arm->registers[PC])+((decodedArgs->offset)<<2)-8);
+    arm->registers[PC] = ((arm->registers[PC])+(trueoffset)-2);
   }
+//
   arm->counter=0;
 }
 
 // Extends sign of 24 bit signed int
 uint32_t signEx24to32(uint32_t val24){
-  if (val24>>(numberofelements-1)){
-    return (0xff000000 | val24);
+  if (val24>>(numberofelements+1)){
+    return (0xfc000000 | val24);
   } else {
     return val24;
   }
