@@ -64,8 +64,8 @@
 #define DEC_PADDING           11
 
 struct processor {
-  uint32_t registers[NUMBER_OF_REGISTERS];
-  uint8_t memory[BYTES_IN_MEMORY];
+  uint32_t *registers;
+  uint8_t *memory;
   int counter; // counter to determine whether to decode and execute
 };
 
@@ -133,8 +133,8 @@ int main(int argc, char **argv) {
   printMem(arm.memory, BYTES_IN_MEMORY);
   
   // free allocated memory
-  free(arm->memory);
-  free(arm->registers);
+  free(arm.memory);
+  free(arm.registers);
   
   return EXIT_SUCCESS;
   
@@ -241,8 +241,9 @@ uint32_t fetch(struct processor *arm) {
 
 // Initialise values to zero
 void initProcessor(struct processor *arm){
-  arm->memory = (uint8_t*)calloc(BYTES_IN_MEMORY * sizeof(uint8_t));
-  arm->registers = (uint32_t*)calloc(NUMBER_OF_REGISTERS * sizeof(uint32_t));
+  arm->memory = (uint8_t *)calloc(BYTES_IN_MEMORY, sizeof(uint8_t));
+  arm->registers = (uint32_t *)calloc(BYTES_IN_MEMORY, sizeof(uint32_t));
+  
   arm->counter = 0;
 }
 
