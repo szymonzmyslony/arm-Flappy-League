@@ -1,5 +1,3 @@
-
-
 #ifndef EMULATE_H
 #define EMULATE_H
 
@@ -58,5 +56,3 @@ uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t,
         struct processor *arm, bool sFlag);
 
 #endif
-
-
