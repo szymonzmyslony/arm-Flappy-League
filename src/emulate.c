@@ -349,6 +349,12 @@ void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
   } else {
     memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
   }
+  
+  if(outOfBounds(memAddress)) {
+    printOOBError(memAddress);
+    return;
+  }
+  
   uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
   arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
 }
@@ -357,6 +363,12 @@ void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
 void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
+  
+  if(outOfBounds(memAddress)) {
+    printOOBError(memAddress);
+    return;
+  }
+  
   uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
   arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
   if (decodedArgs->uFlag) {
@@ -374,6 +386,12 @@ void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
   } else {
     memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
   }
+  
+  if(outOfBounds(memAddress)) {
+    printOOBError(memAddress);
+    return;
+  }
+  
   storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
           memAddress, arm);
 }
@@ -382,6 +400,12 @@ void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
 void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   assert(decodedArgs->mRegIndex == decodedArgs->nRegIndex);
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
+  
+  if(outOfBounds(memAddress)) {
+    printOOBError(memAddress);
+    return;
+  }
+  
   storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
           memAddress, arm);
   if (decodedArgs->uFlag) {
@@ -589,6 +613,16 @@ void executeDP(struct arguments *decodedArgs, struct processor *arm) {
 }
 
 // ====================== Helper Functions ====================================
+// Returns whether the memory address is out of bounds
+bool outOfBounds(uint32_t memAddress) {
+  return memAddress > BYTES_IN_MEMORY;
+}
+
+// Prints an error message for out of bounds memory access
+void printOOBError(uint32_t memAddress) {
+  fprintf(stderr, "Error: Out of bounds memory access at address 0x%08x\n", 
+     memAddress);
+}
 
 // Set the Z, N flags for the Data Processing Instruction. The C flag is set in 
 // the opDP__ functions for arithmetic operations, or stays as the result from 
