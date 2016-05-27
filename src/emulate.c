@@ -371,7 +371,8 @@ void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
 void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
 
-  if (decodedArgs->mRegIndex == decodedArgs->nRegIndex) {
+  if (decodedArgs->iFlag 
+          && (decodedArgs->mRegIndex == decodedArgs->nRegIndex)) {
     fprintf(stderr, "Error: Invalid registers for post-incrementing load to : \
             %08x", memAddress);
     return;
@@ -413,7 +414,8 @@ void strSDTpre(struct arguments *decodedArgs, struct processor *arm) {
 void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
 
-  if (decodedArgs->mRegIndex == decodedArgs->nRegIndex) {
+  if (decodedArgs->iFlag 
+          && (decodedArgs->mRegIndex == decodedArgs->nRegIndex)) {
     fprintf(stderr, "Error: Invalid registers for post-incrementing store to : \
             %08x", memAddress);
     return;
