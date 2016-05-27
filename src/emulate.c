@@ -342,6 +342,24 @@ void execSDT(struct arguments *decodedArgs, struct processor *arm) {
   }
 }
 
+// For executing SDT load intruction, pre-increment
+void ldrSDTpre(struct arguments *decodedArgs, struct processor *arm) {
+  uint32_t memAddress;
+  if (decodedArgs->uFlag) {
+    memAddress = arm->registers[decodedArgs->nRegIndex] + decodedArgs->offset;
+  } else {
+    memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
+  }
+    
+  if(outOfBounds(memAddress)) {
+    printOOBError(memAddress);
+    return;
+  }
+
+  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
+  arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
+}
+
 // For executing SDT load intruction, post-increment
 void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
