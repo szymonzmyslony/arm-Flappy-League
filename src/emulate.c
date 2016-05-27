@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
   
   // points to appropriate execute function after decoding
   uint32_t dInstruction; // instruction to be decoded next
-  bool end;
+  bool end = false;
 
   while (!end) {
     
@@ -133,8 +133,12 @@ int main(int argc, char **argv) {
   printMem(arm.memory, BYTES_IN_MEMORY);
   
   // free allocated memory
-  free(arm.memory);
-  free(arm.registers);
+  if(arm.memory != NULL) {
+    free(arm.memory);
+  }
+  if(arm.memory != NULL) {
+    free(arm.registers);
+  }
   
   return EXIT_SUCCESS;
   
@@ -143,6 +147,10 @@ int main(int argc, char **argv) {
 void loadFile(char name[],struct processor *pointer) {	  
   FILE *myFile;
   myFile = fopen(name, "rb");
+  if(myFile == NULL) {
+    printFileNotFoundError(name);
+  }
+  
   // getting file length
   fseek(myFile, 0L, SEEK_END);
   long int sizeOfFile = ftell(myFile);
@@ -242,7 +250,10 @@ uint32_t fetch(struct processor *arm) {
 // Initialise values to zero
 void initProcessor(struct processor *arm){
   arm->memory = (uint8_t *)calloc(BYTES_IN_MEMORY, sizeof(uint8_t));
-  arm->registers = (uint32_t *)calloc(BYTES_IN_MEMORY, sizeof(uint32_t));
+  checkAllocError(arm->memory, BYTES_IN_MEMORY * sizeof(uint8_t));
+  
+  arm->registers = (uint32_t *)calloc(NUMBER_OF_REGISTERS, sizeof(uint32_t));
+  checkAllocError(arm->registers, NUMBER_OF_REGISTERS * sizeof(uint32_t));
   
   arm->counter = 0;
 }
@@ -361,8 +372,8 @@ void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
 
   if (decodedArgs->mRegIndex == decodedArgs->nRegIndex) {
-    fprintf(stderr, "Error: Invalid registers for post-incrementing load
-        to : %08x", memAddress);
+    fprintf(stderr, "Error: Invalid registers for post-incrementing load to : \
+            %08x", memAddress);
     return;
   }
   
@@ -403,8 +414,8 @@ void strSDTpost(struct arguments *decodedArgs, struct processor *arm) {
   uint32_t memAddress = arm->registers[decodedArgs->nRegIndex];
 
   if (decodedArgs->mRegIndex == decodedArgs->nRegIndex) {
-    fprintf(stderr, "Error: Invalid registers for post-incrementing store 
-        to : %08x", memAddress);
+    fprintf(stderr, "Error: Invalid registers for post-incrementing store to : \
+            %08x", memAddress);
     return;
   }
 
@@ -619,7 +630,8 @@ void executeDP(struct arguments *decodedArgs, struct processor *arm) {
   }
 }
 
-// ====================== Helper Functions ====================================
+// ====================== Error Functions =====================================
+
 // Returns whether the memory address is out of bounds
 bool outOfBounds(uint32_t memAddress) {
   return memAddress > BYTES_IN_MEMORY;
@@ -630,6 +642,20 @@ void printOOBError(uint32_t memAddress) {
   fprintf(stderr, "Error: Out of bounds memory access at address 0x%08x\n", 
      memAddress);
 }
+
+// Checks for a memory allocation error and prints an error message
+void checkAllocError(void* ptr, uint32_t numBytes) {
+  if(ptr == NULL) {
+    fprintf(stderr, "Error: Memory allocation failed for %u bytes\n", numBytes);
+  }
+}
+
+// Prints an error message for file not found
+void printFileNotFoundError(char fileName[]) {
+  fprintf(stderr, "Error: File \'%s\' not found\n", fileName);
+}
+
+// ====================== Helper Functions ====================================
 
 // Set the Z, N flags for the Data Processing Instruction. The C flag is set in 
 // the opDP__ functions for arithmetic operations, or stays as the result from 

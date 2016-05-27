@@ -39,9 +39,13 @@ void ldrSDTpost(struct arguments *decodedArgs, struct processor *arm);
 void strSDTpre(struct arguments *decodedArgs, struct processor *arm);
 void strSDTpost(struct arguments *decodedArgs, struct processor *arm);
 
-// Helper functions
+// Error functions
+void checkAllocError(void* ptr, uint32_t numBytes);
+void printFileNotFoundError(char fileName[]);
 bool outOfBounds(uint32_t memAddress);
 void printOOBError(uint32_t memAddress);
+
+// Helper functions
 void setFlagsZN(uint32_t value, struct processor *arm);
 uint32_t getLittleFromMem32(uint32_t address, struct processor *arm);
 void storeBigEndy32(uint32_t value, uint32_t address, struct processor *arm);
