@@ -1,5 +1,15 @@
 #ifndef EMULATE_H
 #define EMULATE_H
+#include <stdlib.h>
+#include <stdio.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <assert.h>
+#include <string.h>
+
+
 
 // Structs
 struct processor;
@@ -45,20 +55,14 @@ void printFileNotFoundError(char fileName[]);
 bool outOfBounds(uint32_t memAddress);
 void printOOBError(uint32_t memAddress);
 
-// Helper functions
+// Helper Functions which use struct
 void setFlagsZN(uint32_t value, struct processor *arm);
 uint32_t getLittleFromMem32(uint32_t address, struct processor *arm);
 void storeBigEndy32(uint32_t value, uint32_t address, struct processor *arm);
-uint32_t switchEndy32(uint32_t value);
-bool getBit(uint32_t word, uint8_t position);
-uint32_t setBit(uint32_t word, bool set, uint8_t position);
 void resolveSDTOffset(uint16_t offset, bool iFlag,
         struct arguments *decodedArgs, struct processor *arm);
 void resolveOperand2(uint32_t op, bool iFlag, struct arguments *decodedArgs,
         struct processor *arm);
-uint32_t rotateRight32(uint32_t val, uint16_t n);
-uint32_t arithShiftRight32(uint32_t val, uint16_t n);
 uint32_t shift(uint8_t shiftCode, uint32_t value, uint16_t,
         struct processor *arm, bool sFlag);
-
 #endif
