@@ -11,5 +11,7 @@ bool getBit(uint32_t word, uint8_t position);
 uint32_t setBit(uint32_t word, bool set, uint8_t position);
 uint32_t rotateRight32(uint32_t val, uint16_t n);
 uint32_t arithShiftRight32(uint32_t val, uint16_t n);
+uint8_t getRegIndex(char *str);
+uint8_t charToInt(char c);
 
 #endif

@@ -39,4 +39,30 @@ uint32_t arithShiftRight32(uint32_t val, uint16_t n){
   }
 }
 
+// Returns the index as an int of a register given in the format r1, r2, etc
+// Returns zero if index if string is not valid
+uint8_t getRegIndex(char *str){
+  if (strlen(str) != 2){
+    fprintf(stderr, "Attempted read of null argument");
+    return 0;
+  }
+
+  if (str[0] == 'r'){
+    return charToInt(str[1]);
+  } 
+
+  return 0;
+}
+
+// Converts a char digit between '0' and '9' to an int
+// returns 10 if digit is not valid
+uint8_t charToInt(char c) {
+  if (c < '0' || '9' < c) {
+    fprintf(stderr, "Char c is not a valid digit");
+    return 10;
+  }
+  uint8_t i = (uint8_t) c - (uint8_t) '0';
+  return i;
+}
+
 
