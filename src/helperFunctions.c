@@ -49,7 +49,7 @@ uint8_t getRegIndex(char *str){
   }
 
   if (str[0] == 'r'){
-    if (strLen(str) == 2) {
+    if (strlen(str) == 2) {
       return charToInt(str[1]);
     } else {
       if (str[2] == ',') {
@@ -75,4 +75,14 @@ uint8_t charToInt(char c) {
   return i;
 }
 
-
+// Moves a char ptr to the last character in the String
+// If already at null char, do nothing
+void movToLastChar(char *str) {
+  if (str == '\0') {
+    return;
+  }
+  while (str != '\0') {
+    str++;
+  }
+  str--;
+}

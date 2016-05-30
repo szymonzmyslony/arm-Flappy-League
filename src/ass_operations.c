@@ -38,11 +38,11 @@ uint32_t encodeSDTldr (char **opfields) {
   if (operand[0] == '[') {
     operand++;
     char *ptr;
-    long int regIndex = strtol(operand, &ptr, base);
+    long int regIndex = getRegIndex(operand);
     uint32_t regIndex32 = (regIndex << 16);
     binInstruction |= regIndex32;
-    operand = ptr;
-
+    operand = movToLastChar(operand);
+    
     if (operand[0] == ']') {
       if (opFieldIndex == sizeof(opFields)) {
         // pre-indexing with no offset
@@ -64,8 +64,7 @@ uint32_t encodeSDTldr (char **opfields) {
         } else {
           // offset is a (shifted) register
           binInstruction = setBit(binInstruction, true, iBit);
-          char *ptr;
-          long int mRegIndex = strtol(operand, &ptr, base);
+          long int mRegIndex = getRegIndex(operand);
           binInstruction |= mRegIndex;
           if (opFieldIndex != sizeof(opFields)) {
             // shift
@@ -76,8 +75,7 @@ uint32_t encodeSDTldr (char **opfields) {
             uint8_t shiftCode = getShiftCode(operand);
             binInstruction |= (shiftCode << 5);
             removeLeadingSpace(operand);
-            char *ptr;
-            long int sRegIndex = strtol(operand, &ptr, base);
+            long int sRegIndex = getRegIndex(operand);
             binInstruction |= (sRegIndex << 8);
           }
         }
@@ -104,7 +102,7 @@ uint32_t encodeSDTldr (char **opfields) {
         // offset is a (shifted) register
         binInstruction = setBit(binInstruction, true, iBit);
         char *ptr;
-        long int mRegIndex = strtol(operand, &ptr, base);
+        long int mRegIndex = getRegIndex(operand);
         binInstruction |= mRegIndex;
         if (opFieldIndex != sizeof(opFields)) {
           // shift
@@ -122,7 +120,6 @@ uint32_t encodeSDTldr (char **opfields) {
       }
     }
   }
-
 
   // add value to end of file if necessary
 
