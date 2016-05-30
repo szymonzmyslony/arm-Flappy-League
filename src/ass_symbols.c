@@ -1,7 +1,6 @@
-#include "RBT_ADT.h"
-
-extern node* head;
-extern node* tail;
+#include <stdio.h>
+#include <assert.h>
+#include "ass_symbols.h"
 
 void initialiseList(list *l) {
   l->head = allocateNode();
@@ -15,7 +14,7 @@ void initialiseList(list *l) {
 node* allocateNode(void) {
   node *newNode = malloc(sizeof(node));
   if (newNode == NULL) {
-    perror("Node allocation failure!");
+    perror("NodeAllocationFailure!");
     exit(EXIT_FAILURE);
   }
   return newNode;
@@ -48,12 +47,11 @@ node* nextNode(node *iter) {
 }
 
 VAL getVal(node *curr) {
-  assert (listIsInternal(curr));
-  #NDBUG
+  // assert (listIsInternal(curr));
   return curr->val;
 }
 
-bool listIsInternal(node *curr) {
+uint8_t listIsInternal(node *curr) {
   return (curr->prev != NULL) && (curr->next != NULL);
 }
 
@@ -72,4 +70,8 @@ void destroyList(list *l) {
     freeNode(next);
     curr = next;
   }
+}
+
+void printData(node *curr) {
+  printf("Key: %s and Val: %d \n", curr->key, curr->val);
 }
