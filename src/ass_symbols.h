@@ -34,6 +34,7 @@ node* endList(list *l);
 void insertNode(list *l, node *iter, KEY key, VAL val);
 node* nextNode(node *iter);
 void printData(node *curr);
+KEY getKey(node *curr);
 VAL getVal(node *curr);
 uint8_t listIsInternal(node *curr);
 void insertFront(list *l, KEY key, VAL val);

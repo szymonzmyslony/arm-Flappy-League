@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "ass_symbols.h"
+#define NDEBUG
 
 void initialiseList(list *l) {
   l->head = allocateNode();
@@ -47,8 +48,15 @@ node* nextNode(node *iter) {
 }
 
 VAL getVal(node *curr) {
-  // assert (listIsInternal(curr));
+  assert (listIsInternal(curr));
+  NDEBUG
   return curr->val;
+}
+
+KEY getKey(node *curr) {
+  assert (listIsInternal(curr));
+  NDEBUG
+  return curr->key;
 }
 
 uint8_t listIsInternal(node *curr) {
