@@ -49,7 +49,7 @@ uint8_t getRegIndex(char *str){
 
   if (str[0] == 'r'){
     return charToInt(str[1]);
-  } 
+  }
 
   return 0;
 }
@@ -74,7 +74,7 @@ void trim(char *string) {
 		start++;
 	}
 
-	while(isspace(string[end]) && start >= end) {
+	while(isspace(string[end]) && start <= end) {
 		end--;
 	}
 
@@ -84,5 +84,3 @@ void trim(char *string) {
 
 	string[end - start + 1] = '\0';
 }
-
-
