@@ -2,9 +2,11 @@
 
 // The byte address of the end of the binary file to be written
 uint32_t endOfFileAddr = 0;
+// The byte address that the line being processed is associated with
+static uint32_t memAddr = 0;
 
 int main(int argc, char **argv) {
-  char *file;
+  char *file; //TODO free this
   readfile(file); //TODO Define this. Should return a string.
 
   // The current line being processed. It is null-terminated when the line has
@@ -14,14 +16,18 @@ int main(int argc, char **argv) {
   char *line = calloc(MAX_LINE_LENGTH + 1, sizeof(char));
   checkAllocError(line, (MAX_LINE_LENGTH + 1) * sizeof(char));
 
+  list symbolsTable;
+  initialiseList(symbolsTable);
+  //TODO add all the opcodes' associated functions
+  // Copypasta: insertFront(symbolsTable, <opCodeName>, &<encodeFunctionName>);
+
   // -- First pass : Find labels and associate them with a memory address
   // Let one instruction and its preceding label (if it exists) be a block
   // 'line' will only be used to record the label in this pass
 
   // The index of the current character to write in the line.
   int cIndex = 0;
-  // The byte address that the line being processed is associated with
-  uint32_t memAddr = 0;
+  memAddr = 0;
 
   // Tracking the content of the current processed block - if we have found
   // a label and if we have found an instruction.
@@ -34,8 +40,8 @@ int main(int argc, char **argv) {
       if(foundInstruction) {
         // Block had a label, process it
         if(foundLabel) {
-          // TODO Treat the whitespace of line.
-          //      Add mapping of (line, memAddr) to symbol table.
+          // Add mapping of (label, memAddr) to symbol table.
+          insertFront(symbolsTable, trim(line), memAddr);
 
           foundLabel = false;
         }
@@ -92,7 +98,13 @@ int main(int argc, char **argv) {
         // Line is the instruction, with leading & trailing whitespace
         line[cIndex] = "\0";
 
-        //TODO tokenise and encode, whitespace treated in tokenise
+        // Parse the instruction
+        char *opCode[MAX_OPCODE_LENGTH];
+        char opFields[MAX_OPFIELD_SIZE][MAX_OPFIELD_LENGTH];
+        tokenise (line, opCode, opFields);
+
+        //TODO Call the opcode's associated function via the symbols table
+        getValOfKey(symbolsTable, opCode)(opFields);
 
         cIndex = 0;
         memAddr += 4;
@@ -124,5 +136,13 @@ int main(int argc, char **argv) {
     }
   }
 
+  destroyList(symbolsTable);
+  free(line);
+  free(file);
+
   return EXIT_SUCCESS;
+}
+
+uint32_t getMemAddr(void) {
+	return memAddr;
 }
