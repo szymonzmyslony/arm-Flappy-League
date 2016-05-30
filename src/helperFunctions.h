@@ -1,5 +1,7 @@
 #ifndef HELPERFUNCTIONS_H
 #define HELPERFUNCTIONS_H
+#include <ctype.h>
+#include <string.h>
 #include "emulate.h"
 
 
