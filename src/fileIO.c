@@ -22,4 +22,23 @@ char * readFile(FILE *file, char *filename) {
     fprintf(stderr, "Error: File only partially read");
   }
   return content;
+  fclose(file);
+}
+
+// adds bytes to the file at the given byte index
+// numBytes should be less than or equal to the length of the array bytes
+void addBytesToFile(char *filename, long int byteIndex, char *bytes, 
+        int numBytes){
+  FILE *file = fopen(filename, "rb+");
+  if (file == NULL) {
+    fprintf(stderr, "Error: cannot find file to write byte to");
+    exit(EXIT_FAILURE);
+  }
+  fseek(file, byteIndex, SEEK_SET);
+  size_t num = fwrite(bytes, 1, numBytes, file);
+  if (num != numBytes) {
+    fprintf(stderr, "Error: File only partially written to");
+  }
+
+  fclose(file);
 }
