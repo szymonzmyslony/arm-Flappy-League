@@ -1,0 +1,41 @@
+/*
+Header File for OLL_ADT
+*/
+#ifndef ASS_SYMBOLS_H
+#define ASS_SYMBOLS_H
+
+#include <stdint.h>
+#include <stdlib.h>
+
+#define VAL void*
+#define KEY char*
+
+typedef struct node node;
+
+struct node {
+  node *prev;
+  node *next;
+  KEY key;
+  VAL val;
+};
+
+typedef struct list list;
+
+struct list {
+  list *head;
+  list *tail;
+}
+
+void initialiseList(list *l);
+node* allocateNode(void);
+void freeNode(node *curr);
+node* startList(list *l);
+node* endList(list *l);
+void insertNode(list *l, node *iter, KEY key, VAL val);
+node* nextNode(node *iter);
+VAL getVal(node *curr);
+bool listIsInternal(node *curr);
+void insertFront(list *l, KEY key, VAL val);
+void insertBack(list *l, KEY key, VAL val);
+void destroyList(list *l);
+#endif
