@@ -1,18 +1,16 @@
 #include "ass_tokeniser.h"
 
 // Breaks a line into its label, opcode and operand fields.
-// Modifies the parameters *label, *opcode and **opFields.
-void tokenise (char *line, char *label, char *opcode, char **opFields) {
-  char *saveptr; //TODO init
+// Modifies all arguments.
+void tokenise (char *line, char *opcode, char **opFields) {
+  // Set the opcode
+  strcpy(opcode, trim(strtok(NULL, " ")));
   
-  label = strtok_r(line, ":", &saveptr);
-  
-  opcode = strtok_r(NULL, " ", &saveptr);
-  
-  char *opField = //TODO ALL OF THIS
-  opField = strtok_r(NULL, ",", &saveptr);
-  
-  while(opField != NULL) {
-    opField = strtok_r(NULL, ",", &saveptr);
+  // Set the opFields
+  char opField[MAX_OPFIELD_SIZE];
+  strcpy(opField, strtok(NULL, ","));
+  for(int i = 0; opField != NULL; i++) {
+	  strcpy(opFields[index], trim(opField));
+	  strcpy(opField, strtok(NULL, ","));
   }
 }

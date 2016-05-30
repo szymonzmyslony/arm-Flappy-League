@@ -1,5 +1,7 @@
 #ifndef HELPERFUNCTIONS_H
 #define HELPERFUNCTIONS_H
+#include <ctype.h>
+#include <string.h>
 #include "emulate.h"
 
 
@@ -14,5 +16,6 @@ uint32_t arithShiftRight32(uint32_t val, uint16_t n);
 uint8_t getRegIndex(char *str);
 void movToLastChar(char *str);
 uint8_t charToInt(char c);
+void trim(char *string)
 
 #endif

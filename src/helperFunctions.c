@@ -86,3 +86,23 @@ void movToLastChar(char *str) {
   }
   str--;
 }
+// Removes the leading and trailing whitespace in a string
+void trim(char *string) {
+  int start = 0;
+  int end = strlen(string) - 1;
+  
+  while(isspace(string[start])) {
+    start++;
+  }
+  
+  while(isspace(string[end]) && start >= end) {
+    end--;
+  }
+  
+  for(int i = start; i <= end; i++) {
+    string[i - start] = string[i];
+  }
+  
+  string[end - start + 1] = '\0';
+}
+
