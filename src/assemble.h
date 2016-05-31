@@ -15,5 +15,6 @@
 
 uint32_t getMemAddr(void);
 uint32_t getFileName(void);
+list *getLabelTable(void);
 
 #endif

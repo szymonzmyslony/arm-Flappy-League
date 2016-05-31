@@ -6,7 +6,9 @@ static uint32_t endOfFileAddr = 0;
 // The byte address that the line being processed is associated with
 static uint32_t memAddr = 0;
 // Pointer to file name
-static char* fileName;
+static char *fileName;
+// Pointer to a list - labelTable, the table of labels
+static list *labelTablePtr;
 
 int main(int argc, char **argv) {
   fileName = argv[1];
@@ -27,6 +29,8 @@ int main(int argc, char **argv) {
 
   list labelTable;
   initialiseList(labelTable);
+  labelTablePtr = *labelTable;
+  
   // Add all the opcodes' associated functions
   insertFront(operandTable, "add"  , (uint64_t) &encodeDPadd);
   insertFront(operandTable, "sub"  , (uint64_t) &encodeDPsub);
@@ -62,8 +66,8 @@ int main(int argc, char **argv) {
 
   // Tracking the content of the current processed block - if we have found
   // a label and if we have found an instruction.
-  bool foundLabel;
-  bool foundInstruction;
+  bool foundLabel = false;
+  bool foundInstruction = false;
 
   for (int i = 0; ; i++) {
     if(file[i] == '\n' || !file[i]) {
@@ -187,4 +191,8 @@ uint32_t getMemAddr(void) {
 
 uint32_t getFileName(void) {
   return fileName;
+}
+
+list *getLabelTable(void) {
+  return labelTablePtr;
 }
