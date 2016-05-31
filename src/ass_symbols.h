@@ -33,13 +33,14 @@ node* startList(list *l);
 node* endList(list *l);
 void insertNode(list *l, node *iter, KEY key, VAL val);
 node* nextNode(node *iter);
-void printData(node *curr);
 KEY getKey(node *curr);
 VAL getVal(node *curr);
 VAL getValFromStruct(struct list *symbolsTable, KEY key);
-uint8_t equals(KEY key1, KEY key2);
 uint8_t listIsInternal(node *curr);
 void insertFront(list *l, KEY key, VAL val);
 void insertBack(list *l, KEY key, VAL val);
+uint8_t equals(KEY key1, KEY key2);
 void destroyList(list *l);
+void printData(node *curr);
+void printAll(list *l);
 #endif

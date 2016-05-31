@@ -254,10 +254,6 @@ uint32_t encodeMla (char **opfields) {
 
 }
 
-
-#include "emulate.h"
-#include "ass_operations.h"
-
 uint32_t encodeSDTldr (char **opfields, char *filename) {
   // initialise binInstruction and set cond to always (1110) and load bit set
   uint32_t binInstruction = 0xe4100000;
