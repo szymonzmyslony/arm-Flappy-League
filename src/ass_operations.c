@@ -1,6 +1,21 @@
 #include "helperFunctions.h"
 #include "ass_operations.h"
 
+int getOffset(char **opfields){
+  uint32_t current =  getMemAddr(); \
+  int opFieldsIndex = 0; \
+  char *operand = opFields[opFieldsIndex]; \
+  trim(operand); \
+  //get Label adress
+  uint32_t labelAdress = getValFromStruct(&symbolsTable, operand); 	 \
+  //account for pipeline 
+  current=current+8;  \
+  int offset = labelAdress-current;	  \
+  offset=offset>>2;  \
+  return offset; \	
+	
+}
+
 uint32_t encodeMul (char **opfields) {
   // Cond is 1110, A is 0 and S is 0;
   uint32_t binInstruction = 0xC0000090;
@@ -72,24 +87,10 @@ uint32_t encodeMul (char **opfields) {
 
  uint32_t encodeBeq (char **opfields) {
 	  // Cond is 0000
-  uint32_t binInstruction = 0xa000000;
-  uint32_t current =  getMemAddr();
-
-  int opFieldsIndex = 0;
-  char *operand = opFields[opFieldsIndex];
-  trim(operand);
-  //get Label adress
-  uint32_t labelAdress = getValFromStruct(&symbolsTable, operand); 	 
+  uint32_t binInstruction = 0xa000000;   
+  binInstruction |= OFFSET(&opFields);
+  
  
-  //account for pipeline
-  current=current+8;  
-  int offset = labelAdress-current;	  
-  offset=offset>>2;  
-  binInstruction |= offset;
-  
-  
-  
-  
   
   
   
@@ -99,19 +100,8 @@ uint32_t encodeMul (char **opfields) {
 uint32_t encodeBne (char **opfields){
 	  // Cond is 0001
 	uint32_t binInstruction = 0x1a000000;
-	
-	
-	int opFieldsIndex = 0;
-  char *operand = opFields[opFieldsIndex];
-  trim(operand);
-  //get Label adress
-  uint32_t labelAdress = getValFromStruct(&symbolsTable, operand); 	 
- 
-  //account for pipeline
-  current=current+8;  
-  int offset = labelAdress-current;	  
-  offset=offset>>2;  
-  binInstruction |= offset;
+		
+	binInstruction |= OFFSET;
   
 	
 	
@@ -127,17 +117,7 @@ uint32_t encodeBge (char **opfields){
 	uint32_t binInstruction = 0xAA000000;
 	
 	
-	int opFieldsIndex = 0;
-  char *operand = opFields[opFieldsIndex];
-  trim(operand);
-  //get Label adress
-  uint32_t labelAdress = getValFromStruct(&symbolsTable, operand); 	 
- 
-  //account for pipeline
-  current=current+8;  
-  int offset = labelAdress-current;	  
-  offset=offset>>2;  
-  binInstruction |= offset;
+	 binInstruction |= OFFSET;
   
 	
 	
@@ -147,6 +127,7 @@ uint32_t encodeBge (char **opfields){
 uint32_t encodeBlt (char **opfields){
 	  // Cond is 1011
 	uint32_t binInstruction = 0xBA000000;
+	 binInstruction |= OFFSET;
 	
 	
 	
@@ -158,18 +139,7 @@ uint32_t encodeBgt (char **opfields){
 	uint32_t binInstruction = 0xCA000000;
 	
 	
-	int opFieldsIndex = 0;
-  char *operand = opFields[opFieldsIndex];
-  trim(operand);
-  //get Label adress
-  uint32_t labelAdress = getValFromStruct(&symbolsTable, operand); 	 
- 
-  //account for pipeline
-  current=current+8;  
-  int offset = labelAdress-current;	  
-  offset=offset>>2;  
-  binInstruction |= offset;
-  
+	 binInstruction |= OFFSET;
 	
 	
 	
