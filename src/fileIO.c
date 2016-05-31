@@ -2,7 +2,8 @@
 
 // reads a file and returns a pointer to a string of that file, which is heap
 //   allocated, so will need to be freed after use
-char * readFile(FILE *file, char *filename) {
+char *readFile(char *filename) {
+  FILE *file;
   file = fopen(filename, "rb");
   if (file == NULL) {
     fprintf(stderr, "Error: cannot find file to read");
