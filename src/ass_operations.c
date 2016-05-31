@@ -2,7 +2,7 @@
 #include "emulate.h"
 #include "ass_operations.h"
 
-uint32_t encodeSDTldr (char **opfields) {
+uint32_t encodeSDTldr (char **opfields, char *filename) {
   // initialise binInstruction and set cond to always (1110) and load bit set
   uint32_t binInstruction = 0xe4100000;
   int opFieldsIndex = 0;
@@ -24,12 +24,29 @@ uint32_t encodeSDTldr (char **opfields) {
     operand++;
     char *ptr;
     long int num = expToL(operand, ptr);
+    uint32_t num32 = num;
     if (num < 0xFF) {
       binInstruction = 0; //TODO: call encode function for mov
     } else {
       binInstruction |= (num & MASK11_0);
       binInstruction = setBit(binInstruction, true, pFlag);
       binInstruction = setBit(binInstruction, true, uFlag);
+      uint32_t currMemAddress = getMemAddress();
+      uint32_t offset = endOfFileAddr - currMemAddress;
+      // account for pipeline while encoding offset, at time of execution
+      //   PC will be 8 bytes ahead
+      offset -= 8;
+
+      if (offset > 0xFFFFFFFFFFFF){
+        fprintf(stderr, "Error, cannot store constant at end of file");
+      } else {
+        // set nReg to PC
+        binInstruction |= (PC << 16); 
+        // set offset
+        binInstruction |= offset;
+      }
+      uint32_t num32LE = switchEndy32(num32);
+      appendBytes(char *filename, (char *) &num32LE, 4);
     }
     operand--;
   }
