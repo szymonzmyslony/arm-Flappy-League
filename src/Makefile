@@ -5,7 +5,7 @@ CFLAGS  = -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -std=c99 -Werror -pedantic
 
 .PHONY: all clean
 
-all: helperFunctions emulate 
+all: emulate
 
 #assemble: assemble.o
 
@@ -15,8 +15,8 @@ emulate: emulate.o helperFunctions.o
 emulate.o : emulate.c emulate.h
 	$(CC) $(CFLAGS) emulate.c -c -o emulate.o
 
-helperFunctions : helperFunctions.o
-	$(CC) $(CFLAGS) helperFunctions.o -o helperFunctions
+#helperFunctions : helperFunctions.o
+#	$(CC) $(CFLAGS) helperFunctions.o -o helperFunctions
 
 helperFunctions.o : helperFunctions.c helperFunctions.h
 	$(CC) $(CFLAGS) helperFunctions.c -c -o helperFunctions.o

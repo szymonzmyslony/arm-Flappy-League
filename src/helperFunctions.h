@@ -5,7 +5,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <stdarg.h>
+#include <stdio.h>
+#include "ass_symbols.h"
 
 // Helper functions
 uint32_t switchEndy32(uint32_t value);
@@ -16,6 +17,5 @@ uint32_t arithShiftRight32(uint32_t val, uint16_t n);
 uint8_t getRegIndex(char *str);
 void movToLastChar(char *str);
 uint8_t charToInt(char c);
-VAL getValFromStruct(struct list *symbolsTable, KEY key);
-void trim(char *string)
+void trim(char *string);
 #endif

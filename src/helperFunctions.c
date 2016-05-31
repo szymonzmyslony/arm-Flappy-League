@@ -58,7 +58,7 @@ uint8_t getRegIndex(char *str){
         return ((charToInt(str[1]) * 10 ) + charToInt(str[2]));
       }
     }
-  } 
+  }
 
   fprintf(stderr, "Attempted read of invalid argument");
   return 0;
@@ -76,17 +76,8 @@ uint8_t charToInt(char c) {
 }
 
 
-//gets value from the symbol table based on on the key
-VAL getValFromStruct(struct list *symbolsTable, KEY key){
-	// we assume key is in the structure, no need to checking whether key is null
-	node *curNode = startList(symbolsTable);
-	
-	while (!equals(getKey(curNode), key)) {
-		curNode = curNode->next;
-	}
-	
-	return getVal(curNode);
-	
+
+
 
 // Moves a char ptr to the last character in the String
 // If already at null char, do nothing
@@ -103,20 +94,19 @@ void movToLastChar(char *str) {
 void trim(char *string) {
   int start = 0;
   int end = strlen(string) - 1;
-  
+
   while(isspace(string[start])) {
     start++;
   }
-  
+
   while(isspace(string[end]) && start >= end) {
     end--;
   }
-  
+
   for(int i = start; i <= end; i++) {
     string[i - start] = string[i];
   }
-  
+
   string[end - start + 1] = '\0';
 
 }
-

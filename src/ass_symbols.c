@@ -53,6 +53,16 @@ VAL getVal(node *curr) {
   return curr->val;
 }
 
+//gets value from the symbol table based on on the key
+VAL getValFromStruct(struct list *symbolsTable, KEY key){
+	// we assume key is in the structure, no need to checking whether key is null
+	node *curNode = startList(symbolsTable);
+	while (equals(getKey(curNode), key) != 1) {
+		curNode = curNode->next;
+	}
+	return getVal(curNode);
+}
+
 KEY getKey(node *curr) {
   assert (listIsInternal(curr));
   NDEBUG
