@@ -79,8 +79,7 @@ uint32_t encodeMul (char **opfields) {
   char *operand = opFields[opFieldsIndex];
   trim(operand);
   //get Label adress
-  uint32_t labelAdress = getValue(struct, operand); 
-	 
+  uint32_t labelAdress = getValFromStruct(&symbolsTable, operand); 	 
  
   //account for pipeline
   current=current+8;  

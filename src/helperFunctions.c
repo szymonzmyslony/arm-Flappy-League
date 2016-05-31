@@ -65,4 +65,16 @@ uint8_t charToInt(char c) {
   return i;
 }
 
+//gets value from the symbol table based on on the key
+VAL getValFromStruct(struct list *symbolsTable, KEY key){
+	// we assume key is in the structure, no need to checking whether key is null
+	node *curNode = startList(symbolsTable);
+	
+	while (!equals(getKey(curNode), key)) {
+		curNode = curNode->next;
+	}
+	
+	return getVal(curNode);
+	
+}
 
