@@ -7,7 +7,7 @@ Header File for OLL_ADT
 #include <stdint.h>
 #include <stdlib.h>
 
-#define VAL int
+#define VAL uint32_t
 #define KEY char*
 
 typedef struct node node;
@@ -36,6 +36,7 @@ node* nextNode(node *iter);
 void printData(node *curr);
 KEY getKey(node *curr);
 VAL getVal(node *curr);
+uint8_t equals(KEY key1, KEY key2);
 uint8_t listIsInternal(node *curr);
 void insertFront(list *l, KEY key, VAL val);
 void insertBack(list *l, KEY key, VAL val);

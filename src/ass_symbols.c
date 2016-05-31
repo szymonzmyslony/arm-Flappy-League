@@ -71,6 +71,15 @@ void insertBack(list *l, KEY key, VAL val) {
   insertNode( l, endList(l), key, val);
 }
 
+uint8_t equals(KEY key1, KEY key2) {
+  int comparator = key1 - key2;
+  if (comparator == 0) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 void destroyList(list *l) {
   node *curr = l->head;
   while (curr != NULL){
