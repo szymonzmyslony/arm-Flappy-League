@@ -2,9 +2,10 @@
 #define HELPERFUNCTIONS_H
 #include <ctype.h>
 #include <string.h>
-#include "emulate.h"
-
-
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdarg.h>
 
 // Helper functions
 

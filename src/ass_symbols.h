@@ -1,5 +1,5 @@
 /*
-Header File for OLL_ADT
+Header File for LL_ADT
 */
 #ifndef ASS_SYMBOLS_H
 #define ASS_SYMBOLS_H
@@ -7,7 +7,7 @@ Header File for OLL_ADT
 #include <stdint.h>
 #include <stdlib.h>
 
-#define VAL uint32_t
+#define VAL uint64_t
 #define KEY char*
 
 typedef struct node node;
