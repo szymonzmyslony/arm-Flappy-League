@@ -26,7 +26,14 @@ uint32_t encodeSDTldr (char **opfields, char *filename) {
     long int num = expToL(operand, ptr);
     uint32_t num32 = num;
     if (num < 0xFF) {
-      binInstruction = 0; //TODO: call encode function for mov
+      char *newExpression = malloc(strlen(operand) + 2);
+      if (newExpression == NULL) {
+        fprintf(stderr, "Memory allocation failure");
+        exit(EXIT_FAILURE);
+      }
+      strcpy(newExpression, "#");
+      strcat(newExpression, operand);
+      binInstruction = encodeDPmov(opFields[0], newExpression);
     } else {
       binInstruction |= (num & MASK11_0);
       binInstruction = setBit(binInstruction, true, pFlag);
@@ -212,3 +219,16 @@ uint32_t encodeSDTstr(char **opfields) {
   }
   return binInstruction;
 } 
+
+uint32_t encodelsl(char **opfields) {
+  char *shiftOpfield = malloc(strlen("lsl ") + strlen(opfields[1]) + 1);
+  if (shiftOpfield == NULL) {
+    fprintf(stderr, "Error, Memory allocation failed");
+    exit(EXIT_FAILURE);
+  }
+  strcpy(shiftOpfield, "lsl ");
+  strcat(shiftOpfield, opfields[1]);
+  char **newOpfields = {opfields[0], opfields[0], shiftOpfield};
+  uint32_t binInstruction = encodeDPmov(newOpfields);
+  return binInstruction;
+}
