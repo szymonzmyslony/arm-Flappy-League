@@ -5,7 +5,7 @@ uint32_t endOfFileAddr = 0;
 
 int main(int argc, char **argv) {
   char *file;
-  readfile(file); //TODO Define this. Should return a string.
+  readfile(file, argv[1]); //TODO Define this. Should return a string.
 
   // The current line being processed. It is null-terminated when the line has
   // been processed.
