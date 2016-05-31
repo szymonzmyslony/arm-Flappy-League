@@ -2,7 +2,7 @@
 #define NUM_OF_FUNCTIONS   23 
 
 // The byte address of the end of the binary file to be written
-uint32_t endOfFileAddr = 0;
+static uint32_t endOfFileAddr = 0;
 // The byte address that the line being processed is associated with
 static uint32_t memAddr = 0;
 // Pointer to file name
@@ -25,8 +25,8 @@ int main(int argc, char **argv) {
   initialiseList(&operandTable);
   initOperandTable(&operandTable);
 
-  list symbolsTable;
-  initialiseList(symbolsTable);
+  list labelTable;
+  initialiseList(labelTable);
   // Add all the opcodes' associated functions
   insertFront(operandTable, "add"  , (uint64_t) &encodeDPadd);
   insertFront(operandTable, "sub"  , (uint64_t) &encodeDPsub);
@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
         // Block had a label, process it
         if(foundLabel) {
           // Add mapping of (label, memAddr) to symbol table.
-          insertFront(symbolsTable, trim(line), memAddr);
+          insertFront(labelTable, trim(line), memAddr);
 
           foundLabel = false;
         }
@@ -112,8 +112,9 @@ int main(int argc, char **argv) {
     }
   }
 
-  // TODO: edit this, doesn't allow for appending to file
-  endOfFileAddr = memAddr;
+  FILE *outFile = fopen(argv[2], "w");
+  ftruncate(fileno(outFile), memAddress);
+  fclose(outFile);
 
   // -- Second pass : Find instructions and encode them, writing them into
   //                  a file
@@ -131,7 +132,7 @@ int main(int argc, char **argv) {
         line[cIndex] = "\0";
 
         // Parse the instruction
-        char *opCode[MAX_OPCODE_LENGTH];
+        char opCode[MAX_OPCODE_LENGTH];
         char opFields[MAX_OPFIELD_SIZE][MAX_OPFIELD_LENGTH];
         tokenise (line, opCode, opFields);
 
@@ -139,11 +140,9 @@ int main(int argc, char **argv) {
 	// retrieve 64bit int from opTable and cast as function pointer
         functionPointer = (uint32_t (*)(char **)) 
                 getValFromStruct(operandTable, opCode);
-        uint32_t instruction = functionPointer(opFields);
-        uint32_t instructionLE = switchEndy32(instruction);
-        addBytesToFile(fileName, memAddress, (char *) &instructionLE, 4);
-        // TODO: ask uno if this is actual code
-        // getValOfKey(symbolsTable, opCode)(opFields);
+        uint32_t instructionBE = functionPointer(opFields);
+        uint32_t instructionLE = switchEndy32(instructionBE);
+        addBytesToFile(, memAddress, (char *) &instructionLE, 4);
 
         cIndex = 0;
         memAddr += 4;
