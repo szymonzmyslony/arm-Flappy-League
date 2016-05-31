@@ -15,4 +15,6 @@ uint32_t encodeDPtst(char **opFields);
 uint32_t encodeDPteq(char **opFields);
 uint32_t encodeDPcmp(char **opFields);
 
+uint32_t encodeOperand2(char **opFields, uint8_t index);
+
 #endif

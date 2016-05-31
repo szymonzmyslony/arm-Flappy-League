@@ -65,3 +65,21 @@ uint32_t encodeDPmov(char **opFields) {
 	return binInstruction;
 }
 
+// Takes an index, where opFields[index] is the first token in operand2
+uint32_t encodeOperand2(char **opFields, uint8_t index) {
+	uint32_t binInstruction = 0;
+
+	char *op1 = opFields[index];
+
+	// Case <#expression>
+	if(op1[0] == '#') {
+
+	// Case Rm{, <shift>}
+	} else {
+		// Set Rm
+		binInstruction |= getRegIndex(op1);
+
+	}
+
+	return binInstruction;
+}
