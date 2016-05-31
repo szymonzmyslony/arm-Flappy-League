@@ -11,10 +11,13 @@ static char *fileName;
 static list *labelTablePtr;
 
 int main(int argc, char **argv) {
+
   fileName = argv[1];
 
   char *file; //TODO free this
   file = readfile(fileName); //TODO Define this. Should return a string.
+
+  
 
   // The current line being processed. It is null-terminated when the line has
   // been processed.

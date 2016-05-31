@@ -41,16 +41,30 @@ uint32_t arithShiftRight32(uint32_t val, uint16_t n){
 
 // Returns the index as an int of a register given in the format r1, r2, etc
 // Returns zero if index if string is not valid
+// Works for only a maximum of 99 registers
 uint8_t getRegIndex(char *str){
-  if (strlen(str) != 2){
-    fprintf(stderr, "Attempted read of null argument");
+  if (strlen(str) < 2){
+    fprintf(stderr, "Attempted read of invalid argument");
     return 0;
   }
 
   if (str[0] == 'r'){
+
     return charToInt(str[1]);
+
+    if (strlen(str) == 2) {
+      return charToInt(str[1]);
+    } else {
+      if (str[2] == ',') {
+        return charToInt(str[1]);
+      } else {
+        return ((charToInt(str[1]) * 10 ) + charToInt(str[2]));
+      }
+    }
+
   }
 
+  fprintf(stderr, "Attempted read of invalid argument");
   return 0;
 }
 
@@ -65,22 +79,47 @@ uint8_t charToInt(char c) {
   return i;
 }
 
-// Removes the leading and trailing whitespace in a string
-void trim(char *string) {
-	int start = 0;
-	int end = strlen(string) - 1;
 
-	while(isspace(string[start])) {
-		start++;
-	}
 
+<<<<<<< HEAD
 	while(isspace(string[end]) && start <= end) {
 		end--;
 	}
+=======
+>>>>>>> encodeDP
 
-	for(int i = start; i <= end; i++) {
-		string[i - start] = string[i];
-	}
 
-	string[end - start + 1] = '\0';
+// Moves a char ptr to the last character in the String
+// If already at null char, do nothing
+void movToLastChar(char *str) {
+  if (str == '\0') {
+    return;
+  }
+  while (str != '\0') {
+    str++;
+  }
+  str--;
 }
+<<<<<<< HEAD
+=======
+// Removes the leading and trailing whitespace in a string
+void trim(char *string) {
+  int start = 0;
+  int end = strlen(string) - 1;
+
+  while(isspace(string[start])) {
+    start++;
+  }
+
+  while(isspace(string[end]) && start >= end) {
+    end--;
+  }
+
+  for(int i = start; i <= end; i++) {
+    string[i - start] = string[i];
+  }
+
+  string[end - start + 1] = '\0';
+
+}
+>>>>>>> encodeDP
