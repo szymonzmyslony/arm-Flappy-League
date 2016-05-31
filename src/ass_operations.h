@@ -17,4 +17,6 @@ uint32_t encodeDPcmp(char **opFields);
 
 uint32_t encodeOperand2(char **opFields, uint8_t index);
 
+uint32_t encodeDPandeq(char **opFields);
+
 #endif
