@@ -182,7 +182,7 @@ uint32_t name(char **opFields){ 				   \
   uint32_t current =  getMemAddr(); \
   int opFieldsIndex = 0; \
   char *operand = opFields[opFieldsIndex]; \
-  uint32_t labelAdress = getValFromStruct(&symbolsTable, operand); 	 \
+  uint32_t labelAdress = getValFromStruct(getLabelTable(), operand); 	 \
   current=current+8;  \
   int offset = labelAdress-current;	  \
   offset=offset>>2;  \
