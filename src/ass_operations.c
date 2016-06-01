@@ -434,6 +434,9 @@ void removeLeadingSpace(char *str){
 // ptr is set to the end of the int
 long int expToL(char *expression, char *ptr) {
   int base = 10;
+  if(expression[0] == '#') {
+    expression++;
+  }
   if (strlen(expression) > 2) {
     if (expression[1] == 'x'){
       base = 16;
