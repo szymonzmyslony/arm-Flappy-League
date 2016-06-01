@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <inttypes.h>
 #include "ass_symbols.h"
 #define NDEBUG
 
@@ -117,7 +118,7 @@ void destroyList(list *l) {
 
 //Prints the key and value of given node curr
 void printData(node *curr) {
-  printf("Key: %s and Val: %d \n", curr->key, curr->val);
+  printf("Key: %s and Val: %" PRIu64 "\n", curr->key, curr->val);
 }
 
 //Iteratively prints data of all nodes in the list
