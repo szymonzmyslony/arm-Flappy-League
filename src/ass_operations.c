@@ -83,29 +83,32 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
     }
 
     bool bitFound = false;
-    bool firstBitOdd = false;
     int bitDistance = 0;
-    uint32_t imm;
-    uint32_t rotate;
+    uint32_t imm = 0;
+    uint32_t rotate = 0;
     // Loop through cycled bit representation of the expression
-    for(int i = (2 * 32 - 1); i >= 0; i--) {
+    for(int i = 0; i < (2 * 32); i++) {
       if(bitFound) {
         bitDistance++;
       }
+      
+      printf("%i | ", (expr & (1 << (i % 32))) != 0);
+      printf("i: %i\n", i);
 
-      if(getBit(expr, i % 32)) {
+      if((expr & (1 << (i % 32))) != 0) {
         if(!bitFound) {
-          rotate = 31 - (i % 32);
           bitFound = true;
-          firstBitOdd = i % 2 == 1;
+          rotate = ((32 - ((i - 1) % 32)) % 32)/2;
+          bitDistance = i % 2;
         }
 
-        if(bitDistance > 7 || (bitDistance > 6 && firstBitOdd)) {
-          rotate = 31 - (i % 32);
-          firstBitOdd = i % 2 == 1;
-          bitDistance = 0;
+        if(bitDistance > 7) {
+          imm = 0;
+          rotate = ((32 - ((i - 1) % 32)) % 32)/2;
+          bitDistance = i % 2;
         }
-        imm = 1 << (7 - firstBitOdd - bitDistance);
+        
+        imm |= 1 << bitDistance;
       }
 
       if(bitDistance >= 31) {
