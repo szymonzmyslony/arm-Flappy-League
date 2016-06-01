@@ -18,7 +18,7 @@ Header File for assemble
 #define NUMBER_OF_OPCODES    23
 
 uint32_t getMemAddr(void);
-uint32_t getFileName(void);
+char *getFileName(void);
 list *getLabelTable(void);
 
 #endif

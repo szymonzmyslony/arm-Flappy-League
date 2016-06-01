@@ -192,7 +192,7 @@ uint32_t getMemAddr(void) {
   return memAddr;
 }
 
-uint32_t getFileName(void) {
+char *getFileName(void) {
   return fileName;
 }
 
