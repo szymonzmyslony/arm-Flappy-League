@@ -107,6 +107,16 @@ void trim(char *string) {
 
 }
 
+//Helper function used for branching operations
+// Extends sign of 24 bit signed int
+uint32_t signEx24to32(uint32_t val24){
+  if (val24>>(numberofelements+1)){
+    return (0xfc000000 | val24);
+  } else {
+    return val24;
+  }
+}
+
 // ====================== Helper Functions which use structs===================
 
 // Set the Z, N flags for the Data Processing Instruction. The C flag is set in
