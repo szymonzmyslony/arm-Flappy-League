@@ -91,9 +91,6 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
         bitDistance++;
       }
       
-      printf("%i | ", (expr & (1 << (i % 32))) != 0);
-      printf("i: %i\n", i);
-
       if((expr & (1 << (i % 32))) != 0) {
         if(!bitFound) {
           bitFound = true;
