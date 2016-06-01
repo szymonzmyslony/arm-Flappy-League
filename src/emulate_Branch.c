@@ -14,7 +14,7 @@ void decodeBranching(int dInstruction, arguments *decodedArgs) {
 
 // Executes branching operation
 void execBranching(arguments *decodedArgs, processor *arm) {
-  bool negative = ((decodedArgs->offset)>>(numberofelements-1));
+  bool negative = ((decodedArgs->offset)>>(numberOfElements-1));
 
   uint32_t trueoffset;
   trueoffset = ((decodedArgs->offset)<<2);

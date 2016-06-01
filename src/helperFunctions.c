@@ -115,7 +115,7 @@ void trim(char *string) {
 //Helper function used for branching operations
 // Extends sign of 24 bit signed int
 uint32_t signEx24to32(uint32_t val24){
-  if (val24>>(numberofelements+1)){
+  if (val24>>(numberOfElements+1)){
     return (0xfc000000 | val24);
   } else {
     return val24;

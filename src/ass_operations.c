@@ -177,7 +177,7 @@ uint32_t encodeDPandeq(char **opFields) {
 
 #define ENC_BRANCHING(name, condition)             \
 uint32_t name(char **opFields){ 				   \
-  uint32_t binInstruction = 0xA000000;           \
+  uint32_t binInstruction = 0x0A000000;           \
   binInstruction |= condition << 28;             \
   uint32_t current =  getMemAddr(); \
   int opFieldsIndex = 0; \
@@ -254,7 +254,8 @@ uint32_t encodeMla (char **opfields) {
 
 }
 
-uint32_t encodeSDTldr (char **opfields, char *filename) {
+uint32_t encodeSDTldr (char **opfields) {
+  char *filename = getFileName();
   // initialise binInstruction and set cond to always (1110) and load bit set
   uint32_t binInstruction = 0xe4100000;
   int opFieldsIndex = 0;

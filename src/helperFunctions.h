@@ -27,7 +27,7 @@
 #define Cbit                  29
 #define Zbit                  30
 #define Nbit                  31
-#define numberofelements      24
+#define numberOfElements      24
 
 // masks
 #define MASK3_0               0x0000000F
