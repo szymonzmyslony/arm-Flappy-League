@@ -31,8 +31,8 @@ int main(int argc, char **argv) {
   initOperandTable(&operandTable);
 
   list labelTable;
-  initialiseList(labelTable);
-  labelTablePtr = *labelTable;
+  labelTablePtr = &labelTable;
+  initialiseList(&labelTable);
 
   // Add all the opcodes' associated functions
   insertFront(&operandTable, "add"  , (uint64_t) &encodeDPadd);
@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
   }
 
   FILE *outFile = fopen(argv[2], "w");
-  ftruncate(fileno(outFile), memAddress);
+  ftruncate(fileno(outFile), memAddr);
   fclose(outFile);
 
   // -- Second pass : Find instructions and encode them, writing them into
@@ -144,12 +144,12 @@ int main(int argc, char **argv) {
         tokenise (line, opCode, opFields);
 
         uint32_t (*functionPointer)(char **opFields);
-	// retrieve 64bit int from opTable and cast as function pointer
+	    // retrieve 64bit int from opTable and cast as function pointer
         functionPointer = (uint32_t (*)(char **))
                 getValFromStruct(operandTable, opCode);
         uint32_t instructionBE = functionPointer(opFields);
         uint32_t instructionLE = switchEndy32(instructionBE);
-        addBytesToFile(, memAddress, (char *) &instructionLE, 4);
+        addBytesToFile(fileName, memAddr, (char *) &instructionLE, 4);
 
         cIndex = 0;
         memAddr += 4;
@@ -181,8 +181,8 @@ int main(int argc, char **argv) {
     }
   }
 
-  destroyList(operandTable);
-  destroyList(symbolsTable);
+  destroyList(&operandTable);
+  destroyList(&labelTable);
   free(line);
 
   return EXIT_SUCCESS;
