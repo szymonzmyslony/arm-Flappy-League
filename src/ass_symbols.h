@@ -1,5 +1,5 @@
 /*
-Header File for LL_ADT
+Header File for linked list ADT
 */
 #ifndef ASS_SYMBOLS_H
 #define ASS_SYMBOLS_H

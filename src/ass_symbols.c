@@ -123,6 +123,7 @@ void printData(node *curr) {
 //Iteratively prints data of all nodes in the list
 void printAll(list *l) {
   node *curr = startList(l);
+  node *tail = endList(l);
   while (curr != tail) {
     printData(curr);
     curr = nextNode(curr);

@@ -1,6 +1,15 @@
-
+/*
+Header File for assemble operations
+*/
 #ifndef ASS_OPERATIONS_H
 #define ASS_OPERATIONS_H
+
+#include <stdio.h>
+#include <stdint.h>
+#include <assert.h>
+#include "helperFunctions.h"
+#include "ass_symbols.h"
+#include "assemble.h"
 
 // Data Processing
 uint32_t encodeDPmov(char **opFields);

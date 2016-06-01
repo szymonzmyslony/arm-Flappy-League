@@ -2,11 +2,11 @@
 
 // ====================== Branching Operation =================================
 
-// Decodes branching operation
+// Updates decodedArgs's offset and executePointer
 void decodeBranching(int dInstruction, arguments *decodedArgs) {
-  // - decode operation
+  // Decode operation
   decodedArgs->executePointer = &execBranching;
-  //decode offset (still unsgined)
+  // Decode offset (still unsigned)
   uint32_t mask = MASK0_23;
   decodedArgs->offset = (dInstruction & mask);
 }
@@ -27,6 +27,5 @@ void execBranching(arguments *decodedArgs, processor *arm) {
   } else{
     arm->registers[PC] = ((arm->registers[PC])+(trueoffset));
   }
-//
   arm->counter=0;
 }

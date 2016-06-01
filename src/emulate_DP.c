@@ -4,19 +4,19 @@
 
 // Updates decodedArgs's opCode, nRegIndex, dRegIndex and executePointer
 void decodeDP(int dInstruction, arguments *decodedArgs) {
-  // - decode operation
+  // Decode operation
   uint32_t mask = MASK24_21;
-  //Remove the trailing 0s from the extracted opcode.
+  // Remove the trailing 0s from the extracted opcode.
   uint8_t opCode = (dInstruction & mask) >> 21;
   decodedArgs->opCode = opCode;
 
-  // - load undecoded operand2 into arguments
+  // Load undecoded operand2 into arguments
   decodedArgs->operand2 = (dInstruction & MASK11_0);
 
-  // - decode Rn
+  // Decode Rn
   decodedArgs->nRegIndex = (dInstruction & MASK19_16) >> 16;
 
-  // - decode Rd
+  // Decode Rd
   decodedArgs->dRegIndex = (dInstruction & MASK15_12) >> 12;
 
   // Set next execute to Data Processing
@@ -87,12 +87,12 @@ void executeDP(arguments *decodedArgs, processor *arm) {
                                     setBit(arm->registers[CPSR], borrow, Cbit);
                                 }
                                 break;
-               //No such other opcode!
+               // No such other opcode!
                default: assert(false); break;
              }
   }
 
-  //Set Rd
+  // Set Rd
   arm->registers[decodedArgs->dRegIndex] = res;
   // In the CPSR register, sets the Z and N flags if S is set
   if(decodedArgs->sFlag) {

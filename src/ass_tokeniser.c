@@ -5,7 +5,7 @@
 void tokenise (char *line, char *opCode, char **opFields) {
   // Set the opCode
   strcpy(opCode, trim(strtok(NULL, " ")));
-  
+
   // Set the opFields
   char opField[MAX_OPFIELD_LENGTH];
   strcpy(opField, strtok(NULL, ","));
