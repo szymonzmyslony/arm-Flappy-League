@@ -49,17 +49,18 @@ DP_ENC_FLG(encodeDPteq, OPCODE_teq)
 DP_ENC_FLG(encodeDPcmp, OPCODE_cmp)
 
 uint32_t encodeDPmov(char **opFields) {
+
   uint32_t binInstruction = 0;
 
   binInstruction |= COND_al << 28;
 
   binInstruction |= OPCODE_mov << 21;
+  printf("just here\n");
 
   uint32_t dRegIndex = getRegIndex(opFields[0]);
   binInstruction |= dRegIndex << 12;
 
   binInstruction |= encodeOperand2(opFields, 1);
-
   return binInstruction;
 }
 
@@ -115,7 +116,7 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
       fprintf(stderr, "Cannot represent the Imm value at: %08x", getMemAddr());
       assert(false);
     }
-    
+
     // Immediate value is representable
     binInstruction |= imm;
     binInstruction |= rotate;
@@ -275,7 +276,7 @@ uint32_t encodeSDTldr (char **opFields) {
       binInstruction |= (num & MASK11_0);
       binInstruction = setBit(binInstruction, true, Pbit);
       binInstruction = setBit(binInstruction, true, Ubit);
-      
+
       uint32_t num32LE = switchEndy32(num32);
       uint32_t endOfFile = appendBytes(filename, (char *) &num32LE, 4);
 
@@ -348,7 +349,7 @@ uint32_t encodeSDTldr (char **opFields) {
       opFieldsIndex++;
       operand = opFields[opFieldsIndex];
       removeLeadingSpace(operand);
-      
+
       if (operand[0] == '+') {
         binInstruction = setBit(binInstruction, true, Ubit);
         operand++;
@@ -446,7 +447,7 @@ uint32_t encodeSDTstr(char **opfields) {
   binInstruction = setBit(binInstruction, false, Lbit);
   // check that instruction is not storing a numerical constant
   char *operand = opfields[1];
-  removeLeadingSpace(operand); 
+  removeLeadingSpace(operand);
   if (operand[0] == '='){
     fprintf(stderr, "Invalid Instruction: Cannot strore into a numerical \
             constant");

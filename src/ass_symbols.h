@@ -6,6 +6,7 @@ Header File for linked list ADT
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define VAL uint64_t
 #define KEY char*

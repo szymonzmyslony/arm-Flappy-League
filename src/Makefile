@@ -8,9 +8,9 @@ CFLAGS  = -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -std=c99 -Werror -pedantic
 all: assemble emulate
 
 assemble: assemble.o ass_operations.o ass_symbols.o ass_tokeniser.o\
-	 helperFunctions.o fileIO.o
+	 helperFunctions.o fileIO.o emulate_Error.o
 	 $(CC) $(CFLAGS) assemble.o ass_operations.o ass_symbols.o ass_tokeniser.o\
-	 	 helperFunctions.o fileIO.o -o assemble
+	 	 helperFunctions.o fileIO.o emulate_Error.o -o assemble
 
 assemble.o : assemble.c assemble.h
 	$(CC) $(CFLAGS) assemble.c -c -o assemble.o

@@ -58,25 +58,27 @@ node* nextNode(node *curr) {
 //Returns the vgalue of the curr node
 VAL getVal(node *curr) {
   assert (listIsInternal(curr));
-  NDEBUG
-  return curr->val;
+  // NDEBUG
+    return curr->val;
 }
 
 //Returns the value of the node corresponding to the key in the symbol table
 //assuming the key and the corresponding key is in the list
 VAL getValFromStruct(list *symbolsTable, KEY key){
 	node *curNode = startList(symbolsTable);
-	while (equals(getKey(curNode), key) != 1) {
+	while (strcmp(getKey(curNode), key) != 0) {
 		curNode = curNode->next;
+    // printData(curNode);
 	}
+  printData(curNode);
 	return getVal(curNode);
 }
 
 //Returns the key corresponding to the curr node
 KEY getKey(node *curr) {
   assert (listIsInternal(curr));
-  NDEBUG
-  return curr->key;
+  // NDEBUG
+    return curr->key;
 }
 
 //Checks whether or not the given node curr is in the list. Returns one if it is
@@ -108,7 +110,7 @@ uint8_t equals(KEY key1, KEY key2) {
 
 //Iteratively frees the memory spaces occupied by the nodes in the list
 void destroyList(list *l) {
-  node *curr = l->head;
+  node *curr = startList(l);
   while (curr != NULL){
     node *next = nextNode(curr);
     freeNode(next);
@@ -118,7 +120,7 @@ void destroyList(list *l) {
 
 //Prints the key and value of given node curr
 void printData(node *curr) {
-  printf("Key: %s and Val: %" PRIu64 "\n", curr->key, curr->val);
+  printf("Key: %s and Val: %" PRIu64 "\n", getKey(curr), getVal(curr));
 }
 
 //Iteratively prints data of all nodes in the list
