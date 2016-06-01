@@ -1,8 +1,6 @@
 #include "assemble.h"
 #define NUM_OF_FUNCTIONS   23
 
-// The byte address of the end of the binary file to be written
-static uint32_t endOfFileAddr = 0;
 // The byte address that the line being processed is associated with
 static uint32_t memAddr = 0;
 // Pointer to file name
@@ -28,8 +26,8 @@ int main(int argc, char **argv) {
   initialiseList(&operandTable);
 
   list labelTable;
-  initialiseList(&labelTable);
   labelTablePtr = &labelTable;
+  initialiseList(labelTablePtr);
 
   // Add all the opcodes' associated functions
   insertFront(&operandTable, "add"  , (uint64_t) &encodeDPadd);
@@ -78,6 +76,7 @@ int main(int argc, char **argv) {
           // Add mapping of (label, memAddr) to symbol table.
           trim(line);
           insertFront(&labelTable, line, memAddr);
+
 
           foundLabel = false;
         }
@@ -138,16 +137,26 @@ int main(int argc, char **argv) {
 
         // Parse the instruction
         char opCode[MAX_OPCODE_LENGTH];
-        char opFields[MAX_OPFIELD_SIZE][MAX_OPFIELD_LENGTH];
+        char **opFields;
+        opFields = calloc(MAX_OPFIELD_SIZE, sizeof(char*));
+        for(int i = 0; i < MAX_OPFIELD_SIZE; i++) {
+          opFields[i] = calloc(MAX_OPFIELD_LENGTH, sizeof(char));
+        }
+
         tokenise (line, opCode, opFields);
 
+        for(int i = 0; i < MAX_OPFIELD_SIZE; i++) {
+          free(opFields[i]);
+        }
+        free(opFields);
+
         uint32_t (*functionPointer)(char **opFields);
-	// retrieve 64bit int from opTable and cast as function pointer
+	    // retrieve 64bit int from opTable and cast as function pointer
         functionPointer = (uint32_t (*)(char **))
-                getValFromStruct(operandTable, opCode);
+                getValFromStruct(&operandTable, opCode);
         uint32_t instructionBE = functionPointer(opFields);
         uint32_t instructionLE = switchEndy32(instructionBE);
-        addBytesToFile(, memAddress, (char *) &instructionLE, 4);
+        addBytesToFile(fileName, memAddr, (char *) &instructionLE, 4);
 
         cIndex = 0;
         memAddr += 4;
@@ -179,8 +188,8 @@ int main(int argc, char **argv) {
     }
   }
 
-  destroyList(operandTable);
-  destroyList(symbolsTable);
+  destroyList(&operandTable);
+  destroyList(&labelTable);
   free(line);
 
   return EXIT_SUCCESS;
