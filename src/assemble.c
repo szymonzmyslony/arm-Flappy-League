@@ -160,8 +160,8 @@ int main(int argc, char **argv) {
         functionPointer = (uint32_t (*)(char **))
                 getValFromStruct(&operandTable, opCode);
         uint32_t instructionBE = functionPointer(opFields);
-        uint32_t instructionLE = switchEndy32(instructionBE);
-        addBytesToFile(argv[2], memAddr, (char *) &instructionLE, 4);
+        // uint32_t instructionLE = switchEndy32(instructionBE);
+        addBytesToFile(argv[2], memAddr, (char *) &instructionBE, 4);
 
         for(int i = 0; i < MAX_OPFIELD_SIZE; i++) {
           free(opFields[i]);

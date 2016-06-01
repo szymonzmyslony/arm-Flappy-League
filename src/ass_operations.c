@@ -123,6 +123,7 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
     binInstruction |= imm;
     binInstruction |= (rotate << 8);
 
+    binInstruction |= setBit(binInstruction, true, Ibit);
 
   // Case Rm{, <shift>}
   } else {
