@@ -4,12 +4,14 @@ Header File for assemble
 #ifndef ASSEMBLE_H
 #define ASSEMBLE_H
 #include <stdlib.h>
+#include <unistd.h>
 #include <ctype.h>
 #include "helperFunctions.h"
 #include "ass_operations.h"
 #include "ass_symbols.h"
 #include "ass_tokeniser.h"
 #include "fileIO.h"
+#include "emulate_Error.h"
 
 #define MAX_LINE_LENGTH     511
 //andeq is largest opcode

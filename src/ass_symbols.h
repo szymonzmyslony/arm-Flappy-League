@@ -35,7 +35,7 @@ void insertNode(list *l, node *iter, KEY key, VAL val);
 node* nextNode(node *iter);
 KEY getKey(node *curr);
 VAL getVal(node *curr);
-VAL getValFromStruct(struct list *symbolsTable, KEY key);
+VAL getValFromStruct(list *symbolsTable, KEY key);
 uint8_t listIsInternal(node *curr);
 void insertFront(list *l, KEY key, VAL val);
 void insertBack(list *l, KEY key, VAL val);

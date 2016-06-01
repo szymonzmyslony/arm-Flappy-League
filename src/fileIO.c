@@ -22,13 +22,13 @@ char *readFile(char *filename) {
   if (num != sizeInBytes) {
     fprintf(stderr, "Error: File only partially read");
   }
-  return content;
   fclose(file);
+  return content;
 }
 
 // adds bytes to the file at the given byte index
 // numBytes should be less than or equal to the length of the array bytes
-void addBytesToFile(char *filename, long int byteIndex, char *bytes, 
+void addBytesToFile(char *filename, long int byteIndex, char *bytes,
         int numBytes){
   FILE *file = fopen(filename, "rb+");
   if (file == NULL) {

@@ -14,25 +14,22 @@ int main(int argc, char **argv) {
 
   fileName = argv[1];
 
-  char *file; //TODO free this
-  file = readfile(fileName); //TODO Define this. Should return a string.
-
-
+  char *file;
+  file = readFile(fileName);
 
   // The current line being processed. It is null-terminated when the line has
   // been processed.
   // We may assume that no line is longer than 511 characters
   // TODO check if it's ok for this to be on the stack
   char *line = calloc(MAX_LINE_LENGTH + 1, sizeof(char));
-  checkAllocError(line, (MAX_LINE_LENGTH + 1) * sizeof(char));
+  checkAllocError((void*)line, (MAX_LINE_LENGTH + 1) * sizeof(char));
 
   list operandTable;
   initialiseList(&operandTable);
-  initOperandTable(&operandTable);
 
   list labelTable;
-  initialiseList(labelTable);
-  labelTablePtr = *labelTable;
+  initialiseList(&labelTable);
+  labelTablePtr = &labelTable;
 
   // Add all the opcodes' associated functions
   insertFront(&operandTable, "add"  , (uint64_t) &encodeDPadd);
@@ -79,7 +76,8 @@ int main(int argc, char **argv) {
         // Block had a label, process it
         if(foundLabel) {
           // Add mapping of (label, memAddr) to symbol table.
-          insertFront(labelTable, trim(line), memAddr);
+          trim(line);
+          insertFront(&labelTable, line, memAddr);
 
           foundLabel = false;
         }
@@ -98,7 +96,7 @@ int main(int argc, char **argv) {
       // The text in the scanned block so far was not an instruction
       foundInstruction = false;
       // Line is now the label name, with leading/trailing whitespace
-      line[cIndex] = "\0";
+      line[cIndex] = '\0';
 
     } else {
       // Write the label to line
@@ -120,7 +118,7 @@ int main(int argc, char **argv) {
   }
 
   FILE *outFile = fopen(argv[2], "w");
-  ftruncate(fileno(outFile), memAddress);
+  ftruncate(fileno(outFile), memAddr);
   fclose(outFile);
 
   // -- Second pass : Find instructions and encode them, writing them into
@@ -136,7 +134,7 @@ int main(int argc, char **argv) {
       // Block found, process it
       if(foundInstruction) {
         // Line is the instruction, with leading & trailing whitespace
-        line[cIndex] = "\0";
+        line[cIndex] = '\0';
 
         // Parse the instruction
         char opCode[MAX_OPCODE_LENGTH];
