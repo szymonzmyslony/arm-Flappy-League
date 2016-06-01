@@ -11,6 +11,9 @@ bigLoop:
 cmp r6, r7
 bge endBigLoop
 
+mov r10, 0
+insideLoop:
+
 
 ;turn pin 16 on
 mov r0, #0x00010000; ;put the instruction to clear pin 16
@@ -26,26 +29,21 @@ mov r5, #0 ;let counter be equal to 0
 mov r6, #1000 ;repeat it 1000 times
 loop:
 cmp r5, r6
-jg endloop
-str r5, r1 ;put all zeros instruction in clearing memory location
+bg endloop
+str r5, [r1] ;put all zeros instruction in clearing memory location
 add r5, #1 ;increment the counter
+bal loop
 endloop:
+add r10, #1
 
 ;turn pin 16 off
 mov r1, #0x20200028 ;store the memory adress for clearing
 str r0, [r1] ;clear the pin 16
 
-
-;begin loop to hold for a long time
-mov r5, #0 ;let counter be equal to 0
-mov r6, #1000 ;repeat it 1000 times
-loop:
-cmp r5, r6
-jg endloop
-str r5, r1 ;put all zeros instruction in clearing memory location
-add r5, #1 ;increment the counter
-endloop:
+cmp r10, #1
+beq insideLoop
 
 
-
+bal bigLoop
 endBigLoop:
+mov r0, #0
