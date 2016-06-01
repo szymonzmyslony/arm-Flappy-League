@@ -173,8 +173,6 @@ uint32_t encodeDPandeq(char **opFields) {
 }
 
 
-
-
 #define ENC_BRANCHING(name, condition)             \
 uint32_t name(char **opFields){ 				   \
   uint32_t binInstruction = 0x0A000000;           \
