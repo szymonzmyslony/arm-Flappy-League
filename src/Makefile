@@ -25,4 +25,3 @@ clean:
 	rm -f $(wildcard *.o)
 	rm -f assemble
 	rm -f emulate
-	rm -f helperFunctions
