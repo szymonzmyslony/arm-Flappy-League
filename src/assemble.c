@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
       }
       // No block, continue
 
-    } else if(file[i] == ";") {
+    } else if(file[i] == ';') {
     	foundComment = true;
 
     } else if(!foundComment) {
@@ -149,21 +149,24 @@ int main(int argc, char **argv) {
         for(int i = 0; i < MAX_OPFIELD_SIZE; i++) {
           opFields[i] = calloc(MAX_OPFIELD_LENGTH, sizeof(char));
         }
+        // TODO printf("line 2 b tokenised %s\n", line);
 
         tokenise (line, opCode, opFields);
+
+        // TODO printf("opcode %s, opfields 0 and 1 %s %s\n", opCode, opFields[0], opFields[1]);
+
+        uint32_t (*functionPointer)(char **opFields);
+	// retrieve 64bit int from opTable and cast as function pointer
+        functionPointer = (uint32_t (*)(char **))
+                getValFromStruct(&operandTable, opCode);
+        uint32_t instructionBE = functionPointer(opFields);
+        uint32_t instructionLE = switchEndy32(instructionBE);
+        addBytesToFile(argv[2], memAddr, (char *) &instructionLE, 4);
 
         for(int i = 0; i < MAX_OPFIELD_SIZE; i++) {
           free(opFields[i]);
         }
         free(opFields);
-
-        uint32_t (*functionPointer)(char **opFields);
-	    // retrieve 64bit int from opTable and cast as function pointer
-        functionPointer = (uint32_t (*)(char **))
-                getValFromStruct(&operandTable, opCode);
-        uint32_t instructionBE = functionPointer(opFields);
-        uint32_t instructionLE = switchEndy32(instructionBE);
-        addBytesToFile(fileName, memAddr, (char *) &instructionLE, 4);
 
         cIndex = 0;
         memAddr += 4;
@@ -172,7 +175,7 @@ int main(int argc, char **argv) {
       }
       // No block, continue
 
-    } else if(file[i] == ";") {
+    } else if(file[i] == ';') {
       foundComment = true;
 
     } else if(!foundComment) {

@@ -55,7 +55,6 @@ uint32_t encodeDPmov(char **opFields) {
   binInstruction |= COND_al << 28;
 
   binInstruction |= OPCODE_mov << 21;
-  printf("just here\n");
 
   uint32_t dRegIndex = getRegIndex(opFields[0]);
   binInstruction |= dRegIndex << 12;
@@ -78,7 +77,7 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
 
     //Check if the expression can be in the form of [Rotate|Imm]
     if((expr > (INT32_MAX)) || (expr < 0)) {
-      fprintf(stderr, "Immediate value is too large at: %08x", getMemAddr());
+      fprintf(stderr, "Immediate value is too large at: %08x\n", getMemAddr());
       assert(false);
     }
 
@@ -115,14 +114,14 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
         break;
       }
     }
-    if(bitDistance < 31) {
-      fprintf(stderr, "Cannot represent the Imm value at: %08x", getMemAddr());
+    if(bitDistance < 31 && bitDistance != 0) {
+      fprintf(stderr,"Cannot represent the Imm value at: %08x\n", getMemAddr());
       assert(false);
     }
 
     // Immediate value is representable
     binInstruction |= imm;
-    binInstruction |= rotate;
+    binInstruction |= (rotate << 8);
 
 
   // Case Rm{, <shift>}

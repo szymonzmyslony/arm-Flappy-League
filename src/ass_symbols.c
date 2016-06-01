@@ -65,20 +65,18 @@ VAL getVal(node *curr) {
 //Returns the value of the node corresponding to the key in the symbol table
 //assuming the key and the corresponding key is in the list
 VAL getValFromStruct(list *symbolsTable, KEY key){
-	node *curNode = startList(symbolsTable);
-	while (strcmp(getKey(curNode), key) != 0) {
-		curNode = curNode->next;
-    // printData(curNode);
-	}
-  printData(curNode);
-	return getVal(curNode);
+  node *curNode = startList(symbolsTable);
+  while (strcmp(getKey(curNode), key) != 0) {
+    curNode = curNode->next;
+  }
+  return getVal(curNode);
 }
 
 //Returns the key corresponding to the curr node
 KEY getKey(node *curr) {
   assert (listIsInternal(curr));
   // NDEBUG
-    return curr->key;
+  return curr->key;
 }
 
 //Checks whether or not the given node curr is in the list. Returns one if it is
