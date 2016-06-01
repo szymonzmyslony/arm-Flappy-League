@@ -66,6 +66,7 @@ int main(int argc, char **argv) {
   // a label and if we have found an instruction.
   bool foundLabel = false;
   bool foundInstruction = false;
+  bool foundComment = false;
 
   for (int i = 0; ; i++) {
     if(file[i] == '\n' || !file[i]) {
@@ -85,29 +86,35 @@ int main(int argc, char **argv) {
         cIndex = 0;
         memAddr += 4;
         foundInstruction = false;
+        foundComment = false;
       }
       // No block, continue
 
-      // Found a label, assume it is the first label in this block
-    } else if(file[i] == ':') {
-      assert(!foundLabel);
-      foundLabel = true;
-      // The text in the scanned block so far was not an instruction
-      foundInstruction = false;
-      // Line is now the label name, with leading/trailing whitespace
-      line[cIndex] = '\0';
+    } else if(file[i] == ";") {
+    	foundComment = true;
 
-    } else {
-      // Write the label to line
-      if (!foundLabel) {
-        line[cIndex] = file[i];
-        cIndex++;
-      }
+    } else if(!foundComment) {
+        // Found a label, assume it is the first label in this block
+      if(file[i] == ':') {
+        assert(!foundLabel);
+        foundLabel = true;
+        // The text in the scanned block so far was not an instruction
+        foundInstruction = false;
+        // Line is now the label name, with leading/trailing whitespace
+        line[cIndex] = '\0';
 
-      // A non-whitespace is either a label or an instruction.
-      // If it is a label, we'll set it to false again once we find a colon
-      if (!isspace(file[i])) {
-        foundInstruction = true;
+      } else {
+        // Write the label to line
+        if (!foundLabel) {
+          line[cIndex] = file[i];
+          cIndex++;
+        }
+
+        // A non-whitespace is either a label or an instruction.
+        // If it is a label, we'll set it to false again once we find a colon
+        if (!isspace(file[i])) {
+          foundInstruction = true;
+        }
       }
     }
 
@@ -161,25 +168,31 @@ int main(int argc, char **argv) {
         cIndex = 0;
         memAddr += 4;
         foundInstruction = false;
+        foundComment = false;
       }
       // No block, continue
 
+    } else if(file[i] == ";") {
+      foundComment = true;
+
+    } else if(!foundComment) {
       // Found a label, assume it is the first label in this block
-    } else if(file[i] == ':') {
-      // The text in the scanned block so far was not an instruction
-      foundInstruction = false;
-      cIndex = 0;
+      if(file[i] == ':') {
+        // The text in the scanned block so far was not an instruction
+        foundInstruction = false;
+        cIndex = 0;
 
-    } else {
-      // As above, a non-whitespace is either a label or an instruction.
-      // If it is a label, it will be set to false once we find a colon
-      if (!isspace(file[i])) {
-        foundInstruction = true;
-      }
+      } else {
+        // As above, a non-whitespace is either a label or an instruction.
+        // If it is a label, it will be set to false once we find a colon
+        if (!isspace(file[i])) {
+          foundInstruction = true;
+        }
 
-      if(foundInstruction) {
-        line[cIndex] = file[i];
-        cIndex++;
+        if(foundInstruction) {
+          line[cIndex] = file[i];
+          cIndex++;
+        }
       }
     }
 
