@@ -55,7 +55,6 @@ uint32_t encodeDPmov(char **opFields) {
   binInstruction |= COND_al << 28;
 
   binInstruction |= OPCODE_mov << 21;
-  printf("just here\n");
 
   uint32_t dRegIndex = getRegIndex(opFields[0]);
   binInstruction |= dRegIndex << 12;
@@ -78,15 +77,15 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
 
     //Check if the expression can be in the form of [Rotate|Imm]
     if((expr > (INT32_MAX)) || (expr < 0)) {
-      fprintf(stderr, "Immediate value is too large at: %08x", getMemAddr());
+      fprintf(stderr, "Immediate value is too large at: %08x\n", getMemAddr());
       assert(false);
     }
 
     bool bitFound = false;
     bool firstBitOdd = false;
     int bitDistance = 0;
-    uint32_t imm;
-    uint32_t rotate;
+    uint32_t imm = 0;
+    uint32_t rotate = 0;
     // Loop through cycled bit representation of the expression
     for(int i = (2 * 32 - 1); i >= 0; i--) {
       if(bitFound) {
@@ -94,32 +93,35 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
       }
 
       if(getBit(expr, i % 32)) {
+        rotate = ((32 - (i % 32)) % 32) / 2;
         if(!bitFound) {
-          rotate = 31 - (i % 32);
           bitFound = true;
-          firstBitOdd = i % 2 == 1;
+          firstBitOdd = ((i % 2) == 1);
         }
 
         if(bitDistance > 7 || (bitDistance > 6 && firstBitOdd)) {
-          rotate = 31 - (i % 32);
-          firstBitOdd = i % 2 == 1;
-          bitDistance = 0;
+          firstBitOdd = ((i % 2) == 1);
+          if (firstBitOdd) {
+            bitDistance = 1;
+          } else {
+            bitDistance = 0;
+          }
         }
-        imm = 1 << (7 - firstBitOdd - bitDistance);
+        imm |= 1 << bitDistance;
       }
 
       if(bitDistance >= 31) {
         break;
       }
     }
-    if(bitDistance < 31) {
-      fprintf(stderr, "Cannot represent the Imm value at: %08x", getMemAddr());
+    if(bitDistance < 31 && bitDistance != 0) {
+      fprintf(stderr,"Cannot represent the Imm value at: %08x\n", getMemAddr());
       assert(false);
     }
 
     // Immediate value is representable
     binInstruction |= imm;
-    binInstruction |= rotate;
+    binInstruction |= (rotate << 8);
 
 
   // Case Rm{, <shift>}
