@@ -1,8 +1,6 @@
 #include "assemble.h"
 #define NUM_OF_FUNCTIONS   23
 
-// The byte address of the end of the binary file to be written
-static uint32_t endOfFileAddr = 0;
 // The byte address that the line being processed is associated with
 static uint32_t memAddr = 0;
 // Pointer to file name
@@ -79,7 +77,8 @@ int main(int argc, char **argv) {
         // Block had a label, process it
         if(foundLabel) {
           // Add mapping of (label, memAddr) to symbol table.
-          insertFront(labelTable, trim(line), memAddr);
+          trim(line);
+          insertFront(labelTable, line, memAddr);
 
           foundLabel = false;
         }
@@ -98,7 +97,7 @@ int main(int argc, char **argv) {
       // The text in the scanned block so far was not an instruction
       foundInstruction = false;
       // Line is now the label name, with leading/trailing whitespace
-      line[cIndex] = "\0";
+      line[cIndex] = '\0';
 
     } else {
       // Write the label to line
@@ -136,17 +135,27 @@ int main(int argc, char **argv) {
       // Block found, process it
       if(foundInstruction) {
         // Line is the instruction, with leading & trailing whitespace
-        line[cIndex] = "\0";
+        line[cIndex] = '\0';
 
         // Parse the instruction
         char opCode[MAX_OPCODE_LENGTH];
-        char opFields[MAX_OPFIELD_SIZE][MAX_OPFIELD_LENGTH];
+        char **opFields;
+        opFields = calloc(MAX_OPFIELD_SIZE, sizeof(char*));
+        for(int i = 0; i < MAX_OPFIELD_SIZE; i++) {
+          opFields[i] = calloc(MAX_OPFIELD_LENGTH, sizeof(char));
+        }
+
         tokenise (line, opCode, opFields);
+
+        for(int i = 0; i < MAX_OPFIELD_SIZE; i++) {
+          free(opFields[i]);
+        }
+        free(opFields);
 
         uint32_t (*functionPointer)(char **opFields);
 	    // retrieve 64bit int from opTable and cast as function pointer
         functionPointer = (uint32_t (*)(char **))
-                getValFromStruct(operandTable, opCode);
+                getValFromStruct(&operandTable, opCode);
         uint32_t instructionBE = functionPointer(opFields);
         uint32_t instructionLE = switchEndy32(instructionBE);
         addBytesToFile(fileName, memAddr, (char *) &instructionLE, 4);

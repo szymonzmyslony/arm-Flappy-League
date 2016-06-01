@@ -4,6 +4,7 @@ Header File for assemble
 #ifndef ASSEMBLE_H
 #define ASSEMBLE_H
 #include <stdlib.h>
+#include <stdio.h>
 #include <ctype.h>
 #include "helperFunctions.h"
 #include "ass_operations.h"
