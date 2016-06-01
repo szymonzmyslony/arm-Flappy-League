@@ -1,5 +1,5 @@
 #include "assemble.h"
-#define NUM_OF_FUNCTIONS   23 
+#define NUM_OF_FUNCTIONS   23
 
 // The byte address of the end of the binary file to be written
 static uint32_t endOfFileAddr = 0;
@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   char *file; //TODO free this
   file = readfile(fileName); //TODO Define this. Should return a string.
 
-  
+
 
   // The current line being processed. It is null-terminated when the line has
   // been processed.
@@ -33,31 +33,31 @@ int main(int argc, char **argv) {
   list labelTable;
   initialiseList(labelTable);
   labelTablePtr = *labelTable;
-  
+
   // Add all the opcodes' associated functions
-  insertFront(operandTable, "add"  , (uint64_t) &encodeDPadd);
-  insertFront(operandTable, "sub"  , (uint64_t) &encodeDPsub);
-  insertFront(operandTable, "rsb"  , (uint64_t) &encodeDPrsb);
-  insertFront(operandTable, "and"  , (uint64_t) &encodeDPand);
-  insertFront(operandTable, "eor"  , (uint64_t) &encodeDPeor);
-  insertFront(operandTable, "orr"  , (uint64_t) &encodeDPorr);
-  insertFront(operandTable, "mov"  , (uint64_t) &encodeDPmov);
-  insertFront(operandTable, "tst"  , (uint64_t) &encodeDPtst);
-  insertFront(operandTable, "teq"  , (uint64_t) &encodeDPteq);
-  insertFront(operandTable, "cmp"  , (uint64_t) &encodeDPcmp);
-  insertFront(operandTable, "mul"  , (uint64_t) &encodeMul);
-  insertFront(operandTable, "mla"  , (uint64_t) &encodeMla);
-  insertFront(operandTable, "ldr"  , (uint64_t) &encodeSDTldr);
-  insertFront(operandTable, "str"  , (uint64_t) &encodeSDTstr);
-  insertFront(operandTable, "beq"  , (uint64_t) &encodeBeq);
-  insertFront(operandTable, "bne"  , (uint64_t) &encodeBne);
-  insertFront(operandTable, "bge"  , (uint64_t) &encodeBge);
-  insertFront(operandTable, "blt"  , (uint64_t) &encodeBlt);
-  insertFront(operandTable, "bgt"  , (uint64_t) &encodeBgt);
-  insertFront(operandTable, "ble"  , (uint64_t) &encodeBle);
-  insertFront(operandTable, "b"    , (uint64_t) &encodeBal);
-  insertFront(operandTable, "lsl"  , (uint64_t) &encodelsl);
-  insertFront(operandTable, "andeq", (uint64_t) &encodeDPandeq);
+  insertFront(&operandTable, "add"  , (uint64_t) &encodeDPadd);
+  insertFront(&operandTable, "sub"  , (uint64_t) &encodeDPsub);
+  insertFront(&operandTable, "rsb"  , (uint64_t) &encodeDPrsb);
+  insertFront(&operandTable, "and"  , (uint64_t) &encodeDPand);
+  insertFront(&operandTable, "eor"  , (uint64_t) &encodeDPeor);
+  insertFront(&operandTable, "orr"  , (uint64_t) &encodeDPorr);
+  insertFront(&operandTable, "mov"  , (uint64_t) &encodeDPmov);
+  insertFront(&operandTable, "tst"  , (uint64_t) &encodeDPtst);
+  insertFront(&operandTable, "teq"  , (uint64_t) &encodeDPteq);
+  insertFront(&operandTable, "cmp"  , (uint64_t) &encodeDPcmp);
+  insertFront(&operandTable, "mul"  , (uint64_t) &encodeMul);
+  insertFront(&operandTable, "mla"  , (uint64_t) &encodeMla);
+  insertFront(&operandTable, "ldr"  , (uint64_t) &encodeSDTldr);
+  insertFront(&operandTable, "str"  , (uint64_t) &encodeSDTstr);
+  insertFront(&operandTable, "beq"  , (uint64_t) &encodeBeq);
+  insertFront(&operandTable, "bne"  , (uint64_t) &encodeBne);
+  insertFront(&operandTable, "bge"  , (uint64_t) &encodeBge);
+  insertFront(&operandTable, "blt"  , (uint64_t) &encodeBlt);
+  insertFront(&operandTable, "bgt"  , (uint64_t) &encodeBgt);
+  insertFront(&operandTable, "ble"  , (uint64_t) &encodeBle);
+  insertFront(&operandTable, "b"    , (uint64_t) &encodeBal);
+  insertFront(&operandTable, "lsl"  , (uint64_t) &encodelsl);
+  insertFront(&operandTable, "andeq", (uint64_t) &encodeDPandeq);
 
   // -- First pass : Find labels and associate them with a memory address
   // Let one instruction and its preceding label (if it exists) be a block
@@ -145,7 +145,7 @@ int main(int argc, char **argv) {
 
         uint32_t (*functionPointer)(char **opFields);
 	// retrieve 64bit int from opTable and cast as function pointer
-        functionPointer = (uint32_t (*)(char **)) 
+        functionPointer = (uint32_t (*)(char **))
                 getValFromStruct(operandTable, opCode);
         uint32_t instructionBE = functionPointer(opFields);
         uint32_t instructionLE = switchEndy32(instructionBE);
