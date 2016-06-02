@@ -77,6 +77,7 @@ void movToLastChar(char *str);
 uint8_t charToInt(char c);
 void trim(char *string);
 uint32_t signEx24to32(uint32_t val24);
+bool checkGPIO(uint32_t memAddress, bool pinOn);
 
 // Helper functions which use structs
 void setZNFlags(uint32_t value, processor *arm);

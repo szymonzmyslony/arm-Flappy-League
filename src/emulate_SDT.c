@@ -42,12 +42,18 @@ void ldrSDTpre(arguments *decodedArgs, processor *arm) {
     memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
   }
 
-  if(outOfBounds(memAddress)) {
-    printOOBError(memAddress);
-    return;
-  }
+  uint32_t littleEndVal;
 
-  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
+  if (checkGPIO(memAddress, false)) {
+    littleEndVal = switchEndy32(memAddress); 
+  } else {
+    if(outOfBounds(memAddress)) {
+      printOOBError(memAddress);
+      return;
+    }
+
+    littleEndVal = getLittleFromMem32(memAddress, arm);
+  }
   arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
 }
 
@@ -61,13 +67,18 @@ void ldrSDTpost(arguments *decodedArgs, processor *arm) {
             %08x", memAddress);
     return;
   }
+  
+  uint32_t littleEndVal;
 
-  if(outOfBounds(memAddress)) {
-    printOOBError(memAddress);
-    return;
+  if (checkGPIO(memAddress, false)){
+    littleEndVal = switchEndy32(memAddress); 
+  } else {
+    if(outOfBounds(memAddress)) {
+      printOOBError(memAddress);
+      return;
+    }
+    littleEndVal = getLittleFromMem32(memAddress, arm);
   }
-
-  uint32_t littleEndVal = getLittleFromMem32(memAddress, arm);
   arm->registers[decodedArgs->dRegIndex] = switchEndy32(littleEndVal);
   if (decodedArgs->uFlag) {
     arm->registers[decodedArgs->nRegIndex] += decodedArgs->offset;
@@ -84,14 +95,17 @@ void strSDTpre(arguments *decodedArgs, processor *arm) {
   } else {
     memAddress = arm->registers[decodedArgs->nRegIndex] - decodedArgs->offset;
   }
+  
+  uint32_t storeVal = (arm->registers[decodedArgs->dRegIndex]);
 
-  if(outOfBounds(memAddress)) {
-    printOOBError(memAddress);
-    return;
+  if (!checkGPIO(memAddress, storeVal)) {
+    if(outOfBounds(memAddress)) {
+      printOOBError(memAddress);
+      return;
+    }
+
+    storeBigEndy32(storeVal, memAddress, arm);
   }
-
-  storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
-          memAddress, arm);
 }
 
 // For executing SDT store intruction, post-increment
@@ -105,13 +119,16 @@ void strSDTpost(arguments *decodedArgs, processor *arm) {
     return;
   }
 
-  if(outOfBounds(memAddress)) {
-    printOOBError(memAddress);
-    return;
+  uint32_t storeVal = (arm->registers[decodedArgs->dRegIndex]);
+
+  if(!checkGPIO(memAddress, storeVal)){
+    if(outOfBounds(memAddress)) {
+      printOOBError(memAddress);
+      return;
+    }
+    storeBigEndy32(storeVal, memAddress, arm);
   }
 
-  storeBigEndy32((arm->registers[decodedArgs->dRegIndex]),
-          memAddress, arm);
   if (decodedArgs->uFlag) {
     arm->registers[decodedArgs->nRegIndex] += decodedArgs->offset;
   } else {

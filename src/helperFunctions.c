@@ -122,6 +122,30 @@ uint32_t signEx24to32(uint32_t val24){
   }
 }
 
+bool checkGPIO(uint32_t memAddress, bool pinOn) {
+  if (memAddress == 0x20200008) {
+    printf("One GPIO pin from 20 to 29 has been accessed\n");
+    return true;
+  }
+  if (memAddress == 0x20200004) {
+    printf("One GPIO pin from 10 to 19 has been accessed\n");
+    return true;
+  }
+  if (memAddress == 0x20200000) {
+    printf("One GPIO pin from 0 to 9 has been accessed\n");
+    return true;
+  }
+  if ((memAddress == 0x2020001C) && pinOn) {
+    printf("PIN ON\n");
+    return true;
+  }
+  if ((memAddress == 0x20200028) && pinOn) {
+    printf("PIN OFF\n");
+    return true;
+  }
+  return false;
+}
+
 // ====================== Helper Functions which use structs===================
 
 // Set the Z, N flags for the Data Processing Instruction. The C flag is set in
