@@ -21,6 +21,7 @@ Header File for assemble
 
 uint32_t getMemAddr(void);
 char *getFileName(void);
+char *getOutFileName(void);
 list *getLabelTable(void);
 
 #endif

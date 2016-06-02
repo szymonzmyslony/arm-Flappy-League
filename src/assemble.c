@@ -6,12 +6,15 @@
 static uint32_t memAddr = 0;
 // Pointer to file name
 static char *fileName;
+// Pointer to outFile
+static char *outFileName;
 // Pointer to a list - labelTable, the table of labels
 static list *labelTablePtr;
 
 int main(int argc, char **argv) {
 
   fileName = argv[1];
+  outFileName = argv[2];
 
   char *file;
   file = readFile(fileName);
@@ -168,7 +171,7 @@ int main(int argc, char **argv) {
                 getValFromStruct(&operandTable, opCode);
         uint32_t instructionBE = functionPointer(opFields);
         // uint32_t instructionLE = switchEndy32(instructionBE);
-        addBytesToFile(argv[2], memAddr, (char *) &instructionBE, 4);
+        addBytesToFile(outFileName, memAddr, (char *) &instructionBE, 4);
 
         for(int i = 0; i < MAX_OPFIELD_SIZE; i++) {
           free(opFields[i]);
@@ -224,6 +227,10 @@ uint32_t getMemAddr(void) {
 
 char *getFileName(void) {
   return fileName;
+}
+
+char *getOutFileName(void) {
+  return outFileName;
 }
 
 list *getLabelTable(void) {

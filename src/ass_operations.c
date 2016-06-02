@@ -86,34 +86,39 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
     uint32_t imm = 0;
     uint32_t rotate = 0;
     // Loop through cycled bit representation of the expression
-    for(int i = 0; i < (2 * 32); i++) {
-      if(bitFound) {
-        bitDistance++;
-      }
-      
-      if((expr & (1 << (i % 32))) != 0) {
-        if(!bitFound) {
-          bitFound = true;
-          rotate = ((32 - ((i - 1) % 32)) % 32)/2;
-          bitDistance = i % 2;
-        }
-
-        if(bitDistance > 7) {
-          imm = 0;
-          rotate = ((32 - ((i - 1) % 32)) % 32)/2;
-          bitDistance = i % 2;
+    if ((uint32_t) expr <= 0xFF) {
+      imm = expr;
+    } else {
+      for(int i = 0; i < (2 * 32); i++) {
+        if(bitFound) {
+          bitDistance++;
         }
         
-        imm |= 1 << bitDistance;
-      }
+        if((expr & (1 << (i % 32))) != 0) {
+          if(!bitFound) {
+            bitFound = true;
+            rotate = ((32 - ((i - 1) % 32)) % 32)/2;
+            bitDistance = i % 2;
+          }
 
-      if(bitDistance >= 31) {
-        break;
+          if(bitDistance > 7) {
+            imm = 0;
+            rotate = ((32 - ((i - 1) % 32)) % 32)/2;
+            bitDistance = i % 2;
+          }
+          
+          imm |= 1 << bitDistance;
+        }
+
+        if(bitDistance >= 31) {
+          break;
+        }
       }
-    }
-    if(bitDistance < 31 && bitDistance != 0) {
-      fprintf(stderr,"Cannot represent the Imm value at: %08x\n", getMemAddr());
-      assert(false);
+      if(bitDistance < 31 && bitDistance != 0) {
+        fprintf(stderr,"Cannot represent the Imm value at: %08x\n", 
+                getMemAddr());
+        assert(false);
+      }
     }
 
     // Immediate value is representable
@@ -166,7 +171,7 @@ uint32_t encodeDPandeq(char **opFields) {
 
 
 #define ENC_BRANCHING(name, condition)             \
-uint32_t name(char **opFields){            \
+  uint32_t name(char **opFields){            \
   uint32_t binInstruction = 0x0A000000;           \
   binInstruction |= condition << 28;             \
   uint32_t current =  getMemAddr(); \
@@ -176,13 +181,14 @@ uint32_t name(char **opFields){            \
   current=current+8;  \
   int offset = labelAdress-current;   \
   offset=offset>>2;  \
+  offset = offset & MASK0_23;  \
   binInstruction |= offset;\
   return binInstruction;                         \
 }
 
-ENC_BRANCHING(encodeBeq, COND_eq )
-ENC_BRANCHING(encodeBne, COND_ne )
-ENC_BRANCHING(encodeBge, COND_ge )
+ENC_BRANCHING(encodeBeq, COND_eq)
+ENC_BRANCHING(encodeBne, COND_ne)
+ENC_BRANCHING(encodeBge, COND_ge)
 ENC_BRANCHING(encodeBlt, COND_lt)
 ENC_BRANCHING(encodeBgt, COND_gt)
 ENC_BRANCHING(encodeBle, COND_le)
@@ -190,62 +196,67 @@ ENC_BRANCHING(encodeBal, COND_al)
 
 uint32_t encodeMul (char **opFields) {
   // Cond is 1110, A is 0 and S is 0;
-  uint32_t binInstruction = 0xC0000090;
+  uint32_t binInstruction = 0xE0000090;
   int opFieldsIndex = 0;
   char *operand = opFields[opFieldsIndex];
   //Set Rd
   uint8_t regIndex = getRegIndex(operand);
-  uint32_t regIndex32 = regIndex << 12;
+  uint32_t regIndex32 = regIndex << 16;
   binInstruction |= regIndex32;
   opFieldsIndex++;
+  operand = opFields[opFieldsIndex];
   //Set Rm
   regIndex = getRegIndex(operand);
   regIndex32 = regIndex;
   binInstruction |= regIndex32;
   opFieldsIndex++;
+  operand = opFields[opFieldsIndex];
   //set Rs
-  regIndex = getRegIndex(operand);
-  regIndex32 = regIndex<<4;
-  binInstruction |= regIndex32;
-  return binInstruction;
-}
-
-uint32_t encodeMla (char **opFields) {
-  // Cond is 1110, A is 1 and S is 0;
-  uint32_t binInstruction = 0xC0200090;
-  int opFieldsIndex = 0;
-  char *operand = opFields[opFieldsIndex];
-  //Set Rd
-  uint8_t regIndex = getRegIndex(operand);
-  uint32_t regIndex32 = regIndex << 12;
-  binInstruction |= regIndex32;
-  opFieldsIndex++;
-  //Set Rm
-  regIndex = getRegIndex(operand);
-  regIndex32 = regIndex;
-  binInstruction |= regIndex32;
-  opFieldsIndex++;
-  //set Rs
-  regIndex = getRegIndex(operand);
-  regIndex32 = regIndex<<4;
-  binInstruction |= regIndex32;
-  opFieldsIndex++;
-  //set Rn
   regIndex = getRegIndex(operand);
   regIndex32 = regIndex<<8;
   binInstruction |= regIndex32;
   return binInstruction;
 }
 
+uint32_t encodeMla (char **opFields) {
+  // Cond is 1110, A is 1 and S is 0;
+  uint32_t binInstruction = 0xE0200090;
+  int opFieldsIndex = 0;
+  char *operand = opFields[opFieldsIndex];
+  //Set Rd
+  uint8_t regIndex = getRegIndex(operand);
+  uint32_t regIndex32 = regIndex << 16;
+  binInstruction |= regIndex32;
+  opFieldsIndex++;
+  operand = opFields[opFieldsIndex];
+  //Set Rm
+  regIndex = getRegIndex(operand);
+  regIndex32 = regIndex;
+  binInstruction |= regIndex32;
+  opFieldsIndex++;
+  operand = opFields[opFieldsIndex];
+  //set Rs
+  regIndex = getRegIndex(operand);
+  regIndex32 = regIndex<<8;
+  binInstruction |= regIndex32;
+  opFieldsIndex++;
+  operand = opFields[opFieldsIndex];
+  //set Rn
+  regIndex = getRegIndex(operand);
+  regIndex32 = regIndex<<12;
+  binInstruction |= regIndex32;
+  return binInstruction;
+}
+
 uint32_t encodeSDTldr (char **opFields) {
-  char *filename = getFileName();
+  char *filename = getOutFileName();
   // initialise binInstruction and set cond to always (1110) and load bit set
   uint32_t binInstruction = 0xe4100000;
   int opFieldsIndex = 0;
 
   // resolve all opFields
   char *operand = opFields[opFieldsIndex];
-  removeLeadingSpace(operand);
+  trim(operand);
 
   uint8_t regIndex = getRegIndex(operand);
   uint32_t regIndex32 = regIndex << 12;
@@ -253,7 +264,7 @@ uint32_t encodeSDTldr (char **opFields) {
 
   opFieldsIndex++;
   operand = opFields[opFieldsIndex];
-  removeLeadingSpace(operand);
+  trim(operand);
 
   // if loading a numerical constant - ldr only
   if (operand[0] == '=') {
@@ -274,15 +285,15 @@ uint32_t encodeSDTldr (char **opFields) {
       newOpfields[1] = newExpression;
       binInstruction = encodeDPmov(newOpfields);
     } else {
-      binInstruction |= (num & MASK11_0);
       binInstruction = setBit(binInstruction, true, Pbit);
       binInstruction = setBit(binInstruction, true, Ubit);
 
-      uint32_t num32LE = switchEndy32(num32);
-      uint32_t endOfFile = appendBytes(filename, (char *) &num32LE, 4);
+      // uint32_t num32LE = switchEndy32(num32);
+      uint32_t endOfFile = appendBytes(filename, (char *) &num32, 4);
+      uint32_t addressOfValue = endOfFile - 4;
 
       uint32_t currMemAddress = getMemAddr();
-      uint32_t offset = endOfFile - currMemAddress;
+      uint32_t offset = addressOfValue - currMemAddress;
       // account for pipeline while encoding offset, at time of execution
       //   PC will be 8 bytes ahead
       offset -= 8;
@@ -331,21 +342,25 @@ uint32_t encodeSDTldr (char **opFields) {
           // offset is a number
           char *ptr = NULL;
           long int num = expToL(operand, ptr);
+          if (num < 0) {
+            num = num * (-1);
+            binInstruction = setBit(binInstruction, false, Ubit);
+          }
           binInstruction |= (num & MASK11_0);
         } else {
           // offset is a (shifted) register
           binInstruction = setBit(binInstruction, true, Ibit);
           long int mRegIndex = getRegIndex(operand);
           binInstruction |= mRegIndex;
-          if (opFieldsIndex != sizeof(opFields)) {
+          opFieldsIndex++;
+          operand = opFields[opFieldsIndex];
+          if (operand[0] != '\0') {
             // shift
             binInstruction = setBit(binInstruction, true, 4);
-            opFieldsIndex++;
-            operand = opFields[opFieldsIndex];
-            removeLeadingSpace(operand);
+            trim(operand);
             uint8_t shiftCode = getShiftCode(operand);
             binInstruction |= (shiftCode << 5);
-            removeLeadingSpace(operand);
+            trim(operand);
             long int sRegIndex = getRegIndex(operand);
             binInstruction |= (sRegIndex << 8);
           }
@@ -356,7 +371,7 @@ uint32_t encodeSDTldr (char **opFields) {
       binInstruction = setBit(binInstruction, true, Pbit);
       opFieldsIndex++;
       operand = opFields[opFieldsIndex];
-      removeLeadingSpace(operand);
+      trim(operand);
 
       binInstruction = setBit(binInstruction, true, Ubit);
       if (operand[0] == '+') {
@@ -369,23 +384,36 @@ uint32_t encodeSDTldr (char **opFields) {
         // offset is a number
         char *ptr = NULL;
         long int num = expToL(operand, ptr);
+        if (num < 0) {
+          num = num * (-1);
+          binInstruction = setBit(binInstruction, false, Ubit);
+        }
         binInstruction |= (num & MASK11_0);
       } else {
         // offset is a (shifted) register
         binInstruction = setBit(binInstruction, true, Ibit);
         long int mRegIndex = getRegIndex(operand);
         binInstruction |= mRegIndex;
-        if (opFieldsIndex != sizeof(opFields)) {
+        opFieldsIndex++;
+        operand = opFields[opFieldsIndex];
+        if (operand[0] != '\0') {
           // shift
-          binInstruction = setBit(binInstruction, true, 4);
-          opFieldsIndex++;
-          operand = opFields[opFieldsIndex];
-          removeLeadingSpace(operand);
+          trim(operand);
           uint8_t shiftCode = getShiftCode(operand);
           binInstruction |= (shiftCode << 5);
-          removeLeadingSpace(operand);
-          long int sRegIndex = getRegIndex(operand);
-          binInstruction |= (sRegIndex << 8);
+          //skip past shiftcode
+          operand += 3;
+          trim(operand);
+          if (operand[0] == '#') {
+            char *ptr = NULL;
+            long int num = expToL(operand, ptr);
+            num = num << 7;
+            binInstruction |= (num & MASK11_7);
+          } else {
+            long int sRegIndex = getRegIndex(operand);
+            binInstruction |= (sRegIndex << 8);
+            binInstruction = setBit(binInstruction, true, 4);
+          }
         }
       }
     }
@@ -432,18 +460,17 @@ uint8_t getShiftCode(char *str) {
   return 0;
 }
 
-// moves a pointer to a string past the white spaces
-void removeLeadingSpace(char *str){
-  while (*str == ' ') {
-    str++;
-  }
-}
 // takes an expression of the form #1234 and returns the long in
 // ptr is set to the end of the int
 long int expToL(char *expression, char *ptr) {
+  bool negative = false;
   int base = 10;
   if(expression[0] == '#') {
     expression++;
+  }
+  if(expression[0] == '-') {
+    expression++;
+    negative = true;
   }
   if (strlen(expression) > 2) {
     if (expression[1] == 'x'){
@@ -451,7 +478,12 @@ long int expToL(char *expression, char *ptr) {
       expression += 2;
     }
   }
-  return strtol(expression, &ptr, base);
+  long ret = strtol(expression, &ptr, base);
+  if (negative) {
+    return (ret * (-1));
+  } else {
+    return ret;
+  }
 }
 
 uint32_t encodeSDTstr(char **opfields) {
@@ -460,7 +492,7 @@ uint32_t encodeSDTstr(char **opfields) {
   binInstruction = setBit(binInstruction, false, Lbit);
   // check that instruction is not storing a numerical constant
   char *operand = opfields[1];
-  removeLeadingSpace(operand);
+  trim(operand);
   if (operand[0] == '='){
     fprintf(stderr, "Invalid Instruction: Cannot strore into a numerical \
             constant");
