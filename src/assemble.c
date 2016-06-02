@@ -1,5 +1,6 @@
 #include "assemble.h"
 #define NUM_OF_FUNCTIONS   23
+#define MAX_NUMBER_LABELS    100
 
 // The byte address that the line being processed is associated with
 static uint32_t memAddr = 0;
@@ -67,6 +68,8 @@ int main(int argc, char **argv) {
   bool foundLabel = false;
   bool foundInstruction = false;
   bool foundComment = false;
+  char labelArray[MAX_NUMBER_LABELS][512];
+  int labelArrayIndex = 0;
 
   for (int i = 0; ; i++) {
     if(file[i] == '\n' || !file[i]) {
@@ -76,9 +79,13 @@ int main(int argc, char **argv) {
         if(foundLabel) {
           // Add mapping of (label, memAddr) to symbol table.
           trim(line);
-          insertFront(&labelTable, line, memAddr);
 
+          //Ensures that actual string is stored on the stack
+          strcpy(labelArray[labelArrayIndex], line);
+          labelArray[labelArrayIndex][strlen(line)] = '\0';
+          insertFront(&labelTable, labelArray[labelArrayIndex], memAddr);
 
+          labelArrayIndex++;
           foundLabel = false;
         }
 
@@ -153,7 +160,7 @@ int main(int argc, char **argv) {
 
         tokenise (line, opCode, opFields);
 
-        // TODO printf("opcode %s, opfields 0 and 1 %s %s\n", opCode, opFields[0], opFields[1]);
+        printf("opcode %s, opfields 0 and 1 %s %s\n", opCode, opFields[0], opFields[1]);
 
         uint32_t (*functionPointer)(char **opFields);
 	// retrieve 64bit int from opTable and cast as function pointer

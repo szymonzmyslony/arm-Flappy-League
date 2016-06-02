@@ -82,10 +82,10 @@ uint8_t charToInt(char c) {
 // Moves a char ptr to the last character in the String
 // If already at null char, do nothing
 void movToLastChar(char *str) {
-  if (str == '\0') {
+  if (str[0] == '\0') {
     return;
   }
-  while (str != '\0') {
+  while (str[0] != '\0') {
     str++;
   }
   str--;

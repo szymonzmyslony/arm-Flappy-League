@@ -125,7 +125,6 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
   // Case Rm{, <shift>}
   } else {
     // Set Rm
-    printf("op1; %s\n", op1);
     binInstruction |= getRegIndex(op1);
     char *shiftType = op2;
     shiftType[3] = '\0';
@@ -270,7 +269,6 @@ uint32_t encodeSDTldr (char **opFields) {
       }
       strcpy(newExpression, "#");
       strcat(newExpression, operand);
-      //TODO Ask Benja da Ninja
       char *newOpfields[2];
       newOpfields[0] = opFields[0];
       newOpfields[1] = newExpression;
@@ -307,10 +305,16 @@ uint32_t encodeSDTldr (char **opFields) {
     long int regIndex = getRegIndex(operand);
     uint32_t regIndex32 = (regIndex << 16);
     binInstruction |= regIndex32;
-    movToLastChar(operand);
+    // move operand to last char
+    while (operand[0] != '\0') {
+      operand++;
+    }
+    operand--;
 
     if (operand[0] == ']') {
-      if (opFieldsIndex == sizeof(opFields)) {
+      opFieldsIndex++;
+      operand = opFields[opFieldsIndex];
+      if (operand[0] == '\0') {
         // pre-indexing with no offset
         binInstruction = setBit(binInstruction, true, Pbit);
         binInstruction = setBit(binInstruction, true, Ubit);
