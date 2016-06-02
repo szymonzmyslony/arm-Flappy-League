@@ -14,7 +14,7 @@ uint32_t name(char **opFields){                    \
   uint32_t dRegIndex = getRegIndex(opFields[0]);   \
   binInstruction |= dRegIndex << 12;               \
                                                    \
-    binInstruction |= encodeOperand2(opFields, 2); \
+  binInstruction |= encodeOperand2(opFields, 2); \
                                                    \
   return binInstruction;                           \
 }
@@ -27,12 +27,12 @@ uint32_t name(char **opFields){                    \
                                                    \
   binInstruction |= opcode << 21;                  \
                                                    \
-    binInstruction |= 1 << Sbit;                   \
+  binInstruction |= 1 << Sbit;                   \
                                                    \
   uint32_t nRegIndex = getRegIndex(opFields[0]);   \
   binInstruction |= nRegIndex << 16;               \
                                                    \
-    binInstruction |= encodeOperand2(opFields, 1); \
+  binInstruction |= encodeOperand2(opFields, 1); \
                                                    \
   return binInstruction;                           \
 }
@@ -125,25 +125,29 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
   // Case Rm{, <shift>}
   } else {
     // Set Rm
+    printf("op1; %s\n", op1);
     binInstruction |= getRegIndex(op1);
-
     char *shiftType = op2;
     shiftType[3] = '\0';
     char *shiftVal = op2 + 4;
+  
 
-    // Set Shift Type
-    binInstruction |= ((getShiftCode(shiftType)) << 5);
-
-    // Shift by constant
-    if(shiftVal[0] == '#') {
-      char *junk = NULL;
-      long expr = expToL(shiftVal, junk);
-      assert(expr < 32);
-      binInstruction |= expr << 7;
-    // Shift by register
-    } else {
-      binInstruction |= 1 << 4;
-      binInstruction |= getRegIndex(shiftVal) << 8;
+    // only if a shift is provided
+    if (shiftType[0] != '\0') {
+      // Set Shift Type
+      binInstruction |= ((getShiftCode(shiftType)) << 5);
+  
+      // Shift by constant
+      if(shiftVal[0] == '#') {
+        char *junk = NULL;
+        long expr = expToL(shiftVal, junk);
+        assert(expr < 32);
+        binInstruction |= expr << 7;
+      // Shift by register
+      } else {
+        binInstruction |= 1 << 4;
+        binInstruction |= getRegIndex(shiftVal) << 8;
+      }
     }
   }
 
@@ -151,7 +155,6 @@ uint32_t encodeOperand2(char **opFields, uint8_t index) {
 }
 
 uint32_t encodeDPandeq(char **opFields) {
-  //TODO Unz what you doing?
   if ((getRegIndex(opFields[0]) == getRegIndex(opFields[1]))
       && (getRegIndex(opFields[0]) == getRegIndex(opFields[2]))
       && (getRegIndex(opFields[0]) == getRegIndex("r0"))) {
@@ -418,7 +421,8 @@ uint8_t getShiftCode(char *str) {
       }
     }
   }
-  fprintf(stderr, "Invalid shiftCode");
+
+  fprintf(stderr, "Invalid shiftCode %s\n", str);
   return 0;
 }
 

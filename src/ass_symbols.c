@@ -67,6 +67,7 @@ VAL getVal(node *curr) {
 VAL getValFromStruct(list *symbolsTable, KEY key){
   node *curNode = startList(symbolsTable);
   while (strcmp(getKey(curNode), key) != 0) {
+    // printf("Comparing %s and %s.\n", getKey(curNode), key);
     curNode = curNode->next;
   }
   return getVal(curNode);

@@ -44,7 +44,7 @@ uint32_t arithShiftRight32(uint32_t val, uint16_t n){
 // Works for only a maximum of 99 registers
 uint8_t getRegIndex(char *str){
   if (strlen(str) < 2){
-    fprintf(stderr, "Attempted read of invalid argument");
+    fprintf(stderr, "Attempted read of invalid argument\n");
     return 0;
   }
 
@@ -64,7 +64,7 @@ uint8_t getRegIndex(char *str){
 
   }
 
-  fprintf(stderr, "Attempted read of invalid argument");
+  fprintf(stderr, "Attempted read of invalid argument\n");
   return 0;
 }
 
@@ -72,7 +72,7 @@ uint8_t getRegIndex(char *str){
 // returns 10 if digit is not valid
 uint8_t charToInt(char c) {
   if (c < '0' || '9' < c) {
-    fprintf(stderr, "Char c is not a valid digit");
+    fprintf(stderr, "Char c is not a valid digit\n");
     return 10;
   }
   uint8_t i = (uint8_t) c - (uint8_t) '0';
