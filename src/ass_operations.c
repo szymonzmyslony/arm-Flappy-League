@@ -320,10 +320,11 @@ uint32_t encodeSDTldr (char **opFields) {
         binInstruction = setBit(binInstruction, true, Ubit);
       } else {
         // post-indexing
+        binInstruction = setBit(binInstruction, true, Ubit);
         if (operand[0] == '+') {
-          binInstruction = setBit(binInstruction, true, Ubit);
           operand++;
         } else if (operand[0] == '-') {
+          binInstruction = setBit(binInstruction, false, Ubit);
           operand++;
         }
         if (operand[0] == '#') {
@@ -357,10 +358,11 @@ uint32_t encodeSDTldr (char **opFields) {
       operand = opFields[opFieldsIndex];
       removeLeadingSpace(operand);
 
+      binInstruction = setBit(binInstruction, true, Ubit);
       if (operand[0] == '+') {
-        binInstruction = setBit(binInstruction, true, Ubit);
         operand++;
       } else if (operand[0] == '-') {
+        binInstruction = setBit(binInstruction, false, Ubit);
         operand++;
       }
       if (operand[0] == '#') {

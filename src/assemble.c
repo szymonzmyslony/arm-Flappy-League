@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
 
         tokenise (line, opCode, opFields);
 
-        printf("opcode %s, opfields 0 and 1 %s %s\n", opCode, opFields[0], opFields[1]);
+        // TODO printf("opcode %s, opfields 0 and 1 %s %s\n", opCode, opFields[0], opFields[1]);
 
         uint32_t (*functionPointer)(char **opFields);
 	// retrieve 64bit int from opTable and cast as function pointer

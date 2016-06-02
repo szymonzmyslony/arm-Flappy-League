@@ -48,7 +48,7 @@ void addBytesToFile(char *filename, long int byteIndex, char *bytes,
 // numBytes should be less than or equal to the length of the array bytes
 // returns the new end of the file
 long int appendBytes(char *filename, char *bytes, int numBytes){
-  FILE *file = fopen(filename, "ab");
+  FILE *file = fopen(filename, "ab+");
   if (file == NULL) {
     fprintf(stderr, "Error: cannot find file to write byte to");
     exit(EXIT_FAILURE);
