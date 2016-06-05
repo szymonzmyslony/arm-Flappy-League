@@ -50,18 +50,11 @@ uint8_t getRegIndex(char *str){
 
   if (str[0] == 'r'){
 
-    return charToInt(str[1]);
-
-    if (strlen(str) == 2) {
-      return charToInt(str[1]);
-    } else {
-      if (str[2] == ',') {
-        return charToInt(str[1]);
-      } else {
-        return ((charToInt(str[1]) * 10 ) + charToInt(str[2]));
-      }
-    }
-
+    // return charToInt(str[1]);
+    char *ptr = str;
+    ptr++;
+    char *tempPtr;
+    return strtol(ptr, &tempPtr, 10);
   }
 
   fprintf(stderr, "Attempted read of invalid argument %s\n", str);
