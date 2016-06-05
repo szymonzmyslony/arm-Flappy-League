@@ -25,8 +25,8 @@ enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 720 };
       exit(EXIT_FAILURE);
     }
 
-    // No window icon
-    SDL_WM_SetCaption("Fuck it all", NULL);
+    // No window icon, so NULL
+    SDL_WM_SetCaption("window mcwindowface", NULL);
 
     SDL_Event event;
     bool quit = false;
@@ -45,6 +45,16 @@ enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 720 };
                   quit = true;
                   break;
 
+                case SDLK_BACKSPACE:
+                  SDL_FillRect(screen, NULL,
+                    SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF) );
+                  break;
+
+                case SDLK_SPACE:
+                  SDL_FillRect(screen, NULL,
+                    SDL_MapRGB(screen->format, 0x00, 0x00, 0x00) );
+                  break;
+
                 default:
                   break;
               }
@@ -54,6 +64,8 @@ enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 720 };
             break;
         }
       }
+
+      SDL_Flip(screen);
     }
 
     SDL_Quit();
