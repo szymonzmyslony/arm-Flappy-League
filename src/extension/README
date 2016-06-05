@@ -7,3 +7,6 @@ $ sdl-config
 To use SDL without X, (from the console), you need permissions for framebuffer/
 audio/input access. Do the following command and then log out and in again:
 $ sudo usermod -a -G video,input,audio <username>
+
+Compile the using the following. The order of some flags matter:
+$ gcc <filename>.c 'sdl-config --libs' -o <output> -Wall
