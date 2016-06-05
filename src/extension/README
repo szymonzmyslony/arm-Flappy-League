@@ -1,0 +1,9 @@
+In order to compile the SDL program, you will need the SDL library:
+$ sudo apt-get install libsdl1.2-dev
+
+Check it is installed with this:
+$ sdl-config
+
+To use SDL without X, (from the console), you need permissions for framebuffer/
+audio/input access. Do the following command and then log out and in again:
+$ sudo usermod -a -G video,input,audio <username>
