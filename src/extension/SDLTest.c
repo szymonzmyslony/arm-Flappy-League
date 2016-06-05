@@ -3,70 +3,89 @@
 
 enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 720 };
 
-/** SDL_main is used for Windows / Mac, we will just use Linux
- * DARWIN is MAC OS X
- */
-#if defined (DARWIN) || defined (WIN32)
-  int SDL_main(int argc, char **argv)
-#else
-  int main(int argc, char **argv) {
-#endif
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO |
-                 SDL_INIT_TIMER) != 0) {
-      fprintf(stderr, "%s\n", "Error initialising SDL");
-      exit(EXIT_FAILURE);
-    }
-
-    // Use default bits per pixel with 0
-    SDL_Surface* screen = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT,
-                                            0, SDL_HWSURFACE | SDL_DOUBLEBUF );
-    if(screen == NULL) {
+/** Get the framebuffer, with a set width and height, and using the native bits
+* per pixel.
+* Flags are for double buffering and getting the surface from hardware (GPU
+* memory)
+*/
+SDL_Surface *getConsoleScreen(void) {
+  SDL_Surface *screenPtr = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT,
+    0, SDL_HWSURFACE | SDL_DOUBLEBUF );
+    if(screenPtr == NULL) {
       fprintf(stderr, "%s\n", "Error setting SDL Video Mode");
       exit(EXIT_FAILURE);
     }
 
-    // No window icon, so NULL
-    SDL_WM_SetCaption("window mcwindowface", NULL);
+    return screenPtr;
+  }
 
-    SDL_Event event;
-    bool quit = false;
-    // now we loop until the quit flag is set to true
-    while(!quit) {
-     // process SDL events, in this case we are looking for keys
-      while ( SDL_PollEvent(&event) ) {
-        switch (event.type) {
-            // this is the window x being clicked.
-          case SDL_QUIT : quit = true; break;
-            // now we look for a keydown event
-          case SDL_KEYDOWN:
-              switch( event.key.keysym.sym ) {
-                // if it's the escape key quit
-                case SDLK_ESCAPE:
-                  quit = true;
-                  break;
+  /** Initialise SDL using video, audio and the timer.
+  */
+  void initSDL(void) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
+      fprintf(stderr, "%s\n", "Error initialising SDL");
+      exit(EXIT_FAILURE);
+    }
+  }
+/** SDL_main is used for Windows / Mac, we will just use Linux
+ * DARWIN is MAC OS X
+ */
+#if defined (DARWIN) || defined (WIN32)
+int SDL_main(int argc, char **argv)
+#else
+int main(int argc, char **argv) {
+#endif
+  initSDL();
 
-                case SDLK_BACKSPACE:
-                  SDL_FillRect(screen, NULL,
-                    SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF) );
-                  break;
+  // Get the console's screen for drawing
+  SDL_Surface* screen = getConsoleScreen();
 
-                case SDLK_SPACE:
-                  SDL_FillRect(screen, NULL,
-                    SDL_MapRGB(screen->format, 0x00, 0x00, 0x00) );
-                  break;
+  // No window icon, so NULL
+  SDL_WM_SetCaption("window mcwindowface", NULL);
 
-                default:
-                  break;
-              }
-            break;
+  // A union capable of holding all input events
+  SDL_Event event;
+  bool quit = false;
+  // now we loop until the quit flag is set to true
+  while(!quit) {
+   // Process SDL input events, one at a time
+    while (SDL_PollEvent(&event)) {
+      switch (event.type) {
+        // Closable via x window button if run outside of a console.
+        case SDL_QUIT :
+          quit = true;
+          break;
+        // Key down events - when a key is first pressed down (not held)
+        case SDL_KEYDOWN:
+            switch( event.key.keysym.sym ) {
+              case SDLK_ESCAPE:
+                quit = true;
+                break;
 
-          default:
-            break;
-        }
+              case SDLK_BACKSPACE:
+                SDL_FillRect(screen, NULL,
+                  SDL_MapRGB(screen->format, 0xFF, 0x00, 0xFF) );
+                break;
+
+              case SDLK_SPACE:
+                SDL_FillRect(screen, NULL,
+                  SDL_MapRGB(screen->format, 0x00, 0x00, 0x00) );
+                break;
+
+              default:
+                break;
+            }
+          break;
+
+        default:
+          break;
       }
-
-      SDL_Flip(screen);
     }
 
-    SDL_Quit();
+    SDL_Flip(screen);
   }
+
+  SDL_Quit();
+
+  return 0;
+}
