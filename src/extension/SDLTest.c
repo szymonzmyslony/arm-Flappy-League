@@ -6,11 +6,11 @@ enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 720 };
 /** Get the framebuffer, with a set width and height, and using the native bits
 * per pixel.
 * Flags are for double buffering and getting the surface from hardware (GPU
-* memory)
+* memory). You don't get a HWSURFACE in a pi though.
 */
 SDL_Surface *getConsoleScreen(void) {
   SDL_Surface *screenPtr = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT,
-    0, SDL_HWSURFACE | SDL_DOUBLEBUF );
+    0, SDL_HWSURFACE);// | SDL_DOUBLEBUF );
     if(screenPtr == NULL) {
       fprintf(stderr, "%s\n", "Error setting SDL Video Mode");
       exit(EXIT_FAILURE);
