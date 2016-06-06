@@ -82,6 +82,8 @@ int main(int argc, char **argv) {
     //TODO Cap FPS
   }
 
+  // Cleanup
+  free(gObjs);
   SDL_Quit();
 
   printf("Exiting T-\n");
