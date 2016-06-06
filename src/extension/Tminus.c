@@ -3,9 +3,10 @@
 #include "Tminus.h"
 
 enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 720 };
+enum Game { MAX_OBJECTS = 20 };
 
 /** A union that represents a generic variable, allowing the GameObject struct
-* to be more versatile and useful in a variety of ways.
+* to be more versatile and extremely generic.
 */
 typedef union var {
   float f;
@@ -46,36 +47,51 @@ int main(int argc, char **argv) {
   // Set the window bar data. For non-console use only.
   SDL_WM_SetCaption("window mcwindowface", NULL);
 
-  // -- Initialise loop variables
+  // -- Initialise Game variables
   // A union capable of holding all input events
   SDL_Event event;
   bool running = true;
 
+  GameObject **gObjs = calloc(MAX_OBJECTS, sizeof(GameObject*));
+
   // Game Loop
   while(running) {
-    // Process SDL input events, one at a time. For non-Pi only.
+    // Process SDL keyboard input events. For non-Pi only.
     processKeyboardInput(&event, screen, &running);
 
-    /*// Update each gameObject
-    for() {
-      gObj->update(gObj);
+    //TODO Process GPIO pins
+
+    // Update each gameObject that has an update function
+    for(int i = 0; i < MAX_OBJECTS; i++) {
+      if(gObjs[i] != NULL && gObjs[i]->update != NULL) {
+        gObjs[i]->update(gObjs[i]);
+      }
     }
 
-    // Draw all gameObjects onto screen
-    for() {
-      gObj->draw(gObj);
-    }*/
+    // Draw all gameObjects onto screen that have a sprite
+    for(int i = 0; i < MAX_OBJECTS; i++) {
+      if(gObjs[i] != NULL && gObjs[i]->draw != NULL) {
+        gObjs[i]->draw(gObjs[i]);
+      }
+    }
 
     // Swap the back buffer's contents with the front buffer's
     // Update the screen
     SDL_Flip(screen);
+
+    //TODO Cap FPS
   }
 
   SDL_Quit();
 
+  printf("Exiting T-\n");
+
   return 0;
 }
 
+/** Processes each keyboard event that occurred. For non-Pi testing purposes.
+* May change the screen, and cause the game to stop running.
+*/
 inline void processKeyboardInput(SDL_Event *eventPtr, SDL_Surface *screen,
                                  bool *running) {
   while (SDL_PollEvent(eventPtr)) {
