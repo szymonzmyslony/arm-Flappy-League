@@ -9,4 +9,4 @@ audio/input access. Do the following command and then log out and in again:
 $ sudo usermod -a -G video,input,audio <username>
 
 Compile the using the following. The order of some flags matter:
-$ gcc <filename>.c 'sdl-config --libs' -o <output> -Wall
+$ gcc <filename>.c `sdl-config --libs` -o <output> -Wall
