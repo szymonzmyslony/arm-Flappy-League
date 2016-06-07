@@ -2,8 +2,8 @@
 #define TMINUS_H
 
 SDL_Surface *getConsoleScreen(void);
+SDL_Surface *loadImage(char *path);
 void initSDL(void);
-void processKeyboardInput(SDL_Event *eventPtr, SDL_Surface *screen,
-                          bool *running);
+void processKeyboardInput(SDL_Event *eventPtr, bool *running);
 
 #endif
