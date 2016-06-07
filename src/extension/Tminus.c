@@ -1,4 +1,5 @@
 #include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 #include <stdbool.h>
 #include "Tminus.h"
 
@@ -47,12 +48,18 @@ int main(int argc, char **argv) {
   // Set the window bar data. For non-console use only.
   SDL_WM_SetCaption("window mcwindowface", NULL);
 
+  // -- Load Images
+
   // -- Initialise Game variables
   // A union capable of holding all input events
   SDL_Event event;
   bool running = true;
 
-  GameObject **gObjs = calloc(MAX_OBJECTS, sizeof(GameObject*));
+  GameObject **gObjs = (GameObject**)calloc(MAX_OBJECTS, sizeof(GameObject*));
+  if(gObjs == NULL) {
+    fprintf(stderr, "Error allocating memory\n");
+    exit(EXIT_FAILURE);
+  }
 
   // Game Loop
   while(running) {
@@ -139,7 +146,7 @@ inline SDL_Surface *getConsoleScreen(void) {
   SDL_Surface *screenPtr = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT,
                                           0, SDL_HWSURFACE | SDL_DOUBLEBUF );
   if(screenPtr == NULL) {
-    fprintf(stderr, "%s\n", "Error setting SDL Video Mode");
+    fprintf(stderr, "Error setting SDL Video Mode\n");
     exit(EXIT_FAILURE);
   }
 
@@ -150,7 +157,14 @@ inline SDL_Surface *getConsoleScreen(void) {
 */
 inline void initSDL(void) {
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) != 0) {
-    fprintf(stderr, "%s\n", "Error initialising SDL");
+    fprintf(stderr, "Error initialising SDL\n");
+    exit(EXIT_FAILURE);
+  }
+
+  // Load support for PNG
+  int imgFlags = IMG_INIT_PNG;
+  if(!(IMG_Init(imgFlags) & imgFlags)) {
+    fprintf(stderr, "Error initialising SDL_image: %s\n", IMG_GetError());
     exit(EXIT_FAILURE);
   }
 }
