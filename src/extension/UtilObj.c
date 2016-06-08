@@ -65,19 +65,31 @@ void updateTimerConstant(GameObject *timerObj) {
   }
 }
 
-void initTimerObj(GameObject *timerObj, uint32_t duration, bool enable,
-             void (*updateMode)(GameObject*), void (*endAction)(void)) {
+GameObject *initTimerObj(uint32_t duration, bool enable,
+                 void (*updateMode)(GameObject*), void (*endAction)(void)) {
+  GameObject *timerObj = (GameObject*)calloc(1, sizeof(GameObject));
   lastTime = SDL_GetTicks();
   elapsed = 0;
   activationTime = duration;
   enabled = enable;
   runAction = endAction;
   timerObj->update = updateMode;
+
+  return timerObj;
+}
+
+//=============================== Timer Actions ===========================
+void addAllVelocity() {
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
+      gObjs[i]->v2.vec.y += 5;
+    }
+  }
 }
 
 //=============================== Input Objects ===========================
 
 //============================= Setter Functions ==========================
-void setSprite(GameObject *gameObj, SDL_Surface *sprite) {
-  gameObj->sprite = sprite;
+void setSprite(GameObject *gameObj, SDL_Surface *newSprite) {
+  gameObj->sprite = newSprite;
 }
