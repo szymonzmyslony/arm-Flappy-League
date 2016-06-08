@@ -108,7 +108,7 @@ uint8_t equals(KEY key1, KEY key2) {
 
 //Iteratively frees the memory spaces occupied by the nodes in the list
 void destroyList(list *l) {
-  node *curr = startList(l);
+  node *curr = l->head;
   while (curr != NULL){
     node *next = nextNode(curr);
     freeNode(curr);
