@@ -159,11 +159,8 @@ int main(int argc, char **argv) {
         for(int i = 0; i < MAX_OPFIELD_SIZE; i++) {
           opFields[i] = calloc(MAX_OPFIELD_LENGTH, sizeof(char));
         }
-        // TODO printf("line 2 b tokenised %s\n", line);
 
         tokenise (line, opCode, opFields);
-
-        // TODO printf("opcode %s, opfields 0 and 1 %s %s\n", opCode, opFields[0], opFields[1]);
 
         uint32_t (*functionPointer)(char **opFields);
 	// retrieve 64bit int from opTable and cast as function pointer
@@ -216,6 +213,7 @@ int main(int argc, char **argv) {
 
   destroyList(&operandTable);
   destroyList(&labelTable);
+  free(file);
   free(line);
 
   return EXIT_SUCCESS;

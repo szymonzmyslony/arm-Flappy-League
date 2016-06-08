@@ -514,5 +514,6 @@ uint32_t encodelsl(char **opfields) {
   newOpfields[1] = opfields[0];
   newOpfields[2] = shiftOpfield;
   uint32_t binInstruction = encodeDPmov(newOpfields);
+  free(newOpfields[2]);
   return binInstruction;
 }
