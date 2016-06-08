@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <SDL/SDL.h>
 
+#define G 0.5
+
 enum Game { MAX_OBJECTS = 20 };
 
 typedef struct vector {
