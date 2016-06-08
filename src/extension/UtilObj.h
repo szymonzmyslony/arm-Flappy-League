@@ -1,6 +1,8 @@
 #ifndef UTILOBJ_H
 #define UTILOBJ_H
 
+#include "Structs.h"
+
 void timerObjAddTime(GameObject *timerObj);
 uint32_t timerObjElapsed(GameObject *timerObj);
 void timerObjStart(GameObject *timerObj);

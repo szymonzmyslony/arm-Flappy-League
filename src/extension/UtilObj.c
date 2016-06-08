@@ -1,8 +1,4 @@
-#include "Structs.h"
-#include <SDL/SDL.h>
-#include <stdint.h>
-#include <stdbool.h>
-
+#include "UtilObj.h"
 //============================ Timer Object =============================
 #define lastTime         timerObj->v1.u
 #define elapsed          timerObj->v2.u
