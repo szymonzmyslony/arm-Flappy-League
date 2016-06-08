@@ -6,7 +6,7 @@
 #include "Structs.h"
 
 enum colliderTypes {
-  COL_CIRCLE = 1,
+  COL_CIRCLE = 1, 
   COL_LINE   = 2,
   COL_NET    = 3,
 };
