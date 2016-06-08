@@ -37,29 +37,29 @@ int main(int argc, char **argv) {
 
   //TODO remove test code
   gObjs[0] = initCircleObj(32, 300, 300, 0,  0);
-  gObjs[1] = initCircleObj(32, 300, 300, 1,  1);
+  gObjs[1] = initCircleObj(32, 000, 000, 1,  1);
   setSprite(gObjs[0], surf_ball);
   setSprite(gObjs[1], surf_datboi);
 
-  gObjs[2] = initCircleObj(32, 300, 300, 1, -1);
-  gObjs[3] = initCircleObj(32, 300, 300, 1,  0);
-  setSprite(gObjs[2], surf_datboi);
-  setSprite(gObjs[3], surf_datboi);
+  // gObjs[2] = initCircleObj(32, 300, 300, 1, -1);
+  // gObjs[3] = initCircleObj(32, 300, 300, 1,  0);
+  // setSprite(gObjs[2], surf_datboi);
+  // setSprite(gObjs[3], surf_datboi);
+  //
+  // gObjs[4] = initCircleObj(32, 300, 300, -1, -1);
+  // gObjs[5] = initCircleObj(32, 300, 300, -1,  0);
+  // setSprite(gObjs[4], surf_datboi);
+  // setSprite(gObjs[5], surf_datboi);
+  //
+  // gObjs[6] = initCircleObj(32, 300, 300, 0, -1);
+  // gObjs[7] = initCircleObj(32, 300, 300, 0,  1);
+  // setSprite(gObjs[6], surf_datboi);
+  // setSprite(gObjs[7], surf_datboi);
+  //
+  // gObjs[8] = initCircleObj(32, 300, 300, -1,  1);
+  // setSprite(gObjs[8], surf_datboi);
 
-  gObjs[4] = initCircleObj(32, 300, 300, -1, -1);
-  gObjs[5] = initCircleObj(32, 300, 300, -1,  0);
-  setSprite(gObjs[4], surf_datboi);
-  setSprite(gObjs[5], surf_datboi);
-
-  gObjs[6] = initCircleObj(32, 300, 300, 0, -1);
-  gObjs[7] = initCircleObj(32, 300, 300, 0,  1);
-  setSprite(gObjs[6], surf_datboi);
-  setSprite(gObjs[7], surf_datboi);
-
-  gObjs[8] = initCircleObj(32, 300, 300, -1,  1);
-  setSprite(gObjs[8], surf_datboi);
-
-  gObjs[9] = initTimerObj(1000, true, &updateTimerRepeated, &addAllVelocity);
+  //gObjs[9] = initTimerObj(1000, true, &updateTimerRepeated, &addAllVelocity);
 
   // -- Initialise Loop variables
   // A union capable of holding all input events
@@ -111,32 +111,14 @@ inline void updateObjs() {
 }
 
 inline void handleCollisions(void) {
+  // Circle - Circle collision
   for(int i = 0; i < MAX_OBJECTS; i++) {
-    for(int j = i; j < MAX_OBJECTS; j++) {
+    for(int j = i + 1; j < MAX_OBJECTS; j++) {
       GameObject *circObj = gObjs[i];
       if(circObj != NULL && circObj->colliderType == COL_CIRCLE
-         && gObjs[j] != NULL) {
-        switch(gObjs[j]->colliderType) {
-          case COL_CIRCLE:
-            if(circlesCollided(circObj, gObjs[j])) {
-              resolveCollision(&(circObj->v2), &(gObjs[j]->v2), 1, 1, 0.8);
-            }
-            break;
-
-          case COL_LINE:
-            if(false) {
-
-            }
-            break;
-
-          case COL_NET:
-            if(false) {
-
-            }
-            break;
-
-          default:
-            break;
+         && gObjs[j] != NULL && gObjs[j]->colliderType == COL_CIRCLE) {
+        if(circlesCollided(circObj, gObjs[j])) {
+          resolveCollision(&(circObj->v2.vec), &(gObjs[j]->v2.vec), 1, 1, 0.8);
         }
       }
     }
