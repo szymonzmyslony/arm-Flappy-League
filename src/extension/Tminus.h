@@ -4,6 +4,7 @@
 #include <SDL/SDL_image.h>
 #include "Structs.h"
 #include "CircleObj.h"
+#include "UtilObj.h"
 
 SDL_Surface *getConsoleScreen(void);
 SDL_Surface *loadImage(char *path);
