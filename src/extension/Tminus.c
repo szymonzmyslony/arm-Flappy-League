@@ -26,6 +26,7 @@ int main(int argc, char **argv) {
   SDL_Surface *surf_datboi = loadImage("gfx/DatBoi.png");
   SDL_Surface *surf_flappybird = loadImage("gfx/FlappyBird.png");
   SDL_Surface *surf_ball = loadImage("gfx/Ball.png");
+  SDL_Surface *surf_bg = loadImage("gfx/Crowd.png");
 
   // -- Initialise Game Variables
 
@@ -36,8 +37,8 @@ int main(int argc, char **argv) {
   }
 
   //TODO remove test code
-  gObjs[0] = initCircleObj(32, 300, 300, 0,  0);
-  gObjs[1] = initCircleObj(32, 000, 000, 1,  1);
+  gObjs[0] = initCircleObj(32, 300, 300, 10,  0);
+  gObjs[1] = initCircleObj(32, 100, 300, 0,  0);
   setSprite(gObjs[0], surf_ball);
   setSprite(gObjs[1], surf_datboi);
 
@@ -59,7 +60,7 @@ int main(int argc, char **argv) {
   // gObjs[8] = initCircleObj(32, 300, 300, -1,  1);
   // setSprite(gObjs[8], surf_datboi);
 
-  //gObjs[9] = initTimerObj(1000, true, &updateTimerRepeated, &addAllVelocity);
+  //gObjs[9] = initTimerObj(999999, true, &updateTimerConstant, &applyAllGravity);
 
   // -- Initialise Loop variables
   // A union capable of holding all input events
@@ -69,8 +70,10 @@ int main(int argc, char **argv) {
 
   // Game Loop
   while(running) {
-    SDL_FillRect(screen, NULL,
-      SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
+    SDL_BlitSurface(surf_bg, NULL, screen, NULL);
+
+    //SDL_FillRect(screen, NULL,
+    //  SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
 
     // Process SDL keyboard input events. For non-Pi only.
     processKeyboardInput(&event, &running);
@@ -118,7 +121,7 @@ inline void handleCollisions(void) {
       if(circObj != NULL && circObj->colliderType == COL_CIRCLE
          && gObjs[j] != NULL && gObjs[j]->colliderType == COL_CIRCLE) {
         if(circlesCollided(circObj, gObjs[j])) {
-          resolveCollision(&(circObj->v2.vec), &(gObjs[j]->v2.vec), 1, 1, 0.8);
+          resolveCollision(&(circObj->v2.vec), &(gObjs[j]->v2.vec), 1, 1, 0.05);
         }
       }
     }
@@ -174,11 +177,12 @@ inline void processKeyboardInput(SDL_Event *eventPtr, bool *running) {
 /** Get the framebuffer, with a set width and height, and using the native bits
 * per pixel.
 * Flags are for double buffering and getting the surface from hardware (GPU
-* memory). Pis do not give a HWSURFACE.
+* memory). Pis do not give a HWSURFACE. Pis seem to do better without a double
+* buffer
 */
 inline SDL_Surface *getConsoleScreen(void) {
   SDL_Surface *screenPtr = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT,
-                                          0, SDL_HWSURFACE | SDL_DOUBLEBUF );
+                                          0, SDL_HWSURFACE);// | SDL_DOUBLEBUF );
   if(screenPtr == NULL) {
     fprintf(stderr, "Error setting SDL Video Mode\n");
     exit(EXIT_FAILURE);
@@ -217,18 +221,7 @@ SDL_Surface *loadImage(char *path)
   if(loadedSurface == NULL) {
     fprintf(stderr, "Error loading %s: %s\n", path, IMG_GetError());
     exit(EXIT_FAILURE);
-  }/* else {
-    //Convert the surface format to the screen's format
-    optimizedSurface = SDL_ConvertSurface(loadedSurface, screen->format, 0);
-    if(optimizedSurface == NULL) {
-      //TODO read about the flags, transparency is not kept.
-      fprintf(stderr, "Error optimising %s: %s\n", path, SDL_GetError());
-      return loadedSurface;
-    }
-
-    SDL_FreeSurface(loadedSurface);
   }
 
-  return optimizedSurface;*/
   return loadedSurface;
 }
