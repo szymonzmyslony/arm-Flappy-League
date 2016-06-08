@@ -21,11 +21,15 @@ void updateCircleObj(GameObject *circObj) {
   cx += cvx;
   cy += cvy;
 
-  if((cx < 0 && cvx < 0) || (cx > screen->w && cvx > 0)) {
+  if((cx - radius < 0 && cvx < 0) || (cx + radius > screen->w && cvx > 0)) {
     cvx = -cvx;
   }
-  if((cy < 0 && cvy < 0) || (cy > screen->h && cvy > 0)) {
-    cvy = -cvy;
+
+  if((cy - radius < 0 && cvy < 0)) {
+    cvy = 0;
+  }
+  if(cy + radius > screen->h && cvy > 0) {
+    cvy = -15;
   }
 }
 
