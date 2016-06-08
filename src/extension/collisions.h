@@ -12,6 +12,6 @@ enum colliderTypes {
 };
 
 void resolveCollision(Vector *v1, Vector *v2, int m1, int m2, float e);
-void bool circlesCollided(GameObject *c1, GameObject *c2);
+bool circlesCollided(GameObject *c1, GameObject *c2);
 
 #endif
