@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <SDL/SDL.h>
 
+enum Game { MAX_OBJECTS = 20 };
+
 typedef struct vector {
   float x;
   float y;
@@ -32,9 +34,10 @@ typedef union var {
 */
 typedef struct gameObject GameObject;
 struct gameObject {
+  uint8_t colliderType;
   Var v1, v2, v3, v4, v5, v6;
-  // The sprite drawn, if it is not NULL, and the function called to draw it
   SDL_Surface *sprite;
+  // Only circles collide, called from a circle's update
   void (*draw)(GameObject *gObj);
   // A function called every frame, if it is not NULL
   void (*update)(GameObject *gObj);
