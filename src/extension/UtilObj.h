@@ -15,5 +15,6 @@ GameObject *initTimerObj(uint32_t duration, bool enable, void
   (*updateMode)(GameObject*), void (*endAction)(void));
 void setSprite(GameObject *gameObj, SDL_Surface *sprite);
 void addAllVelocity();
+void applyAllGravity();
 
 #endif
