@@ -26,3 +26,12 @@ void resolveCollision(Vector *v1, Vector *v2, int m1, int m2, float e) {
   v2->x = new_v2_x;
   v2->y = new_v2_y;
 }
+
+bool circlesCollided(GameObject *c1, GameObject *c2) {
+  int dx = c1->v1.vec.x - c2->v1.vec.x;
+  int dy = c1->v1.vec.y - c2->v1.vec.y;
+
+  int dr = c1->v3.f + c2->v3.f;
+
+  return (dx * dx) + (dy * dy) < dr * dr;
+}
