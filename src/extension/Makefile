@@ -11,8 +11,8 @@ LIBS = -lSDL_image
 
 all: daGame
 
-daGame: UtilObj.o CircleObj.o linkedList.o Tminus.o Debug.o
-	$(CC) UtilObj.o CircleObj.o linkedList.o Tminus.o Debug.o $(SDL_CFLAGS) $(SDL_LDFLAGS) -o daGame $(LIBS)
+daGame: UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o
+	$(CC) UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o $(SDL_CFLAGS) $(SDL_LDFLAGS) -o daGame $(LIBS)
 
 CircleObj.o : CircleObj.c CircleObj.h
 	$(CC)  CircleObj.c $(SDL_CFLAGS) $(SDL_LDFLAGS) -o CircleObj.o $(LIBS)

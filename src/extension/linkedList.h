@@ -10,7 +10,7 @@ Header File for linked list ADT
 #include <inttypes.h>
 #include <string.h>
 #include <assert.h>
-#include "Tminus.h"
+#include "Struts.h"
 
 #define VAL GameObject
 
