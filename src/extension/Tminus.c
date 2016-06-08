@@ -3,8 +3,7 @@
 #define FPS 60
 #define SPF 1000 / FPS
 
-enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 720 };
-enum Game { MAX_OBJECTS = 20 };
+enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 540 };
 
 //TODO consider SDL 2.0
 
@@ -29,6 +28,7 @@ int main(int argc, char **argv) {
   SDL_Surface *surf_ball = loadImage("gfx/Ball.png");
 
   // -- Initialise Game Variables
+
   gObjs = (GameObject**)calloc(MAX_OBJECTS, sizeof(GameObject*));
   if(gObjs == NULL) {
     fprintf(stderr, "Error allocating memory\n");
@@ -36,9 +36,31 @@ int main(int argc, char **argv) {
   }
 
   //TODO remove test code
-  gObjs[0] = initCircleObj(30, 400, 400, 20, -20);
-  gObjs[1] = initCircleObj(32, 300, 400, 20, -20);
-  setSprite(gObjs[1], datboi);
+  gObjs[0] = initCircleObj(32, 300, 300, 0,  0);
+  gObjs[1] = initCircleObj(32, 300, 300, 1,  1);
+  setSprite(gObjs[0], surf_ball);
+  setSprite(gObjs[1], surf_datboi);
+
+  gObjs[2] = initCircleObj(32, 300, 300, 1, -1);
+  gObjs[3] = initCircleObj(32, 300, 300, 1,  0);
+  setSprite(gObjs[2], surf_datboi);
+  setSprite(gObjs[3], surf_datboi);
+
+  gObjs[4] = initCircleObj(32, 300, 300, -1, -1);
+  gObjs[5] = initCircleObj(32, 300, 300, -1,  0);
+  setSprite(gObjs[4], surf_datboi);
+  setSprite(gObjs[5], surf_datboi);
+
+  gObjs[6] = initCircleObj(32, 300, 300, 0, -1);
+  gObjs[7] = initCircleObj(32, 300, 300, 0,  1);
+  setSprite(gObjs[6], surf_datboi);
+  setSprite(gObjs[7], surf_datboi);
+
+  gObjs[8] = initCircleObj(32, 300, 300, -1,  1);
+  setSprite(gObjs[8], surf_datboi);
+
+  gObjs[9] = initTimerObj(1000, true, &updateTimerRepeated, &addAllVelocity);
+
   // -- Initialise Loop variables
   // A union capable of holding all input events
   SDL_Event event;
@@ -47,6 +69,9 @@ int main(int argc, char **argv) {
 
   // Game Loop
   while(running) {
+    SDL_FillRect(screen, NULL,
+      SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
+
     // Process SDL keyboard input events. For non-Pi only.
     processKeyboardInput(&event, &running);
 
@@ -57,28 +82,10 @@ int main(int argc, char **argv) {
       lastUpdate = now;
 
       // Update each gameObject that has an update function
-      for(int i = 0; i < MAX_OBJECTS; i++) {
-        if(gObjs[i] != NULL && gObjs[i]->update != NULL) {
-          gObjs[i]->update(gObjs[i]);
-        }
-      }
-
+      updateObjs();
+      handleCollisions();
       // Draw all gameObjects onto screen that have a sprite
-      for(int i = 0; i < MAX_OBJECTS; i++) {
-        if(gObjs[i] != NULL && gObjs[i]->draw != NULL) {
-          gObjs[i]->draw(gObjs[i]);
-        }
-      }
-
-      //TODO remove testing --------------------------------
-      SDL_Rect a = { .x = 10, .y = 10, .w = 0, .h = 0 };
-      SDL_Rect b = { .x = 300, .y = 200, .w = 0, .h = 0 };
-      SDL_Rect c = { .x = 730, .y = 530, .w = 0, .h = 0 };
-
-      SDL_BlitSurface(surf_datboi, NULL, screen, &a);
-      SDL_BlitSurface(surf_flappybird, NULL, screen, &b);
-      SDL_BlitSurface(surf_ball, NULL, screen, &c);
-      // ------------------------------------------/ Testing
+      drawSprites();
 
       // Swap the back buffer's contents with the front buffer's
       // Update the screen
@@ -93,6 +100,55 @@ int main(int argc, char **argv) {
   printf("Exiting T-\n");
 
   return 0;
+}
+
+inline void updateObjs() {
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    if(gObjs[i] != NULL && gObjs[i]->update != NULL) {
+      gObjs[i]->update(gObjs[i]);
+    }
+  }
+}
+
+inline void handleCollisions(void) {
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    for(int j = i; j < MAX_OBJECTS; j++) {
+      GameObject *circObj = gObjs[i];
+      if(circObj != NULL && circObj->colliderType == COL_CIRCLE
+         && gObjs[j] != NULL) {
+        switch(gObjs[j]->colliderType) {
+          case COL_CIRCLE:
+            if(circlesCollided(circObj, gObjs[j])) {
+              resolveCollision(&(circObj->v2), &(gObjs[j]->v2), 1, 1, 0.8);
+            }
+            break;
+
+          case COL_LINE:
+            if(false) {
+
+            }
+            break;
+
+          case COL_NET:
+            if(false) {
+
+            }
+            break;
+
+          default:
+            break;
+        }
+      }
+    }
+  }
+}
+
+inline void drawSprites(void) {
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    if(gObjs[i] != NULL && gObjs[i]->draw != NULL) {
+      gObjs[i]->draw(gObjs[i]);
+    }
+  }
 }
 
 /** Processes each keyboard event that occurred. For non-Pi testing purposes.
@@ -163,6 +219,10 @@ inline void initSDL(void) {
     fprintf(stderr, "Error initialising SDL_image: %s\n", IMG_GetError());
     exit(EXIT_FAILURE);
   }
+}
+
+void initMenu(void) {
+
 }
 
 /**
