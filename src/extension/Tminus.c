@@ -38,30 +38,17 @@ int main(int argc, char **argv) {
   }
 
   //TODO remove test code
-  gObjs[0] = initCircleObj(32, 300, 300, 1,  0);
-  gObjs[1] = initCircleObj(32, 400, 400, 0,  0);
-  setSprite(gObjs[0], surf_ball);
-  setSprite(gObjs[1], surf_datboi);
+  gObjs[0] = initCircleObj(32, 100, 300, 0,  0);
+  setSprite(gObjs[0], surf_datboi);
 
-  // gObjs[2] = initCircleObj(32, 300, 300, 1, -1);
-  // gObjs[3] = initCircleObj(32, 300, 300, 1,  0);
-  // setSprite(gObjs[2], surf_datboi);
-  // setSprite(gObjs[3], surf_datboi);
-  //
-  // gObjs[4] = initCircleObj(32, 300, 300, -1, -1);
-  // gObjs[5] = initCircleObj(32, 300, 300, -1,  0);
-  // setSprite(gObjs[4], surf_datboi);
-  // setSprite(gObjs[5], surf_datboi);
-  //
-  // gObjs[6] = initCircleObj(32, 300, 300, 0, -1);
-  // gObjs[7] = initCircleObj(32, 300, 300, 0,  1);
-  // setSprite(gObjs[6], surf_datboi);
-  // setSprite(gObjs[7], surf_datboi);
-  //
-  // gObjs[8] = initCircleObj(32, 300, 300, -1,  1);
-  // setSprite(gObjs[8], surf_datboi);
+  gObjs[1] = initCircleObj(32, screen->w - 100, 300, 0,  0);
+  setSprite(gObjs[1], surf_flappybird);
 
-  //gObjs[9] = initTimerObj(999999, true, &updateTimerConstant, &applyAllGravity);
+  gObjs[2] = initCircleObj(32, screen->w/2, 300, 0, 0);
+  setSprite(gObjs[2], surf_ball);
+
+  gObjs[9] = initTimerObj(999999, true, &updateTimerConstant, &applyAllGravity);
+  gObjs[10] = initTimerObj(999999, true, &updateTimerConstant, &applyAllAirResistance);
 
   // -- Initialise Loop variables
   // A union capable of holding all input events
@@ -155,14 +142,24 @@ inline void processKeyboardInput(SDL_Event *eventPtr, bool *running) {
               *running = false;
               break;
 
-            case SDLK_BACKSPACE:
-              SDL_FillRect(screen, NULL,
-                SDL_MapRGB(screen->format, 0xFF, 0x00, 0xFF));
+            case SDLK_z:
+              gObjs[0]->v2.vec.x = - 5.0;
+              gObjs[0]->v2.vec.y = -10.0;
               break;
 
-            case SDLK_SPACE:
-              SDL_FillRect(screen, NULL,
-                SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
+            case SDLK_x:
+              gObjs[0]->v2.vec.x =   5.0;
+              gObjs[0]->v2.vec.y = -10.0;
+              break;
+
+            case SDLK_n:
+              gObjs[1]->v2.vec.x = - 5.0;
+              gObjs[1]->v2.vec.y = -10.0;
+              break;
+
+            case SDLK_m:
+              gObjs[1]->v2.vec.x =   5.0;
+              gObjs[1]->v2.vec.y = -10.0;
               break;
 
             default:
