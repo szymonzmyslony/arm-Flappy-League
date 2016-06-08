@@ -1,5 +1,3 @@
-#include "Structs.h"
-#include "Debug.h"
 #include "CircleObj.h"
 
 #define cx     circObj->v1.vec.x

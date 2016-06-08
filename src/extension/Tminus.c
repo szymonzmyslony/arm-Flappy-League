@@ -1,10 +1,4 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include "Tminus.h"
-#include "Structs.h"
-#include "CircleObj.h"
 
 #define FPS 60
 #define SPF 1000 / FPS

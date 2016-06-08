@@ -1,6 +1,10 @@
 #ifndef TMINUS_H
 #define TMINUS_H
 
+#include <SDL/SDL_image.h>
+#include "Structs.h"
+#include "CircleObj.h"
+
 SDL_Surface *getConsoleScreen(void);
 SDL_Surface *loadImage(char *path);
 void initSDL(void);

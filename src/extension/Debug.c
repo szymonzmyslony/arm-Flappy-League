@@ -1,5 +1,4 @@
-#include <SDL/SDL.h>
-#include <stdint.h>
+#include "Debug.h"
 #define DEBUG_COLOUR 0xAACCCCAA
 // Handy code for drawing straight onto the screen, for debugging purposes.
 /** The screen must be locked before calling.
