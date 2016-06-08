@@ -2,15 +2,13 @@
 #include <SDL/SDL_image.h>
 #include <stdbool.h>
 #include "Tminus.h"
+#include "Structs.h"
 #include "CircleObj.h"
 
 enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 720 };
 enum Game { MAX_OBJECTS = 20 };
 
 //TODO consider SDL 2.0
-
-SDL_Surface *screen;
-GameObject **gObjs;
 
 /** SDL_main is used for Windows / Mac, we will just use Linux
  * DARWIN is MAC OS X
