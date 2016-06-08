@@ -11,6 +11,6 @@ void updateTimerAlarm(GameObject *timerObj);
 void updateTimerRepeated(GameObject *timerObj);
 void updateTimerConstant(GameObject *timerObj);
 void initTimerObj(GameObject *timerObj, uint32_t duration, bool enable, void
-  (*updateMode)(void), void (*endAction)(void));
+  (*updateMode)(GameObject*), void (*endAction)(void));
 
 #endif

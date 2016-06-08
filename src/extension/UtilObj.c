@@ -66,7 +66,7 @@ void updateTimerConstant(GameObject *timerObj) {
 }
 
 void initTimerObj(GameObject *timerObj, uint32_t duration, bool enable,
-             void (*updateMode)(void), void (*endAction)(void)) {
+             void (*updateMode)(GameObject*), void (*endAction)(void)) {
   lastTime = SDL_GetTicks();
   elapsed = 0;
   activationTime = duration;

@@ -1,7 +1,8 @@
 CC      = gcc
-#CFLAGS  = `sdl-config --libs --cflags`
-SDL_CFLAGS := $(shell sdl-config --cflags) -std=c99
-SDL_LDFLAGS := $(shell sdl-config --libs)
+CFLAGS  = -Wall -Werror -pedantic -std=c99 `sdl-config --libs --cflags`
+#SDL_CFLAGS := $(shell sdl-config --cflags) -std=c99
+#SDL_LDFLAGS := $(shell sdl-config --libs)
+#$(SDL_CFLAGS) $(SDL_LDFLAGS)
 LIBS = -lSDL_image
 
 
@@ -12,22 +13,22 @@ LIBS = -lSDL_image
 all: daGame
 
 daGame: UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o
-	$(CC) UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o $(SDL_CFLAGS) $(SDL_LDFLAGS) -o daGame $(LIBS)
+	$(CC) UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o $(CFLAGS) -o daGame $(LIBS)
 
 CircleObj.o : CircleObj.c CircleObj.h
-	$(CC)  CircleObj.c $(SDL_CFLAGS) $(SDL_LDFLAGS) -o CircleObj.o $(LIBS)
+	$(CC)  CircleObj.c $(CFLAGS) -o CircleObj.o $(LIBS)
 
 linkedList.o : linkedList.c linkedList.h
-	$(CC)  linkedList.c $(SDL_CFLAGS) $(SDL_LDFLAGS) -o linkedList.o $(LIBS)
+	$(CC)  linkedList.c $(CFLAGS) -o linkedList.o $(LIBS)
 
 Tminus.o : Tminus.c Tminus.h
-	$(CC)  Tminus.c $(SDL_CFLAGS) $(SDL_LDFLAGS) -o Tminus.o $(LIBS)
+	$(CC)  Tminus.c $(CFLAGS) -o Tminus.o $(LIBS)
 
 Debug.o : Debug.c Debug.h
-	$(CC)  Debug.c $(SDL_CFLAGS) $(SDL_LDFLAGS) -o Debug.o $(LIBS)
+	$(CC)  Debug.c $(CFLAGS) -o Debug.o $(LIBS)
 
 UtilObj.o : UtilObj.c UtilObj.h
-	$(CC)  UtilObj.c $(SDL_CFLAGS) $(SDL_LDFLAGS) -o UtilObj.o $(LIBS)
+	$(CC)  UtilObj.c $(CFLAGS) -o UtilObj.o $(LIBS)
 
 clean:
 	rm -f $(wildcard *.o)
