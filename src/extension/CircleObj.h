@@ -3,8 +3,9 @@
 
 #include "Structs.h"
 #include "Debug.h"
+#include "collisions.h"
 
-void initCircleObj(float r, float x, float y, float vx, float vy);
+GameObject *initCircleObj(float r, float x, float y, float vx, float vy);
 void drawCircleObj(GameObject *circObj);
 void updateCircleObj(GameObject *circObj);
 void drawCentredObj(GameObject *gameObj);
