@@ -2,6 +2,7 @@
 
 #define FPS 60
 #define SPF 1000 / FPS
+#define COEFF_OF_RESTITUTION 1
 
 enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 540 };
 
@@ -36,8 +37,8 @@ int main(int argc, char **argv) {
   }
 
   //TODO remove test code
-  gObjs[0] = initCircleObj(32, 300, 300, 0,  0);
-  gObjs[1] = initCircleObj(32, 000, 000, 1,  1);
+  gObjs[0] = initCircleObj(32, 300, 300, 1,  0);
+  gObjs[1] = initCircleObj(32, 400, 400, 0,  0);
   setSprite(gObjs[0], surf_ball);
   setSprite(gObjs[1], surf_datboi);
 
@@ -118,7 +119,8 @@ inline void handleCollisions(void) {
       if(circObj != NULL && circObj->colliderType == COL_CIRCLE
          && gObjs[j] != NULL && gObjs[j]->colliderType == COL_CIRCLE) {
         if(circlesCollided(circObj, gObjs[j])) {
-          resolveCollision(&(circObj->v2.vec), &(gObjs[j]->v2.vec), 1, 1, 0.8);
+          resolveCollision(&(circObj->v2.vec), &(gObjs[j]->v2.vec), 1, 1, 
+                           COEFF_OF_RESTITUTION);
         }
       }
     }
