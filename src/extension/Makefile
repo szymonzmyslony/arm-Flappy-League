@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS  = -Wall -Werror -pedantic -std=c99 `sdl-config --libs --cflags`
+CFLAGS  = `sdl-config --libs --cflags` -std=c99
 #SDL_CFLAGS := $(shell sdl-config --cflags) -std=c99
 #SDL_LDFLAGS := $(shell sdl-config --libs)
 #$(SDL_CFLAGS) $(SDL_LDFLAGS)
@@ -16,19 +16,19 @@ daGame: UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o
 	$(CC) UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o $(CFLAGS) -o daGame $(LIBS)
 
 CircleObj.o : CircleObj.c CircleObj.h
-	$(CC)  CircleObj.c $(CFLAGS) -o CircleObj.o $(LIBS)
+	$(CC) $(CFLAGS) CircleObj.c -c -o CircleObj.o $(LIBS)
 
 linkedList.o : linkedList.c linkedList.h
-	$(CC)  linkedList.c $(CFLAGS) -o linkedList.o $(LIBS)
+	$(CC) $(CFLAGS) linkedList.c -c -o linkedList.o $(LIBS)
 
 Tminus.o : Tminus.c Tminus.h
-	$(CC)  Tminus.c $(CFLAGS) -o Tminus.o $(LIBS)
+	$(CC) $(CFLAGS) Tminus.c -c -o Tminus.o $(LIBS)
 
 Debug.o : Debug.c Debug.h
-	$(CC)  Debug.c $(CFLAGS) -o Debug.o $(LIBS)
+	$(CC) $(CFLAGS) Debug.c -c -o Debug.o $(LIBS)
 
 UtilObj.o : UtilObj.c UtilObj.h
-	$(CC)  UtilObj.c $(CFLAGS) -o UtilObj.o $(LIBS)
+	$(CC) $(CFLAGS) UtilObj.c -c -o UtilObj.o $(LIBS)
 
 clean:
 	rm -f $(wildcard *.o)

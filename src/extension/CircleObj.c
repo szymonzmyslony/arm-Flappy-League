@@ -21,7 +21,7 @@ void updateCircleObj(GameObject *circObj) {
 
 }
 
-GameObject *initCircleObj(float r, float x, float y, float vx, float vy) {
+void initCircleObj(float r, float x, float y, float vx, float vy) {
   GameObject *circObj = (GameObject*)calloc(1, sizeof(GameObject));
 
   cx = x;
