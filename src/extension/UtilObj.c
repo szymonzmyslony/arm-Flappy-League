@@ -87,6 +87,14 @@ void addAllVelocity() {
   }
 }
 
+void applyAllGravity() {
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
+      gObjs[i]->v2.vec.y += G;
+    }
+  }
+}
+
 //=============================== Input Objects ===========================
 
 //============================= Setter Functions ==========================
