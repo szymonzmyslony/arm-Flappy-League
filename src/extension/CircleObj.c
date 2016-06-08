@@ -1,6 +1,6 @@
 #include "Structs.h"
-#include "CircleObj.h"
 #include "Debug.h"
+#include "CircleObj.h"
 
 #define cx     circObj->v1.vec.x
 #define cy     circObj->v1.vec.y

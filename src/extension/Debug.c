@@ -1,12 +1,13 @@
 #include <SDL/SDL.h>
+#include <stdint.h>
 #define DEBUG_COLOUR 0xAACCCCAA
 // Handy code for drawing straight onto the screen, for debugging purposes.
 /** The screen must be locked before calling.
  */
-void debugDrawPixel(int x, int y, Uint32 pixel) {
+void debugDrawPixel(int x, int y, uint32_t pixel) {
   int bpp = screen->format->BytesPerPixel;
   /* Here p is the address to the pixel we want to set */
-  Uint8 *p = (Uint8 *)screen->pixels + y * screen->pitch + x * bpp;
+  Uint8 *p = (uint8_t *)screen->pixels + y * screen->pitch + x * bpp;
 
   switch(bpp) {
   case 1:
@@ -14,7 +15,7 @@ void debugDrawPixel(int x, int y, Uint32 pixel) {
     break;
 
   case 2:
-    *(Uint16 *)p = pixel;
+    *(uint16_t *)p = pixel;
     break;
 
   case 3:
@@ -30,7 +31,7 @@ void debugDrawPixel(int x, int y, Uint32 pixel) {
     break;
 
   case 4:
-    *(Uint32 *)p = pixel;
+    *(uint32_t *)p = pixel;
     break;
   }
 }
