@@ -12,8 +12,8 @@ LIBS = -lSDL_image
 
 all: daGame
 
-daGame: UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o
-	$(CC) UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o $(CFLAGS) -o daGame $(LIBS)
+daGame: UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o
+	$(CC) UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
 
 CircleObj.o : CircleObj.c CircleObj.h
 	$(CC) $(CFLAGS) CircleObj.c -c -o CircleObj.o $(LIBS)
@@ -29,6 +29,9 @@ Debug.o : Debug.c Debug.h
 
 UtilObj.o : UtilObj.c UtilObj.h
 	$(CC) $(CFLAGS) UtilObj.c -c -o UtilObj.o $(LIBS)
+
+collisions.o : collisions.c collisions.h
+	$(CC) $(CFLAGS) collisions.c -c -o collisions.o $(LIBS)
 
 clean:
 	rm -f $(wildcard *.o)
