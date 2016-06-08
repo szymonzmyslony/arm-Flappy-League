@@ -36,7 +36,9 @@ int main(int argc, char **argv) {
   }
 
   //TODO remove test code
-  //gObjs[0] = initCircleObj(30, 400, 400, 20, -20);
+  gObjs[0] = initCircleObj(30, 400, 400, 20, -20);
+  gObjs[1] = initCircleObj(32, 300, 400, 20, -20);
+  setSprite(gObjs[1], datboi);
   // -- Initialise Loop variables
   // A union capable of holding all input events
   SDL_Event event;
