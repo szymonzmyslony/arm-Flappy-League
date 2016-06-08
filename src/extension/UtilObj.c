@@ -76,3 +76,8 @@ void initTimerObj(GameObject *timerObj, uint32_t duration, bool enable,
 }
 
 //=============================== Input Objects ===========================
+
+//============================= Setter Functions ==========================
+void setSprite(GameObject *gameObj, SDL_Surface *sprite) {
+  gameObj->sprite = sprite;
+}
