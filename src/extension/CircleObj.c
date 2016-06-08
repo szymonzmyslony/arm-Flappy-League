@@ -18,11 +18,27 @@ void drawCircleObj(GameObject *circObj) {
 }
 
 void updateCircleObj(GameObject *circObj) {
+  cx += cvx;
+  cy += cvy;
 
+  if((cx < 0 && cvx < 0) || (cx > screen->w && cvx > 0)) {
+    cvx = -cvx;
+  }
+  if((cy < 0 && cvy < 0) || (cy > screen->h && cvy > 0)) {
+    cvy = -cvy;
+  }
 }
 
-void initCircleObj(float r, float x, float y, float vx, float vy) {
+GameObject *initCircleObj(float r, float x, float y, float vx, float vy) {
   GameObject *circObj = (GameObject*)calloc(1, sizeof(GameObject));
+  if(circObj == NULL) {
+    printf("Error allocating gameObj memory.");
+    //TODO do for all
+  }
+
+  circObj->colliderType = COL_CIRCLE;
+
+  radius = r;
 
   cx = x;
   cy = y;
@@ -30,10 +46,10 @@ void initCircleObj(float r, float x, float y, float vx, float vy) {
   cvx = vx;
   cvy = vy;
 
-  radius = r;
-
   circObj->draw = &drawCircleObj;
   circObj->update = &updateCircleObj;
+
+  return circObj;
 }
 
 /** Pre: The GameObject must have v1 set to a position
