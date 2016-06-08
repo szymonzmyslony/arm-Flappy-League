@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <SDL/SDL.h>
 
-#define G 0.5
-
 enum Game { MAX_OBJECTS = 20 };
 
 typedef struct vector {
@@ -13,12 +11,14 @@ typedef struct vector {
   float y;
 } Vector;
 
+typedef struct gameObject GameObject;
 /** A union that represents a generic variable, allowing the GameObject struct
 * to be more versatile and extremely generic, at the cost of taking up more
 * memory.
 */
 typedef union var {
   void (*func)(void);
+  GameObject *g;
   Vector vec;
   uint32_t u;
   float f;
@@ -34,7 +34,6 @@ typedef union var {
 * to switch the sides of each player in a football game when update() is
 * called.
 */
-typedef struct gameObject GameObject;
 struct gameObject {
   uint8_t colliderType;
   Var v1, v2, v3, v4, v5, v6;
