@@ -4,6 +4,10 @@
 /** The screen must be locked before calling.
  */
 void debugDrawPixel(int x, int y, uint32_t pixel) {
+  if(x < 0 || x > screen->w || y < 0 || y > screen->h) {
+    return;
+  }
+
   int bpp = screen->format->BytesPerPixel;
   /* Here p is the address to the pixel we want to set */
   Uint8 *p = (uint8_t *)screen->pixels + y * screen->pitch + x * bpp;
