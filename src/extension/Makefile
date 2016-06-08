@@ -32,3 +32,6 @@ UtilObj.o : UtilObj.c UtilObj.h
 clean:
 	rm -f $(wildcard *.o)
 	rm -f daGame
+
+#Use this if you want to compile it manually
+#gcc UtilObj.c Debug.c CircleObj.c linkedList.c Tminus.c `sdl-config --libs --cflags` -std=c99 -o daGame -lSDL_image
