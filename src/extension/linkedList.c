@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <assert.h>
-#include <inttypes.h>
 #include "linkedList.h"
 #define NDEBUG
 

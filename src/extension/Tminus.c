@@ -1,16 +1,12 @@
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
-#include <stdbool.h>
 #include "Tminus.h"
-#include "CircleObj.h"
+
+#define FPS 60
+#define SPF 1000 / FPS
 
 enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 720 };
 enum Game { MAX_OBJECTS = 20 };
 
 //TODO consider SDL 2.0
-
-SDL_Surface *screen;
-GameObject **gObjs;
 
 /** SDL_main is used for Windows / Mac, we will just use Linux
  * DARWIN is MAC OS X
@@ -32,18 +28,20 @@ int main(int argc, char **argv) {
   SDL_Surface *surf_flappybird = loadImage("gfx/FlappyBird.png");
   SDL_Surface *surf_ball = loadImage("gfx/Ball.png");
 
-  // -- Initialise Game variables
-  // A union capable of holding all input events
-  SDL_Event event;
-  bool running = true;
-
+  // -- Initialise Game Variables
   gObjs = (GameObject**)calloc(MAX_OBJECTS, sizeof(GameObject*));
   if(gObjs == NULL) {
     fprintf(stderr, "Error allocating memory\n");
     exit(EXIT_FAILURE);
   }
+
   //TODO remove test code
-  gObjs[0] = initCircleObj(30, 400, 400, 20, -20);
+  //gObjs[0] = initCircleObj(30, 400, 400, 20, -20);
+  // -- Initialise Loop variables
+  // A union capable of holding all input events
+  SDL_Event event;
+  bool running = true;
+  uint32_t lastUpdate = SDL_GetTicks();
 
   // Game Loop
   while(running) {
@@ -52,35 +50,38 @@ int main(int argc, char **argv) {
 
     //TODO Process GPIO pins
 
-    // Update each gameObject that has an update function
-    for(int i = 0; i < MAX_OBJECTS; i++) {
-      if(gObjs[i] != NULL && gObjs[i]->update != NULL) {
-        gObjs[i]->update(gObjs[i]);
+    uint32_t now = SDL_GetTicks();
+    if(now - lastUpdate > SPF) {
+      lastUpdate = now;
+
+      // Update each gameObject that has an update function
+      for(int i = 0; i < MAX_OBJECTS; i++) {
+        if(gObjs[i] != NULL && gObjs[i]->update != NULL) {
+          gObjs[i]->update(gObjs[i]);
+        }
       }
-    }
 
-    // Draw all gameObjects onto screen that have a sprite
-    for(int i = 0; i < MAX_OBJECTS; i++) {
-      if(gObjs[i] != NULL && gObjs[i]->draw != NULL) {
-        gObjs[i]->draw(gObjs[i]);
+      // Draw all gameObjects onto screen that have a sprite
+      for(int i = 0; i < MAX_OBJECTS; i++) {
+        if(gObjs[i] != NULL && gObjs[i]->draw != NULL) {
+          gObjs[i]->draw(gObjs[i]);
+        }
       }
+
+      //TODO remove testing --------------------------------
+      SDL_Rect a = { .x = 10, .y = 10, .w = 0, .h = 0 };
+      SDL_Rect b = { .x = 300, .y = 200, .w = 0, .h = 0 };
+      SDL_Rect c = { .x = 730, .y = 530, .w = 0, .h = 0 };
+
+      SDL_BlitSurface(surf_datboi, NULL, screen, &a);
+      SDL_BlitSurface(surf_flappybird, NULL, screen, &b);
+      SDL_BlitSurface(surf_ball, NULL, screen, &c);
+      // ------------------------------------------/ Testing
+
+      // Swap the back buffer's contents with the front buffer's
+      // Update the screen
+      SDL_Flip(screen);
     }
-
-    //TODO remove testing --------------------------------
-    SDL_Rect a = { .x = 10, .y = 10, .w = 0, .h = 0 };
-    SDL_Rect b = { .x = 300, .y = 200, .w = 0, .h = 0 };
-    SDL_Rect c = { .x = 730, .y = 530, .w = 0, .h = 0 };
-
-    SDL_BlitSurface(surf_datboi, NULL, screen, &a);
-    SDL_BlitSurface(surf_flappybird, NULL, screen, &b);
-    SDL_BlitSurface(surf_ball, NULL, screen, &c);
-    // ------------------------------------------/ Testing
-
-    // Swap the back buffer's contents with the front buffer's
-    // Update the screen
-    SDL_Flip(screen);
-
-    //TODO Cap FPS
   }
 
   // Cleanup

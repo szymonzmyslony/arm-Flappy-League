@@ -4,10 +4,13 @@ Header File for linked list ADT
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
-#include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
 #include <string.h>
-#include "Tminus.h"
+#include <assert.h>
+#include "Structs.h"
 
 #define VAL GameObject
 

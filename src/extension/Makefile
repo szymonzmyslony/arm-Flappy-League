@@ -1,5 +1,8 @@
 CC      = gcc
-CFLAGS  = `sdl-config --libs --cflags`
+CFLAGS  = `sdl-config --libs --cflags` -std=c99
+#SDL_CFLAGS := $(shell sdl-config --cflags) -std=c99
+#SDL_LDFLAGS := $(shell sdl-config --libs)
+#$(SDL_CFLAGS) $(SDL_LDFLAGS)
 LIBS = -lSDL_image
 
 
@@ -9,18 +12,27 @@ LIBS = -lSDL_image
 
 all: daGame
 
-daGame: CircleObj.o linkedList.o Tminus.o
-	$(CC)  CircleObj.o linkedList.o Tminus.o $(CFLAGS) -o daGame $(LIBS)
+daGame: UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o
+	$(CC) UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o $(CFLAGS) -o daGame $(LIBS)
 
 CircleObj.o : CircleObj.c CircleObj.h
-	$(CC)  CircleObj.c $(CFLAGS) -o CircleObj.o $(LIBS)
+	$(CC) $(CFLAGS) CircleObj.c -c -o CircleObj.o $(LIBS)
 
 linkedList.o : linkedList.c linkedList.h
-	$(CC)  linkedList.c $(CFLAGS) -o linkedList.o $(LIBS)
+	$(CC) $(CFLAGS) linkedList.c -c -o linkedList.o $(LIBS)
 
 Tminus.o : Tminus.c Tminus.h
-	$(CC)  Tminus.c $(CFLAGS) -o Tminus.o $(LIBS)
+	$(CC) $(CFLAGS) Tminus.c -c -o Tminus.o $(LIBS)
+
+Debug.o : Debug.c Debug.h
+	$(CC) $(CFLAGS) Debug.c -c -o Debug.o $(LIBS)
+
+UtilObj.o : UtilObj.c UtilObj.h
+	$(CC) $(CFLAGS) UtilObj.c -c -o UtilObj.o $(LIBS)
 
 clean:
 	rm -f $(wildcard *.o)
 	rm -f daGame
+
+#Use this if you want to compile it manually
+#gcc UtilObj.c Debug.c CircleObj.c linkedList.c Tminus.c `sdl-config --libs --cflags` -std=c99 -o daGame -lSDL_image
