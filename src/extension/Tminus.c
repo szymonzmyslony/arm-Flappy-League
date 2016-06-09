@@ -238,10 +238,8 @@ inline void initPins(void){
 }
 
 
-void initMenu(void) {
-  
-tup();
-
+void initMenu(void) {  
+  initSetup();
 }
 
 void initGame(void) {
