@@ -1,8 +1,5 @@
 CC      = gcc
-CFLAGS  = `sdl-config --libs --cflags` -std=c99
-#SDL_CFLAGS := $(shell sdl-config --cflags) -std=c99
-#SDL_LDFLAGS := $(shell sdl-config --libs)
-#$(SDL_CFLAGS) $(SDL_LDFLAGS)
+CFLAGS  = `sdl-config --libs --cflags` -std=c99 -lm
 LIBS = -lSDL_image -lSDL_mixer
 
 
@@ -12,8 +9,11 @@ LIBS = -lSDL_image -lSDL_mixer
 
 all: daGame
 
-daGame: Control.o UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o
-	$(CC) Control.o UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
+daGame: GameEdit.o Control.o UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o
+	$(CC) GameEdit.o Control.o UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
+
+GameEdit.o : GameEdit.c GameEdit.h
+	$(CC) $(CFLAGS) GameEdit.c -c -o GameEdit.o $(LIBS)
 
 Control.o : Control.c Control.h
 	$(CC) $(CFLAGS) Control.c -c -o Control.o $(LIBS)

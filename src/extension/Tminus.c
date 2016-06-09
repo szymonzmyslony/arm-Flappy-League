@@ -127,12 +127,37 @@ inline void handleCollisions(void) {
   // Circle - Circle collision
   for(int i = 0; i < MAX_OBJECTS; i++) {
     for(int j = i + 1; j < MAX_OBJECTS; j++) {
+
       GameObject *circObj = gObjs[i];
       if(circObj != NULL && circObj->colliderType == COL_CIRCLE
          && gObjs[j] != NULL && gObjs[j]->colliderType == COL_CIRCLE) {
+
         if(circlesCollided(circObj, gObjs[j])) {
           resolveCollision(&(circObj->v2.vec), &(gObjs[j]->v2.vec), 1, 1,
                            COEFF_OF_RESTITUTION);
+        }
+      }
+
+    }
+  }
+  // Circle - Other collision
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    for(int j = 0; j < MAX_OBJECTS; j++) {
+      GameObject *circObj = gObjs[i];
+      if(circObj != NULL && circObj->colliderType == COL_CIRCLE
+         && gObjs[j] != NULL) {
+        switch(gObjs[j]->colliderType) {
+          case COL_BOX:
+            break;
+
+          case COL_NET:
+            if(circleNetCollided(circObj, gObjs[j])) {
+              gObjs[j]->v3.func();
+            }
+            break;
+
+          default:
+            break;
         }
       }
     }
@@ -230,34 +255,12 @@ inline void initSDL(void) {
     exit(EXIT_FAILURE);
   }
 }
+
 inline void initPins(void){
   int i;
   for(i = LeftFirstPlayer; i<=LeftSecondPlayer; i++){
     pinMode(i, OUTPUT);
     digitalWrite(i, HIGH);}
-}
-
-
-void initMenu(void) {  
-  initSetup();
-}
-
-void initGame(void) {
-  initSetup();
-}
-
-void initSetup(void) {
-  gObjs[0] = initCircleObj(32, 100, 300, 0,  0);
-  setSprite(gObjs[0], surf_datboi);
-
-  gObjs[1] = initCircleObj(32, screen->w - 100, 300, 0,  0);
-  setSprite(gObjs[1], surf_flappybird);
-
-  gObjs[2] = initCircleObj(32, screen->w/2, 300, 0, 0);
-  setSprite(gObjs[2], surf_ball);
-
-  gObjs[9] = initTimerObj(UINT32_MAX, true, &updateTimerConstant, &applyAllGravity);
-  gObjs[10] = initTimerObj(UINT32_MAX, true, &updateTimerConstant, &applyAllAirResistance);
 }
 
 /** Attempts to load an image. The image is unoptimised.

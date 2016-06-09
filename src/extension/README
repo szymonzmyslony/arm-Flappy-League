@@ -1,4 +1,4 @@
-============ CREDITS ============================================================
+=========== CREDITS ===========================================================
  Programming
  - Benjamin Gunton
  - Harjuno Perwironegoro
@@ -9,45 +9,56 @@
  - Harjuno Perwironegoro
  - Nimesh Subedi
 
- Sound 
+ Sound
  Edited and used under the Creative Commons license.
 
  Stadium Cheering
- - Avakas : https://www.freesound.org/people/avakas/sounds/263679/
- - paulw2k : https://www.freesound.org/people/paulw2k/sounds/196461/
+ - Avakas
+     https://www.freesound.org/people/avakas/sounds/263679/
+ - paulw2k
+     https://www.freesound.org/people/paulw2k/sounds/196461/
 
  Ball Kicking
- - mikaelfernstrom : https://www.freesound.org/people/mikaelfernstrom/sounds/68650/
+ - mikaelfernstrom
+     https://www.freesound.org/people/mikaelfernstrom/sounds/68650/
 
  Referee Whistle
- - Pablo-F : https://www.freesound.org/people/Pablo-F/sounds/90743/
+ - Pablo-F
+     https://www.freesound.org/people/Pablo-F/sounds/90743/
 
-===== INSTALLATION INSTRUCTIONS =================================================
+===== INSTALLATION INSTRUCTIONS ===============================================
 
- This game was made using SDL v1.2, so you will need to install the SDL libraries
- and compile the program using them. All the necessary instructions should be
- listed below:
----------------------------------------------------------------------------------
-| Installing the Libraries                                                      |
-|                                                                               |
-| In order to compile the SDL program, you will need the SDL library:           |
-| $ sudo apt-get install libsdl1.2-dev                                          |
-|                                                                               |
-| Check it is installed with this:                                              |
-| $ sdl-config                                                                  |
-|                                                                               |
-| You will also need the SDL_image library:                                     |
-| $ sudo apt-get install libsdl-image1.2-dev                                    |
-|                                                                               | 
-| ..and the sound library:                                                      |
-| $ sudo apt-get install libsdl-mixer1.2-dev                                    |
----------------------------------------------------------------------------------
-| Compiling and Running                                                         |
-|                                                                               |
-| To use SDL without X, (from the console), you need permissions for framebuffer|
-| and audio access. Do the following command and then log out and in again:     |
-| $ sudo usermod -a -G video,audio <username>                                   |
-|                                                                               |
-| Compile the using the following. The order of some flags matter:              |
-| $ gcc <filename>.c `sdl-config --libs --cflags` -o <output> -lSDL_image       |
----------------------------------------------------------------------------------
+ This game was made using SDL v1.2, so you will need to install the SDL
+ libraries and compile the program using them. All the necessary instructions
+ should be listed below:
+-------------------------------------------------------------------------------
+| Installing the Libraries                                                    |
+|                                                                             |
+| In order to compile the SDL program, you will need the SDL library:         |
+| $ sudo apt-get install libsdl1.2-dev                                        |
+|                                                                             |
+| Check it is installed with this:                                            |
+| $ sdl-config                                                                |
+|                                                                             |
+| You will also need the SDL_image library:                                   |
+| $ sudo apt-get install libsdl-image1.2-dev                                  |
+|                                                                             |
+| ..and the sound library:                                                    |
+| $ sudo apt-get install libsdl-mixer1.2-dev                                  |
+|                                                                             |
+| The wiringPi library must be installed using git:                           |
+| $ git clone git://git.drogon.net/wiringPi                                   |
+| $ cd wiringPi                                                               |
+| $ git pull origin                                                           |
+| $ ./build                                                                   |
+-------------------------------------------------------------------------------
+| Compiling and Running                                                       |
+|                                                                             |
+| To use SDL without X, (from the console), you need permissions for          |
+| framebuffer and audio access. Do the following command and then log out and |
+|  in again:                                                                  |
+| $ sudo usermod -a -G video,audio <username>                                 |
+|                                                                             |
+| Compile the using the following. The order of some flags matter:            |
+| $ gcc <filename>.c `sdl-config --libs --cflags` -o <output> -lSDL_image     |
+-------------------------------------------------------------------------------

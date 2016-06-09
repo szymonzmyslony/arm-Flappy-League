@@ -48,3 +48,11 @@ void debugDrawCircle(int x, int y, int r) {
     }
   }
 }
+
+void debugDrawSquare(int x, int y, int w, int h) {
+  for(int dy = 0; dy < h; dy++) {
+    for(int dx = 0; dx < w; dx++) {
+      debugDrawPixel(x + dx, y + dy, DEBUG_COLOUR);
+    }
+  }
+}
