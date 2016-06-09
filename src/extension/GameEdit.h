@@ -2,10 +2,14 @@
 #define GAMEEDIT_H
 #include <stdint.h>
 #include <stdbool.h>
+#include "Control.h"
 #include "Structs.h"
 #include "CircleObj.h"
 #include "SquareObj.h"
 #include "UtilObj.h"
+
+#define upVelocity   10.0
+#define sideVelocity  5.0
 
 enum sizesAndPositions {
   PLAYER_SIZE = 64,
@@ -20,6 +24,8 @@ enum sizesAndPositions {
   GOAL_HEIGHT = WINDOW_HEIGHT / 3
 };
 
+void moveLeft(GameObject *circObj);
+void moveRight(GameObject *circObj);
 
 void initMenu(void);
 void initGame(void);
