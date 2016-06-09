@@ -230,7 +230,7 @@ inline void initSDL(void) {
     exit(EXIT_FAILURE);
   }
 }
-inline void initSetup(void){
+inline void initPins(void){
   int i;
   for(i = LeftFirstPlayer; i<=LeftSecondPlayer; i++){
     pinMode(i, OUTPUT);
@@ -239,7 +239,8 @@ inline void initSetup(void){
 
 
 void initMenu(void) {
-  initSetup();
+  
+tup();
 
 }
 

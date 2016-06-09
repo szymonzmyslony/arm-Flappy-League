@@ -30,5 +30,6 @@ void drawSprites(void);
 void initMenu(void);
 void initGame(void);
 void initSetup(void);
+void initPins(void)
 
 #endif
