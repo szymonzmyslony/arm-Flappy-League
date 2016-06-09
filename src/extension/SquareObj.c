@@ -12,14 +12,14 @@ void drawSquareObj(GameObject *squareObj) {
                      .y = sy,
                      .w =  0,
                      .h =  0 };
-    SDL_BlitSurface(sprite, NULL, screen, NULL);
+    SDL_BlitSurface(squareObj->sprite, NULL, screen, &pos);
   } else {
     debugDrawSquare(sx, sy, sw, sh);
   }
 }
 
-void setCollFunc(GameObject *squareObj, (void func)(void)) {
-  squareObj->func = func;
+void setCollFunc(GameObject *squareObj, void (*func)(GameObject*)) {
+  squareObj->v3.gFunc = func;
 }
 
 /** An object which has a square collider. A sprite attached will be drawn
