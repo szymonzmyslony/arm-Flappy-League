@@ -1,5 +1,5 @@
 #include "Debug.h"
-#define DEBUG_COLOUR 0xAACCCCAA
+#define DEBUG_COLOUR 0xFFCC00AA
 // Handy code for drawing straight onto the screen, for debugging purposes.
 /** The screen must be locked before calling.
  */
