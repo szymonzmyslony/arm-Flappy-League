@@ -79,7 +79,7 @@ GameObject *initTimerObj(uint32_t duration, bool enable,
 }
 
 //================= Timer Actions
-void addAllVelocity() {
+void addAllVelocity(void) {
   for(int i = 0; i < MAX_OBJECTS; i++) {
     if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
       gObjs[i]->v2.vec.y += 5;
@@ -87,7 +87,7 @@ void addAllVelocity() {
   }
 }
 
-void applyAllGravity() {
+void applyAllGravity(void) {
   for(int i = 0; i < MAX_OBJECTS; i++) {
     if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
       gObjs[i]->v2.vec.y += 0.5;
@@ -95,12 +95,16 @@ void applyAllGravity() {
   }
 }
 
-void applyAllAirResistance() {
+void applyAllAirResistance(void) {
   for(int i = 0; i < MAX_OBJECTS; i++) {
     if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
       gObjs[i]->v2.vec.x *= 0.99;
     }
   }
+}
+
+void playWhistleSound(void) {
+  Mix_PlayChannel(-1, sound_whistle, 0);
 }
 
 //=============================== Input Objects ===========================
