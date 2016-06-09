@@ -9,6 +9,7 @@
 #include "UtilObj.h"
 #include "collisions.h"
 #include "Control.h"
+#include "GameEdit.h"
 
 
 SDL_Surface *getConsoleScreen(void);
@@ -27,9 +28,6 @@ void updateObjs(void);
 void handleCollisions(void);
 void drawSprites(void);
 
-void initMenu(void);
-void initGame(void);
-void initSetup(void);
-void initPins(void)
+void initPins(void);
 
 #endif

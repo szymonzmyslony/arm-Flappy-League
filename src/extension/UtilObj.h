@@ -14,8 +14,9 @@ void updateTimerConstant(GameObject *timerObj);
 GameObject *initTimerObj(uint32_t duration, bool enable, void
   (*updateMode)(GameObject*), void (*endAction)(void));
 void setSprite(GameObject *gameObj, SDL_Surface *sprite);
-void addAllVelocity();
-void applyAllGravity();
-void applyAllAirResistance();
+void addAllVelocity(void);
+void applyAllGravity(void);
+void applyAllAirResistance(void);
+void drawCentredObj(GameObject *collObj);
 
 #endif

@@ -30,19 +30,37 @@ void resolveCollision(Vector *v1, Vector *v2, int m1, int m2, float e) {
 }
 
 bool circlesCollided(GameObject *c1, GameObject *c2) {
-  int dx = c1->v1.vec.x - c2->v1.vec.x;
-  int dy = c1->v1.vec.y - c2->v1.vec.y;
+  float dx = c1->v1.vec.x - c2->v1.vec.x;
+  float dy = c1->v1.vec.y - c2->v1.vec.y;
 
-  int dr = c1->v3.f + c2->v3.f;
+  float dr = c1->v3.f + c2->v3.f;
 
   return (dx * dx) + (dy * dy) < dr * dr;
 }
+
+bool circleBoxCollided(GameObject *c, GameObject *b) {
+
+}
+
+bool circleNetCollided(GameObject *c, GameObject *b) {
+  float cLeft   = c->v1.vec.x - c->v3.f;
+  float cRight  = c->v1.vec.x + c->v3.f;
+  float cTop    = c->v1.vec.y - c->v3.f;
+  float cBottom = c->v1.vec.y + c->v3.f;
+
+  float bLeft   = b->v1.vec.x;
+  float bRight  = b->v1.vec.x + b->v2.vec.x;
+  float bTop    = b->v1.vec.y;
+  float bBottom = b->v1.vec.y + b->v2.vec.y;
+
+  return (cLeft >= bLeft) && (cRight <= bRight)
+         && (cTop >= bTop) && (cBottom <= bBottom);
 
 /* Resolves a collision between two circles where the circles do not move on
  * the line of collision
  * v1, and v2 are the movement vector of the objects and c1, c2 are their
  * centres */
-void resolveCollisionAdvanced(Vector *v1, Vector *v2, int m1, int m2, 
+void resolveCollisionAdvanced(Vector *v1, Vector *v2, int m1, int m2,
                               Vector *c1, Vector *c2, float e) {
   Vector line_of_collision;
   line_of_collision.x = c1->x - c2->x;
@@ -63,20 +81,20 @@ void resolveCollisionAdvanced(Vector *v1, Vector *v2, int m1, int m2,
   // get parallel component of v1
   float v1_parallel_scalar = dotProduct(v1, &line_of_collision);
 
-  Vector v1_parallel_vect = scalarMultiply(v1_parallel_scalar, 
+  Vector v1_parallel_vect = scalarMultiply(v1_parallel_scalar,
                                            &line_of_collision);
 
   // get parallel component of v2
   float v2_parallel_scalar = dotProduct(v2, &line_of_collision);
 
-  Vector v2_parallel_vect = scalarMultiply(v2_parallel_scalar, 
+  Vector v2_parallel_vect = scalarMultiply(v2_parallel_scalar,
                                            &line_of_collision);
 
   // get the perpendicular component of v1
-  Vector v1_perp = getPerpVect(v1, &v1_parallel_vect); 
+  Vector v1_perp = getPerpVect(v1, &v1_parallel_vect);
 
   // get the perpendicular component of v2
-  Vector v2_perp = getPerpVect(v2, &v2_parallel_vect); 
+  Vector v2_perp = getPerpVect(v2, &v2_parallel_vect);
 
   // resolve and set the parallel parts
   resolveCollision(&v1_parallel_vect, &v2_parallel_vect, m1, m2, e);
