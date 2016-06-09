@@ -55,6 +55,7 @@ bool circleNetCollided(GameObject *c, GameObject *b) {
 
   return (cLeft >= bLeft) && (cRight <= bRight)
          && (cTop >= bTop) && (cBottom <= bBottom);
+}
 
 /* Resolves a collision between two circles where the circles do not move on
  * the line of collision
