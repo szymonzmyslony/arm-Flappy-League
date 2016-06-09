@@ -1,8 +1,5 @@
 CC      = gcc
-CFLAGS  = `sdl-config --libs --cflags` -std=c99
-#SDL_CFLAGS := $(shell sdl-config --cflags) -std=c99
-#SDL_LDFLAGS := $(shell sdl-config --libs)
-#$(SDL_CFLAGS) $(SDL_LDFLAGS)
+CFLAGS  = `sdl-config --libs --cflags` -std=c99 -lm
 LIBS = -lSDL_image -lSDL_mixer
 
 
