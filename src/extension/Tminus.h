@@ -7,6 +7,7 @@
 #include "CircleObj.h"
 #include "UtilObj.h"
 #include "collisions.h"
+#include "Control.h"
 
 SDL_Surface *getConsoleScreen(void);
 SDL_Surface *loadImage(char *path);
@@ -19,5 +20,9 @@ void processKeyboardInput(SDL_Event *eventPtr, bool *running);
 void updateObjs(void);
 void handleCollisions(void);
 void drawSprites(void);
+
+void initMenu(void);
+void initGame(void);
+void initSetup(void);
 
 #endif
