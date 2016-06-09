@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <SDL/SDL.h>
+#include <SDL/SDL_mixer.h>
 
 enum Game { MAX_OBJECTS = 20 };
 
