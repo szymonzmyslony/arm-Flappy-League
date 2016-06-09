@@ -18,6 +18,8 @@ int main(int argc, char **argv) {
 #endif
   // -- Initialise SDL, Graphical Interfaces
   initSDL();
+  // -- Initialise Pins
+  initPins();
   // Get the console's screen for drawing
   screen = getConsoleScreen();
   // Set the window bar data. For non-console use only.
@@ -228,6 +230,13 @@ inline void initSDL(void) {
     exit(EXIT_FAILURE);
   }
 }
+inline void initSetup(void){
+  int i;
+  for(i = LeftFirstPlayer; i<=LeftSecondPlayer; i++){
+    pinMode(i, OUTPUT);
+    digitalWrite(i, HIGH);}
+}
+
 
 void initMenu(void) {
   initSetup();
