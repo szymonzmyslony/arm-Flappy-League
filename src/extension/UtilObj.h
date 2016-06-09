@@ -17,6 +17,7 @@ void setSprite(GameObject *gameObj, SDL_Surface *sprite);
 void addAllVelocity(void);
 void applyAllGravity(void);
 void applyAllAirResistance(void);
+void playWhistleSound(void);
 void drawCentredObj(GameObject *collObj);
 
 #endif
