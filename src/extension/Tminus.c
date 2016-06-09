@@ -29,6 +29,14 @@ int main(int argc, char **argv) {
   SDL_Surface *surf_ball = loadImage("gfx/Ball.png");
   SDL_Surface *surf_bg = loadImage("gfx/Crowd.png");
 
+  // -- Load Sounds
+  Mix_Music *music_crowd = loadMusic("sound/stadium_noise.wav");
+  Mix_Chunk *sound_goal = loadSound("sound/goal.wav");
+  Mix_Chunk *sound_kick1 = loadSound("sound/kick1.wav");
+  Mix_Chunk *sound_kick2 = loadSound("sound/kick1.wav");
+  Mix_Chunk *sound_kick3 = loadSound("sound/kick1.wav");
+  Mix_Chunk *sound_kick4 = loadSound("sound/kick1.wav");
+
   // -- Initialise Game Variables
 
   gObjs = (GameObject**)calloc(MAX_OBJECTS, sizeof(GameObject*));
@@ -36,6 +44,8 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Error allocating memory\n");
     exit(EXIT_FAILURE);
   }
+
+  Mix_PlayMusic(music_crowd, -1);
 
   //TODO remove test code
   gObjs[0] = initCircleObj(32, 100, 300, 0,  0);
@@ -47,8 +57,8 @@ int main(int argc, char **argv) {
   gObjs[2] = initCircleObj(32, screen->w/2, 300, 0, 0);
   setSprite(gObjs[2], surf_ball);
 
-  gObjs[9] = initTimerObj(999999, true, &updateTimerConstant, &applyAllGravity);
-  gObjs[10] = initTimerObj(999999, true, &updateTimerConstant, &applyAllAirResistance);
+  gObjs[9] = initTimerObj(UINT32_MAX, true, &updateTimerConstant, &applyAllGravity);
+  gObjs[10] = initTimerObj(UINT32_MAX, true, &updateTimerConstant, &applyAllAirResistance);
 
   // -- Initialise Loop variables
   // A union capable of holding all input events
@@ -86,6 +96,23 @@ int main(int argc, char **argv) {
 
   // Cleanup
   free(gObjs);
+  // Free Sound Resources
+  Mix_FreeMusic(music_crowd);
+  Mix_FreeChunk(sound_goal);
+  Mix_FreeChunk(sound_kick1);
+  Mix_FreeChunk(sound_kick2);
+  Mix_FreeChunk(sound_kick3);
+  Mix_FreeChunk(sound_kick4);
+
+  //Free Graphical Resources
+  SDL_FreeSurface(screen);
+  SDL_FreeSurface(surf_bg);
+  SDL_FreeSurface(surf_ball);
+  SDL_FreeSurface(surf_flappybird);
+  SDL_FreeSurface(surf_datboi);
+
+  // Release Initialised SDL Systems
+  Mix_CloseAudio();
   SDL_Quit();
 
   printf("Exiting T-\n");
@@ -204,16 +231,22 @@ inline void initSDL(void) {
     fprintf(stderr, "Error initialising SDL_image: %s\n", IMG_GetError());
     exit(EXIT_FAILURE);
   }
+
+  //Initialise Sound Mixer
+  if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
+  {
+    fprintf(stderr, "Error initialising Mixer");
+    exit(EXIT_FAILURE);
+  }
 }
 
 void initMenu(void) {
 
 }
 
-/**
+/** Attempts to load an image. The image is unoptimised.
 */
-SDL_Surface *loadImage(char *path)
-{
+SDL_Surface *loadImage(char *path) {
   SDL_Surface *optimizedSurface = NULL;
   SDL_Surface *loadedSurface = IMG_Load(path);
 
@@ -223,4 +256,26 @@ SDL_Surface *loadImage(char *path)
   }
 
   return loadedSurface;
+}
+
+/** Attempts to load a music file, in .wav format
+*/
+Mix_Music *loadMusic(char *path) {
+  Mix_Music *music = Mix_LoadMUS(path);
+  if(music == NULL) {
+    fprintf(stderr, "Error loading %s\n", path);
+    exit(EXIT_FAILURE);
+  }
+  return music;
+}
+
+/** Attempts to load a sound file, in .wav format
+*/
+Mix_Chunk *loadSound(char *path) {
+  Mix_Chunk *sound = Mix_LoadWAV(path);
+  if(sound == NULL) {
+    fprintf(stderr, "Error loading %s\n", path);
+    exit(EXIT_FAILURE);
+  }
+  return sound;
 }
