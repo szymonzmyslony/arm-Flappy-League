@@ -13,6 +13,23 @@ void initGame(void) {
                                       SCORE_WIDTH, SCORE_HEIGHT, false);
   gObjs[SCOREBOARD2]->v4.i = 0;
 
+  //Init Goals
+  gObjs[GOAL1] = initSquareObj(0, GOAL_OFFSET,
+    GOAL_WIDTH, GOAL_HEIGHT, false);
+  setSprite(gObjs[GOAL1], surf_goal);
+  setCollFunc(gObjs[GOAL1], &scorePlayer1);
+
+  gObjs[GOAL2] = initSquareObj(WINDOW_WIDTH - GOAL_WIDTH, GOAL_OFFSET,
+    GOAL_WIDTH, GOAL_HEIGHT, false);
+  setSprite(gObjs[GOAL2], surf_goal);
+  setCollFunc(gObjs[GOAL2], &scorePlayer2);
+
+  //Init Physics
+  gObjs[9] = initTimerObj(UINT32_MAX, true, &updateTimerConstant,
+    &applyAllGravity);
+  gObjs[10] = initTimerObj(UINT32_MAX, true, &updateTimerConstant,
+    &applyAllAirResistance);
+
   initSetup();
 }
 
@@ -28,23 +45,8 @@ void initSetup(void) {
   gObjs[BALL] = initCircleObj(BALL_SIZE / 2, screen->w/2, 300, 0, 0);
   setSprite(gObjs[BALL], surf_ball);
 
-  //Init Goals
-  gObjs[GOAL1] = initSquareObj(0, GOAL_OFFSET,
-                           GOAL_WIDTH, GOAL_HEIGHT, false);
-  setCollFunc(gObjs[GOAL1], &scorePlayer1);
-
-  gObjs[GOAL2] = initSquareObj(WINDOW_WIDTH - GOAL_WIDTH, GOAL_OFFSET,
-                           GOAL_WIDTH, GOAL_HEIGHT, false);
-  setCollFunc(gObjs[GOAL2], &scorePlayer2);
-
-  //Init Physics
-  gObjs[9] = initTimerObj(UINT32_MAX, true, &updateTimerConstant,
-                          &applyAllGravity);
-  gObjs[10] = initTimerObj(UINT32_MAX, true, &updateTimerConstant,
-                          &applyAllAirResistance);
-
   //Init Countdown
-  gObjs[11] = initTimerObj(3000, true, &updateTimerAlarm,
+  gObjs[11] = initTimerObj(1000, true, &updateTimerAlarm,
                           &playWhistleSound);
 }
 
@@ -61,5 +63,37 @@ void scorePlayer2(GameObject *colObj) {
     gObjs[SCOREBOARD2]->v4.i++;
     initSetup();
     Mix_PlayChannel(-1, sound_goal, 0);
+  }
+}
+
+void moveLeft(GameObject *circObj) {
+  circObj->v2.vec.x = -sideVelocity;
+  circObj->v2.vec.y = -upVelocity;
+}
+
+void moveRight(GameObject *circObj) {
+  circObj->v2.vec.x = +sideVelocity;
+  circObj->v2.vec.y = -upVelocity;
+}
+
+void handleButtonStatus(void) {
+  if(buttonDownP1Left) {
+    moveLeft(gObjs[PLAYER1]);
+    buttonDownP1Left = false;
+  }
+
+  if(buttonDownP1Right) {
+    moveRight(gObjs[PLAYER1]);
+    buttonDownP1Right = false;
+  }
+
+  if(buttonDownP2Left) {
+    moveLeft(gObjs[PLAYER2]);
+    buttonDownP2Left = false;
+  }
+
+  if(buttonDownP2Right) {
+    moveRight(gObjs[PLAYER2]);
+    buttonDownP2Right = false;
   }
 }
