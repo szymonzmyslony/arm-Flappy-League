@@ -18,16 +18,27 @@ int main(int argc, char **argv) {
 #endif
   // -- Initialise SDL, Graphical Interfaces
   initSDL();
+  // -- Initialise Pins
+  initPins();
   // Get the console's screen for drawing
   screen = getConsoleScreen();
   // Set the window bar data. For non-console use only.
   SDL_WM_SetCaption("window mcwindowface", NULL);
 
   // -- Load Images
-  SDL_Surface *surf_datboi = loadImage("gfx/DatBoi.png");
-  SDL_Surface *surf_flappybird = loadImage("gfx/FlappyBird.png");
-  SDL_Surface *surf_ball = loadImage("gfx/Ball.png");
-  SDL_Surface *surf_bg = loadImage("gfx/Crowd.png");
+  surf_datboi = loadImage("gfx/DatBoi.png");
+  surf_flappybird = loadImage("gfx/FlappyBird.png");
+  surf_ball = loadImage("gfx/Ball.png");
+  surf_bg = loadImage("gfx/Crowd.png");
+
+  // -- Load Sounds
+  music_crowd = loadMusic("sound/stadium_noise.wav");
+  sound_whistle = loadSound("sound/whistle.wav");
+  sound_kick1 = loadSound("sound/kick1.wav");
+  sound_kick2 = loadSound("sound/kick1.wav");
+  sound_kick3 = loadSound("sound/kick1.wav");
+  sound_kick4 = loadSound("sound/kick1.wav");
+  sound_goal = loadSound("sound/goal.wav");
 
   // -- Initialise Game Variables
 
@@ -37,18 +48,10 @@ int main(int argc, char **argv) {
     exit(EXIT_FAILURE);
   }
 
+  Mix_PlayMusic(music_crowd, -1);
+
   //TODO remove test code
-  gObjs[0] = initCircleObj(32, 100, 300, 0,  0);
-  setSprite(gObjs[0], surf_datboi);
-
-  gObjs[1] = initCircleObj(32, screen->w - 100, 300, 0,  0);
-  setSprite(gObjs[1], surf_flappybird);
-
-  gObjs[2] = initCircleObj(32, screen->w/2, 300, 0, 0);
-  setSprite(gObjs[2], surf_ball);
-
-  gObjs[9] = initTimerObj(999999, true, &updateTimerConstant, &applyAllGravity);
-  gObjs[10] = initTimerObj(999999, true, &updateTimerConstant, &applyAllAirResistance);
+  initSetup();
 
   // -- Initialise Loop variables
   // A union capable of holding all input events
@@ -86,6 +89,25 @@ int main(int argc, char **argv) {
 
   // Cleanup
   free(gObjs);
+  // Free Sound Resources
+  Mix_FreeMusic(music_crowd);
+
+  Mix_FreeChunk(sound_whistle);
+  Mix_FreeChunk(sound_kick1);
+  Mix_FreeChunk(sound_kick2);
+  Mix_FreeChunk(sound_kick3);
+  Mix_FreeChunk(sound_kick4);
+  Mix_FreeChunk(sound_goal);
+
+  //Free Graphical Resources
+  SDL_FreeSurface(screen);
+  SDL_FreeSurface(surf_bg);
+  SDL_FreeSurface(surf_ball);
+  SDL_FreeSurface(surf_flappybird);
+  SDL_FreeSurface(surf_datboi);
+
+  // Release Initialised SDL Systems
+  Mix_CloseAudio();
   SDL_Quit();
 
   printf("Exiting T-\n");
@@ -143,23 +165,19 @@ inline void processKeyboardInput(SDL_Event *eventPtr, bool *running) {
               break;
 
             case SDLK_z:
-              gObjs[0]->v2.vec.x = - 5.0;
-              gObjs[0]->v2.vec.y = -10.0;
+              moveLeft(gObjs[0]);
               break;
 
             case SDLK_x:
-              gObjs[0]->v2.vec.x =   5.0;
-              gObjs[0]->v2.vec.y = -10.0;
+              moveRight(gObjs[0]);
               break;
 
             case SDLK_n:
-              gObjs[1]->v2.vec.x = - 5.0;
-              gObjs[1]->v2.vec.y = -10.0;
+              moveLeft(gObjs[1]);
               break;
 
             case SDLK_m:
-              gObjs[1]->v2.vec.x =   5.0;
-              gObjs[1]->v2.vec.y = -10.0;
+              moveRight(gObjs[1]);
               break;
 
             default:
@@ -204,16 +222,47 @@ inline void initSDL(void) {
     fprintf(stderr, "Error initialising SDL_image: %s\n", IMG_GetError());
     exit(EXIT_FAILURE);
   }
+
+  //Initialise Sound Mixer
+  if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
+  {
+    fprintf(stderr, "Error initialising Mixer");
+    exit(EXIT_FAILURE);
+  }
+}
+inline void initPins(void){
+  int i;
+  for(i = LeftFirstPlayer; i<=LeftSecondPlayer; i++){
+    pinMode(i, OUTPUT);
+    digitalWrite(i, HIGH);}
 }
 
-void initMenu(void) {
 
+void initMenu(void) {  
+  initSetup();
 }
 
-/**
+void initGame(void) {
+  initSetup();
+}
+
+void initSetup(void) {
+  gObjs[0] = initCircleObj(32, 100, 300, 0,  0);
+  setSprite(gObjs[0], surf_datboi);
+
+  gObjs[1] = initCircleObj(32, screen->w - 100, 300, 0,  0);
+  setSprite(gObjs[1], surf_flappybird);
+
+  gObjs[2] = initCircleObj(32, screen->w/2, 300, 0, 0);
+  setSprite(gObjs[2], surf_ball);
+
+  gObjs[9] = initTimerObj(UINT32_MAX, true, &updateTimerConstant, &applyAllGravity);
+  gObjs[10] = initTimerObj(UINT32_MAX, true, &updateTimerConstant, &applyAllAirResistance);
+}
+
+/** Attempts to load an image. The image is unoptimised.
 */
-SDL_Surface *loadImage(char *path)
-{
+SDL_Surface *loadImage(char *path) {
   SDL_Surface *optimizedSurface = NULL;
   SDL_Surface *loadedSurface = IMG_Load(path);
 
@@ -223,4 +272,26 @@ SDL_Surface *loadImage(char *path)
   }
 
   return loadedSurface;
+}
+
+/** Attempts to load a music file, in .wav format
+*/
+Mix_Music *loadMusic(char *path) {
+  Mix_Music *music = Mix_LoadMUS(path);
+  if(music == NULL) {
+    fprintf(stderr, "Error loading %s\n", path);
+    exit(EXIT_FAILURE);
+  }
+  return music;
+}
+
+/** Attempts to load a sound file, in .wav format
+*/
+Mix_Chunk *loadSound(char *path) {
+  Mix_Chunk *sound = Mix_LoadWAV(path);
+  if(sound == NULL) {
+    fprintf(stderr, "Error loading %s\n", path);
+    exit(EXIT_FAILURE);
+  }
+  return sound;
 }

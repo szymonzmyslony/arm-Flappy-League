@@ -1,6 +1,6 @@
 CC      = gcc
 CFLAGS  = `sdl-config --libs --cflags` -std=c99 -lm
-LIBS = -lSDL_image
+LIBS = -lSDL_image -lSDL_mixer
 
 
 .SUFFIXES: .c .o
@@ -9,8 +9,11 @@ LIBS = -lSDL_image
 
 all: daGame
 
-daGame: UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o
-	$(CC) UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
+daGame: Control.o UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o
+	$(CC) Control.o UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
+
+Control.o : Control.c Control.h
+	$(CC) $(CFLAGS) Control.c -c -o Control.o $(LIBS)
 
 CircleObj.o : CircleObj.c CircleObj.h
 	$(CC) $(CFLAGS) CircleObj.c -c -o CircleObj.o $(LIBS)
@@ -35,4 +38,4 @@ clean:
 	rm -f daGame
 
 #Use this if you want to compile it manually
-#gcc UtilObj.c Debug.c CircleObj.c linkedList.c Tminus.c `sdl-config --libs --cflags` -std=c99 -o daGame -lSDL_image
+#gcc UtilObj.c Debug.c CircleObj.c linkedList.c Tminus.c `sdl-config --libs --cflags` -std=c99 -o daGame -lSDL_image -lSDL_mixer
