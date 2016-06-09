@@ -1,6 +1,6 @@
 CC      = gcc
-CFLAGS  = `sdl-config --libs --cflags` -std=c99 -lm
-LIBS = -lSDL_image -lSDL_mixer
+CFLAGS  = `sdl-config --libs --cflags` -std=c99 -lm -Wall -pedantic
+LIBS = -lSDL_image -lSDL_mixer -lwiringPi
 
 
 .SUFFIXES: .c .o
@@ -9,14 +9,17 @@ LIBS = -lSDL_image -lSDL_mixer
 
 all: daGame
 
-daGame: GameEdit.o Control.o UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o
-	$(CC) GameEdit.o Control.o UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
+daGame: GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o
+	$(CC) GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
 
 GameEdit.o : GameEdit.c GameEdit.h
 	$(CC) $(CFLAGS) GameEdit.c -c -o GameEdit.o $(LIBS)
 
 Control.o : Control.c Control.h
 	$(CC) $(CFLAGS) Control.c -c -o Control.o $(LIBS)
+
+SquareObj.o : SquareObj.c SquareObj.h
+	$(CC) $(CFLAGS) SquareObj.c -c -o SquareObj.o $(LIBS)
 
 CircleObj.o : CircleObj.c CircleObj.h
 	$(CC) $(CFLAGS) CircleObj.c -c -o CircleObj.o $(LIBS)
