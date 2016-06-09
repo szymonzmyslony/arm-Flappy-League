@@ -7,5 +7,6 @@
 
 void debugDrawPixel(int x, int y, uint32_t pixel);
 void debugDrawCircle(int x, int y, int r);
+void debugDrawSquare(int x, int y, int w, int h);
 
 #endif
