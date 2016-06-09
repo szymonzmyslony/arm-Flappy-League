@@ -49,4 +49,19 @@ struct gameObject {
 SDL_Surface *screen;
 GameObject **gObjs;
 
+// Resources
+SDL_Surface *surf_flappybird;
+SDL_Surface *surf_datboi;
+SDL_Surface *surf_ball;
+SDL_Surface *surf_bg;
+
+Mix_Music *music_crowd;
+
+Mix_Chunk *sound_whistle;
+Mix_Chunk *sound_kick1;
+Mix_Chunk *sound_kick2;
+Mix_Chunk *sound_kick3;
+Mix_Chunk *sound_kick4;
+Mix_Chunk *sound_goal;
+
 #endif
