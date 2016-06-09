@@ -12,8 +12,11 @@ LIBS = -lSDL_image -lSDL_mixer
 
 all: daGame
 
-daGame: UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o
-	$(CC) UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
+daGame: Control.o UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o
+	$(CC) Control.o UtilObj.o Debug.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
+
+Control.o : Control.c Control.h
+	$(CC) $(CFLAGS) Control.c -c -o Control.o $(LIBS)
 
 CircleObj.o : CircleObj.c CircleObj.h
 	$(CC) $(CFLAGS) CircleObj.c -c -o CircleObj.o $(LIBS)
