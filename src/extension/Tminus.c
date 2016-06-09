@@ -24,14 +24,15 @@ int main(int argc, char **argv) {
   SDL_WM_SetCaption("window mcwindowface", NULL);
 
   // -- Load Images
-  surf_datboi = loadImage("gfx/DatBoi.png");
-  surf_flappybird = loadImage("gfx/FlappyBird.png");
-  surf_ball = loadImage("gfx/Ball.png");
   surf_bg = loadImage("gfx/Crowd.png");
+  surf_ball = loadImage("gfx/Ball.png");
+  surf_goal = loadImage("gfx/Goal.png");
   surf_bird1 = loadImage("gfx/KingClumsy.png");
   surf_bird2 = loadImage("gfx/SirFlappy.png");
   surf_bird3 = loadImage("gfx/FighterJumpy.png");
   surf_bird4 = loadImage("gfx/PunkSilly.png");
+  surf_datboi = loadImage("gfx/DatBoi.png");
+  surf_flappybird = loadImage("gfx/FlappyBird.png");
 
   // -- Load Sounds
   music_crowd = loadMusic("sound/stadium_noise.wav");
@@ -66,17 +67,20 @@ int main(int argc, char **argv) {
 
     // Process SDL keyboard input events. For non-Pi only.
     processKeyboardInput(&event, &running);
-
     //TODO Process GPIO pins
+    updateButtonsStatus();
 
     uint32_t now = SDL_GetTicks();
     if(now - lastUpdate > SPF) {
+      lastUpdate = now;
+
       // Draw background
       SDL_BlitSurface(surf_bg, NULL, screen, NULL);
       //SDL_FillRect(screen, NULL,
       //  SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
 
-      lastUpdate = now;
+      //Convert input to real effects
+      handleButtonStatus();
 
       // Update each gameObject that has an update function
       updateObjs();
@@ -106,6 +110,7 @@ int main(int argc, char **argv) {
   SDL_FreeSurface(screen);
   SDL_FreeSurface(surf_bg);
   SDL_FreeSurface(surf_ball);
+  SDL_FreeSurface(surf_goal);
   SDL_FreeSurface(surf_flappybird);
   SDL_FreeSurface(surf_datboi);
   SDL_FreeSurface(surf_bird1);
@@ -200,19 +205,19 @@ inline void processKeyboardInput(SDL_Event *eventPtr, bool *running) {
               break;
 
             case SDLK_z:
-              moveLeft(gObjs[PLAYER1]);
+              buttonDownP1Left = true;
               break;
 
             case SDLK_x:
-              moveRight(gObjs[PLAYER1]);
+              buttonDownP1Right = true;
               break;
 
             case SDLK_n:
-              moveLeft(gObjs[PLAYER2]);
+              buttonDownP2Left = true;
               break;
 
             case SDLK_m:
-              moveRight(gObjs[PLAYER2]);
+              buttonDownP2Right = true;
               break;
 
             default:
