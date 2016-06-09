@@ -12,6 +12,9 @@
 \section{What and why?}
 All of us have been always inspired and amazed by the enjoyment that a 2-button game with graphic from 80's can bring. At the same time, we wanted our extension to both teach us further concepts in C(extensive use of different libraries) and be interesting in implementing. Thus, we decided to create a two player game inspired by famous Flappy Birds. Each playeer controls one bird with two buttons (left, right) and tries to score a goal. The game is time limited and comes with sound effects, board that dispay the score, and menu to choose your character.
 \section{Design}
+Our initial design process involved a lot of research on available libraries that we could reuse in our game. Firstly, we found out about SDL library that we used for rendering image on the screen, playing sounds, and processing input from buttons. 
+Secondly, in order to get a low-level input from our buttons, we had to be able to read the voltage at GPIOs. We achieved this through installing wiringPI library on our PI. Next, we had to create a physics engine that would realistically predict behaviour of our objects (ball, birds). In that, we assumed that all collision are perfectly elastic and we approximated all object through a simple circle (that was important in deciding how objects bounce off the wall). As C language does not support objects directly, we used a combination of unions and structures to store all the needed information. Each object represents with the same behaviour(no difference between bird and ball). Finally, we had to create graphic and sound based on Open Source resources.
+
 
 
 \section{Testing}
