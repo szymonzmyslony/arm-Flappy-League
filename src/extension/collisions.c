@@ -38,8 +38,9 @@ bool circlesCollided(GameObject *c1, GameObject *c2) {
   return (dx * dx) + (dy * dy) < dr * dr;
 }
 
+//Unimplemented
 bool circleBoxCollided(GameObject *c, GameObject *b) {
-
+  return false;
 }
 
 bool circleNetCollided(GameObject *c, GameObject *b) {
