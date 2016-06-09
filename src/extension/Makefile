@@ -3,7 +3,7 @@ CFLAGS  = `sdl-config --libs --cflags` -std=c99
 #SDL_CFLAGS := $(shell sdl-config --cflags) -std=c99
 #SDL_LDFLAGS := $(shell sdl-config --libs)
 #$(SDL_CFLAGS) $(SDL_LDFLAGS)
-LIBS = -lSDL_image
+LIBS = -lSDL_image -lSDL_mixer
 
 
 .SUFFIXES: .c .o
