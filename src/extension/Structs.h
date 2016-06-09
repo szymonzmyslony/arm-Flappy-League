@@ -8,16 +8,25 @@
 enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 540 };
 enum Game { MAX_OBJECTS = 20 };
 
-/** These IDs correspond to the drawing order
+/** GPIO pins
+*/
+enum Pins {
+  RightSecondPlayer = 12,
+  RightFirstPlayer = 1,
+  LeftFirstPlayer = 4,
+  LeftSecondPlayer = 13
+};
+
+/** These IDs also correspond to the drawing order
 */
 enum ids {
-  PLAYER1 = 4,
-  PLAYER2 = 5,
-  GOAL1 = 2,
-  GOAL2 = 3,
   SCOREBOARD1 = 0,
   SCOREBOARD2 = 1,
-  BALL = 6
+  PLAYER1 = 2,
+  PLAYER2 = 3,
+  BALL = 4,
+  GOAL1 = 5,
+  GOAL2 = 6
 };
 
 typedef struct vector {
@@ -63,16 +72,21 @@ struct gameObject {
 
 SDL_Surface *screen;
 GameObject **gObjs;
+bool buttonDownP1Left;
+bool buttonDownP1Right;
+bool buttonDownP2Left;
+bool buttonDownP2Right;
 
 // Resources
 SDL_Surface *surf_flappybird;
 SDL_Surface *surf_datboi;
-SDL_Surface *surf_ball;
-SDL_Surface *surf_bg;
 SDL_Surface *surf_bird1;
 SDL_Surface *surf_bird2;
 SDL_Surface *surf_bird3;
 SDL_Surface *surf_bird4;
+SDL_Surface *surf_ball;
+SDL_Surface *surf_goal;
+SDL_Surface *surf_bg;
 
 Mix_Music *music_crowd;
 
