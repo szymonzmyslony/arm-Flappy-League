@@ -4,8 +4,6 @@
 #define SPF 1000 / FPS
 #define COEFF_OF_RESTITUTION 1
 
-enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 540 };
-
 //TODO consider SDL 2.0
 
 /** SDL_main is used for Windows / Mac, we will just use Linux
@@ -30,6 +28,10 @@ int main(int argc, char **argv) {
   surf_flappybird = loadImage("gfx/FlappyBird.png");
   surf_ball = loadImage("gfx/Ball.png");
   surf_bg = loadImage("gfx/Crowd.png");
+  surf_bird1 = loadImage("gfx/KingClumsy.png");
+  surf_bird2 = loadImage("gfx/SirFlappy.png");
+  surf_bird3 = loadImage("gfx/FighterJumpy.png");
+  surf_bird4 = loadImage("gfx/PunkSilly.png");
 
   // -- Load Sounds
   music_crowd = loadMusic("sound/stadium_noise.wav");
@@ -51,7 +53,7 @@ int main(int argc, char **argv) {
   Mix_PlayMusic(music_crowd, -1);
 
   //TODO remove test code
-  initSetup();
+  initGame();
 
   // -- Initialise Loop variables
   // A union capable of holding all input events
@@ -61,10 +63,6 @@ int main(int argc, char **argv) {
 
   // Game Loop
   while(running) {
-    SDL_BlitSurface(surf_bg, NULL, screen, NULL);
-
-    //SDL_FillRect(screen, NULL,
-    //  SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
 
     // Process SDL keyboard input events. For non-Pi only.
     processKeyboardInput(&event, &running);
@@ -73,6 +71,11 @@ int main(int argc, char **argv) {
 
     uint32_t now = SDL_GetTicks();
     if(now - lastUpdate > SPF) {
+      // Draw background
+      SDL_BlitSurface(surf_bg, NULL, screen, NULL);
+      //SDL_FillRect(screen, NULL,
+      //  SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
+
       lastUpdate = now;
 
       // Update each gameObject that has an update function
@@ -105,6 +108,10 @@ int main(int argc, char **argv) {
   SDL_FreeSurface(surf_ball);
   SDL_FreeSurface(surf_flappybird);
   SDL_FreeSurface(surf_datboi);
+  SDL_FreeSurface(surf_bird1);
+  SDL_FreeSurface(surf_bird2);
+  SDL_FreeSurface(surf_bird3);
+  SDL_FreeSurface(surf_bird4);
 
   // Release Initialised SDL Systems
   Mix_CloseAudio();
@@ -133,8 +140,10 @@ inline void handleCollisions(void) {
          && gObjs[j] != NULL && gObjs[j]->colliderType == COL_CIRCLE) {
 
         if(circlesCollided(circObj, gObjs[j])) {
-          resolveCollision(&(circObj->v2.vec), &(gObjs[j]->v2.vec), 1, 1,
-                           COEFF_OF_RESTITUTION);
+          resolveCollisionAdvanced(&(circObj->v2.vec), &(gObjs[j]->v2.vec),
+                                   1, 1,
+                                   &(circObj->v1.vec), &(gObjs[j]->v1.vec),
+                                  COEFF_OF_RESTITUTION);
         }
       }
 
@@ -151,8 +160,9 @@ inline void handleCollisions(void) {
             break;
 
           case COL_NET:
-            if(circleNetCollided(circObj, gObjs[j])) {
-              gObjs[j]->v3.func();
+            if(gObjs[j]->v3.func != NULL
+               && circleNetCollided(circObj, gObjs[j])) {
+              gObjs[j]->v3.gFunc(circObj);
             }
             break;
 
@@ -190,19 +200,19 @@ inline void processKeyboardInput(SDL_Event *eventPtr, bool *running) {
               break;
 
             case SDLK_z:
-              moveLeft(gObjs[0]);
+              moveLeft(gObjs[PLAYER1]);
               break;
 
             case SDLK_x:
-              moveRight(gObjs[0]);
+              moveRight(gObjs[PLAYER1]);
               break;
 
             case SDLK_n:
-              moveLeft(gObjs[1]);
+              moveLeft(gObjs[PLAYER2]);
               break;
 
             case SDLK_m:
-              moveRight(gObjs[1]);
+              moveRight(gObjs[PLAYER2]);
               break;
 
             default:
@@ -224,7 +234,8 @@ inline void processKeyboardInput(SDL_Event *eventPtr, bool *running) {
 */
 inline SDL_Surface *getConsoleScreen(void) {
   SDL_Surface *screenPtr = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT,
-                                          0, SDL_HWSURFACE);// | SDL_DOUBLEBUF );
+                                          0, SDL_SWSURFACE);
+                                          //SDL_HWSURFACE | SDL_DOUBLEBUF );
   if(screenPtr == NULL) {
     fprintf(stderr, "Error setting SDL Video Mode\n");
     exit(EXIT_FAILURE);
@@ -249,7 +260,7 @@ inline void initSDL(void) {
   }
 
   //Initialise Sound Mixer
-  if(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
+  if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
   {
     fprintf(stderr, "Error initialising Mixer");
     exit(EXIT_FAILURE);
@@ -266,7 +277,6 @@ inline void initPins(void){
 /** Attempts to load an image. The image is unoptimised.
 */
 SDL_Surface *loadImage(char *path) {
-  SDL_Surface *optimizedSurface = NULL;
   SDL_Surface *loadedSurface = IMG_Load(path);
 
   if(loadedSurface == NULL) {
