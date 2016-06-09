@@ -17,14 +17,6 @@ SDL_Surface *loadImage(char *path);
 Mix_Music *loadMusic(char *path);
 Mix_Chunk *loadSound(char *path);
 
-
-enum Pins {
-  RightSecondPlayer = 12,
-  RightFirstPlayer = 1,
-  LeftFirstPlayer = 4,
-  LeftSecondPlayer = 13
-};
-
 void initSDL(void);
 void processKeyboardInput(SDL_Event *eventPtr, bool *running);
 
