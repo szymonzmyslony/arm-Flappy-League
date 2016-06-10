@@ -11,9 +11,7 @@
 #define upVelocity   10.0
 #define sideVelocity  5.0
 
-enum gameSettings {
-  MATCH_TIMER 120 * SECOND
-};
+#define MATCH_TIMER 120 * SECOND
 
 enum sizesAndPositions {
   PLAYER_SIZE = 64,
@@ -32,6 +30,7 @@ void moveLeft(GameObject *circObj);
 void moveRight(GameObject *circObj);
 
 void initMenu(void);
+void initEnd(void);
 void initGame(void);
 void initSetup(void);
 
