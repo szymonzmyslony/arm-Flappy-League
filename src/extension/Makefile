@@ -1,11 +1,12 @@
 CC      = gcc
 CFLAGS  = `sdl-config --libs --cflags` -std=c99 -lm -Wall -pedantic
 LIBS = -lSDL_image -lSDL_mixer -lwiringPi
+PIFLAG =
 
 
 .SUFFIXES: .c .o
 
-.PHONY: all clean
+.PHONY: all clean pi
 
 all: daGame
 
@@ -28,7 +29,7 @@ linkedList.o : linkedList.c linkedList.h
 	$(CC) $(CFLAGS) linkedList.c -c -o linkedList.o $(LIBS)
 
 Tminus.o : Tminus.c Tminus.h
-	$(CC) $(CFLAGS) Tminus.c -c -o Tminus.o $(LIBS)
+	$(CC) $(CFLAGS) $(PIFLAG) Tminus.c -c -o Tminus.o $(LIBS)
 
 Debug.o : Debug.c Debug.h
 	$(CC) $(CFLAGS) Debug.c -c -o Debug.o $(LIBS)
@@ -38,6 +39,9 @@ UtilObj.o : UtilObj.c UtilObj.h
 
 collisions.o : collisions.c collisions.h
 	$(CC) $(CFLAGS) collisions.c -c -o collisions.o $(LIBS)
+
+pi:
+	make all PIFLAG="-DRPI"
 
 clean:
 	rm -f $(wildcard *.o)
