@@ -1,7 +1,7 @@
 #include "Tminus.h"
 
 #define FPS 60
-#define SPF 1000 / FPS
+#define SPF SECOND / FPS
 #define COEFF_OF_RESTITUTION 1
 
 //TODO consider SDL 2.0
