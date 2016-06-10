@@ -280,6 +280,12 @@ inline void initSDL(void) {
 
 inline void initPins(void){
   int i;
+
+  if(wiringPiSetup() == -1) {
+      fprintf(stderr, "Failed to setup controllers");
+      exit(EXIT_FAILURE);
+  }
+
   for(i = LeftFirstPlayer; i<=LeftSecondPlayer; i++){
     pinMode(i, OUTPUT);
     digitalWrite(i, HIGH);}
