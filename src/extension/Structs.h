@@ -5,6 +5,8 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_mixer.h>
 
+#define SECOND 1000
+
 enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 540 };
 enum Game { MAX_OBJECTS = 20 };
 
