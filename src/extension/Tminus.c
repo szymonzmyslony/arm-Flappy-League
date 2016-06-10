@@ -72,7 +72,6 @@ int main(int argc, char **argv) {
 
   // Game Loop
   while(running) {
-
     // Process SDL keyboard input events. For non-Pi only.
     processKeyboardInput(&event, &running);
     //TODO Process GPIO pins
