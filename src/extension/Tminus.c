@@ -141,6 +141,7 @@ int main(int argc, char **argv) {
 
   // Release Initialised SDL Systems
   Mix_CloseAudio();
+  Mix_Quit();
   IMG_Quit();
   SDL_Quit();
 
@@ -323,6 +324,7 @@ SDL_Surface *loadImage(char *path) {
     return loadedSurface;
   }
 
+  SDL_FreeSurface(loadedSurface);
   return formattedSurface;
 }
 
