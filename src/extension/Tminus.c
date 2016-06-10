@@ -17,7 +17,9 @@ int main(int argc, char **argv) {
   // -- Initialise SDL, Graphical Interfaces
   initSDL();
   // -- Initialise Pins
-  //TODO uncomment for pi initPins();
+  #ifdef RPI
+  initPins();
+  #endif
   // Get the console's screen for drawing
   screen = getConsoleScreen();
   // Set the window bar data. For non-console use only.
@@ -74,7 +76,7 @@ int main(int argc, char **argv) {
   while(running) {
     // Process SDL keyboard input events. For non-Pi only.
     processKeyboardInput(&event, &running);
-    //TODO Process GPIO pins
+    // Process GPIO pins
     updateButtonsStatus();
 
     // Draw background between frames, too intensive
