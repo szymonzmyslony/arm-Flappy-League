@@ -21,6 +21,7 @@ void initEnd(void) {
                           &playWhistleSound);
   initTimerObj(gObjs[BALL], 2 * SECOND, true, &updateTimerAlarm,
                           &playWhistleSound);
+  initMenuObj(gObjs[ENDSCREEN]);
 }
 
 void initGame(void) {
@@ -181,6 +182,21 @@ void handleButtonStatus(void) {
       break;
 
     case POSTMATCH:
+      if (buttonDownP1Left) {
+        incrementMenu(gObjs[ENDSCREEN]);
+        buttonDownP1Left = false;
+      }
+      if (buttonDownP1Right) {
+        selectEndMenu(gObjs[ENDSCREEN]);
+        buttonDownP1Right = false;
+      }
+      if(buttonDownP2Left) {
+        buttonDownP2Left = false;
+      }
+
+      if(buttonDownP2Right) {
+        buttonDownP2Right = false;
+      }
       break;
   }
 }

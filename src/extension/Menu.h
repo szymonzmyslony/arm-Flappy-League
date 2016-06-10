@@ -3,13 +3,15 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "Structs.h"
+#include "Common.h"
 #include "GameEdit.h"
 
 void initMenuObj(GameObject *menuObj);
+void initEndScreen(GameObject *endObj);
 void drawMenu(GameObject *menuObj);
 void updateMenu(GameObject *menuObj);
 void incrementMenu(GameObject *menuObj);
 void selectMenu(GameObject * menuObj);
+void selectEndMenu(GameObject * menuObj);
 
 #endif

@@ -6,11 +6,22 @@
 void initMenuObj(GameObject *menuObj) {
   menuObj->index = 0;
   menuObj->numElems = 2;
-  /* first 'element' is new game 
-  /  second 'element' is toggle sound */
+  /* First 'element' is new game 
+  /  Second 'element' is toggle sound */
  
   menuObj->draw = &drawMenu;
   menuObj->update = &updateMenu;
+}
+
+void initEndScreenObj(GameObject *endObj) {
+  endObj->index = 0;
+  endObj->numElems = 2;
+  
+  // First and only element is new game
+
+  //TODO update these function pointers
+  endObj->draw = &drawMenu;
+  endObj->update = &updateMenu;
 }
 
 void drawMenu(GameObject *menuObj) {
@@ -33,6 +44,19 @@ void selectMenu(GameObject *menuObj) {
       break;
     case 1:
       toggleSound();
+      break;
+    default:
+      fprintf("stderr", "Error: Unsupported menu option\n");
+  }
+}
+
+void selectEndMenu(GameObject *menuObj) {
+  switch (menuObj->index) {
+    case 0:
+      initGame();
+      break;
+    case 1:
+      initMenu();
       break;
     default:
       fprintf("stderr", "Error: Unsupported menu option\n");
