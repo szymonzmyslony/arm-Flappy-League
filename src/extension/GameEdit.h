@@ -6,6 +6,7 @@
 #include "Common.h"
 #include "CircleObj.h"
 #include "SquareObj.h"
+#include "TimerObj.h"
 #include "UtilObj.h"
 
 #define upVelocity   10.0
@@ -33,6 +34,10 @@ void initMenu(void);
 void initEnd(void);
 void initGame(void);
 void initSetup(void);
+
+void addAllVelocity(void);
+void applyAllGravity(void);
+void applyAllAirResistance(void);
 
 void scorePlayer1(GameObject *colObj);
 void scorePlayer2(GameObject *colObj);
