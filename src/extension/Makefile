@@ -1,7 +1,7 @@
 CC      = gcc
 CFLAGS  = `sdl-config --libs --cflags` -std=c99 -lm -Wall -pedantic
 LIBS = -lSDL_image -lSDL_mixer -lwiringPi
-PIFLAG =
+PIFLAG = #Intentionally blank
 
 
 .SUFFIXES: .c .o
@@ -10,35 +10,11 @@ PIFLAG =
 
 all: FlappyLeague
 
-FlappyLeague: GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Main.o collisions.o
-	$(CC) GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Main.o collisions.o $(CFLAGS) -o FlappyLeague $(LIBS)
+FlappyLeague: GameEdit.o Control.o TimerObj.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Main.o collisions.o
+	$(CC) $^ $(CFLAGS) $(PIFLAG) -o FlappyLeague $(LIBS)
 
-GameEdit.o : GameEdit.c GameEdit.h
-	$(CC) $(CFLAGS) GameEdit.c -c -o GameEdit.o $(LIBS)
-
-Control.o : Control.c Control.h
-	$(CC) $(CFLAGS) Control.c -c -o Control.o $(LIBS)
-
-SquareObj.o : SquareObj.c SquareObj.h
-	$(CC) $(CFLAGS) SquareObj.c -c -o SquareObj.o $(LIBS)
-
-CircleObj.o : CircleObj.c CircleObj.h
-	$(CC) $(CFLAGS) CircleObj.c -c -o CircleObj.o $(LIBS)
-
-linkedList.o : linkedList.c linkedList.h
-	$(CC) $(CFLAGS) linkedList.c -c -o linkedList.o $(LIBS)
-
-Main.o : Main.c Main.h
-	$(CC) $(CFLAGS) $(PIFLAG) Main.c -c -o Main.o $(LIBS)
-
-Debug.o : Debug.c Debug.h
-	$(CC) $(CFLAGS) Debug.c -c -o Debug.o $(LIBS)
-
-UtilObj.o : UtilObj.c UtilObj.h
-	$(CC) $(CFLAGS) UtilObj.c -c -o UtilObj.o $(LIBS)
-
-collisions.o : collisions.c collisions.h
-	$(CC) $(CFLAGS) collisions.c -c -o collisions.o $(LIBS)
+%.o : %.c %.h
+	$(CC) $(CFLAGS) $(patsubst %.o, %.c, $@) -c -o $@ $(LIBS)
 
 pi:
 	make all PIFLAG="-DRPI"
