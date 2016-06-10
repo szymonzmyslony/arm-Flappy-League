@@ -6,7 +6,7 @@ static bool soundEnabled;
 
 void initMenu(void) {
   gameState = MENU;
-  initMenu(gObjs[MAINMENU]);
+  // initMenuObj(gObjs[MAINMENU]);
   initSetup();
 }
 
