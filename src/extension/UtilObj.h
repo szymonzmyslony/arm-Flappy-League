@@ -11,7 +11,7 @@ void timerObjStop(GameObject *timerObj);
 void updateTimerAlarm(GameObject *timerObj);
 void updateTimerRepeated(GameObject *timerObj);
 void updateTimerConstant(GameObject *timerObj);
-void *initTimerObj(GameObject *timerObj, uint32_t duration, bool enable,
+void initTimerObj(GameObject *timerObj, uint32_t duration, bool enable,
   void (*updateMode)(GameObject*), void (*endAction)(void));
 void setSprite(GameObject *gameObj, SDL_Surface *sprite);
 void addAllVelocity(void);
