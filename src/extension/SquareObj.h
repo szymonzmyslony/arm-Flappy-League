@@ -9,5 +9,6 @@ GameObject *initSquareObj(float x, float y, float w, float h, bool isSolid);
 void drawSquareObj(GameObject *squareObj);
 void setAsGoal(GameObject *scoreObj);
 void setCollFunc(GameObject *squareObj, void (*func)(GameObject*));
+void animate(GameObject *animationSource, int i, int j, int width, int height, int x, int y);
 
 #endif
