@@ -7,24 +7,21 @@
 #define collFunc squareObj->v3.func
 
 
-
-void animate(GameObject *animationSource, int i, int j, int width, int height, int x, int y){ 
+void animate(SDL_Surface *animationSource, int i, int j, int width, int height, int x, int y){
   SDL_Rect srcrect;
   int startx = i * width;
-  int starty = j * height; 
+  int starty = j * height;
   srcrect.x = startx;
   srcrect.y = starty;
-  start.w = width;
-  start.h = height; 
+  srcrect.w = width;
+  srcrect.h = height;
   SDL_Rect destrec;
   destrec.x = x;
   destrec.y = y;
   destrec.w = width;
-  destrec.h = height; 
-  BlitSurface(animationSource, srcrect, screen, destrec);
+  destrec.h = height;
+  SDL_BlitSurface(animationSource, &srcrect, screen, &destrec);
 }
-
-
 
 void drawSquareObj(GameObject *squareObj) {
   if(squareObj->sprite != NULL) {
