@@ -107,9 +107,6 @@ void playWhistleSound(void) {
   Mix_PlayChannel(-1, sound_whistle, 0);
 }
 
-//=============================== Input Objects ===========================
-
-
 //=============================== Draw Functions ==========================
 void setSprite(GameObject *gameObj, SDL_Surface *newSprite) {
   gameObj->sprite = newSprite;
