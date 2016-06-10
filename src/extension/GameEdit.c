@@ -10,9 +10,12 @@ void initMenu(void) {
 
 void initEnd(void) {
   gameState = POSTMATCH;
-  gObjs[GOAL1] = NULL;
-  gObjs[GOAL2] = NULL;
-  gObjs[BALL] = NULL;
+  gObjs[GOAL1] = initTimerObj(0 * SECOND, true, &updateTimerAlarm,
+                          &playWhistleSound);
+  gObjs[GOAL2] = initTimerObj((1 * SECOND), true, &updateTimerAlarm,
+                          &playWhistleSound);
+  gObjs[BALL] = initTimerObj(2 * SECOND, true, &updateTimerAlarm,
+                          &playWhistleSound);
 }
 
 void initGame(void) {
@@ -21,9 +24,13 @@ void initGame(void) {
   gObjs[SCOREBOARD1] = initSquareObj(SCORE1_OFFSET_X, SCORE_OFFSET_Y,
                                       SCORE_WIDTH, SCORE_HEIGHT, false);
   gObjs[SCOREBOARD1]->v4.i = 0;
+  gObjs[SCOREBOARD1]->draw = &drawScoreboard;
+  gObjs[SCOREBOARD1]->sprite = surf_scoring;
   gObjs[SCOREBOARD2] = initSquareObj(SCORE2_OFFSET_X, SCORE_OFFSET_Y,
                                       SCORE_WIDTH, SCORE_HEIGHT, false);
   gObjs[SCOREBOARD2]->v4.i = 0;
+  gObjs[SCOREBOARD2]->draw = &drawScoreboard;
+  gObjs[SCOREBOARD2]->sprite = surf_scoring;
 
   //Init Goals
   gObjs[GOAL1] = initSquareObj(0, GOAL_OFFSET,
@@ -91,6 +98,10 @@ void moveRight(GameObject *circObj) {
   circObj->v2.vec.x = +sideVelocity;
   circObj->v2.vec.y = -upVelocity;
 }
+void drawScoreboard(GameObject *board){
+  animate(board->sprite, board->v4.i%10, 0, 62.5, 73, board->v1.vec.x, board->v1.vec.y);
+}
+
 
 void handleButtonStatus(void) {
   switch(gameState) {

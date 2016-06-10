@@ -1,5 +1,7 @@
 #include "CircleObj.h"
 
+#define MINBOUNCE 15.0
+
 #define cx     circObj->v1.vec.x
 #define cy     circObj->v1.vec.y
 #define cvx    circObj->v2.vec.x
@@ -26,7 +28,11 @@ void updateCircleObj(GameObject *circObj) {
     cvy = 0;
   }
   if(cy + radius > screen->h && cvy > 0) {
-    cvy = -15;
+    if(cvy <= MINBOUNCE) {
+      cvy = -MINBOUNCE;
+    } else {
+      cvy *= -0.95;
+    }
   }
 }
 
