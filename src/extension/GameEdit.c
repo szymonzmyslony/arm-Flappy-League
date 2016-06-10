@@ -1,10 +1,22 @@
 #include "GameEdit.h"
 
+enum gameStates { MENU, MATCH, POSTMATCH };
+static int gameState;
+
 void initMenu(void) {
+  gameState = MENU;
   initSetup();
 }
 
+void initEnd(void) {
+  gameState = POSTMATCH;
+  gObjs[GOAL1] = NULL;
+  gObjs[GOAL2] = NULL;
+  gObjs[BALL] = NULL;
+}
+
 void initGame(void) {
+  gameState = MATCH;
   // Setup score counters
   gObjs[SCOREBOARD1] = initSquareObj(SCORE1_OFFSET_X, SCORE_OFFSET_Y,
                                       SCORE_WIDTH, SCORE_HEIGHT, false);
@@ -30,6 +42,10 @@ void initGame(void) {
   gObjs[10] = initTimerObj(UINT32_MAX, true, &updateTimerConstant,
     &applyAllAirResistance);
 
+  //Match Timer
+  gObjs[12] = initTimerObj(MATCH_TIMER, true, &updateTimerAlarm,
+    &initEnd);
+
   initSetup();
 }
 
@@ -46,7 +62,7 @@ void initSetup(void) {
   setSprite(gObjs[BALL], surf_ball);
 
   //Init Countdown
-  gObjs[11] = initTimerObj(1000, true, &updateTimerAlarm,
+  gObjs[11] = initTimerObj(1 * SECOND, true, &updateTimerAlarm,
                           &playWhistleSound);
 }
 
@@ -77,23 +93,33 @@ void moveRight(GameObject *circObj) {
 }
 
 void handleButtonStatus(void) {
-  if(buttonDownP1Left) {
-    moveLeft(gObjs[PLAYER1]);
-    buttonDownP1Left = false;
-  }
+  switch(gameState) {
+    case MENU:
+      break;
 
-  if(buttonDownP1Right) {
-    moveRight(gObjs[PLAYER1]);
-    buttonDownP1Right = false;
-  }
+    case MATCH:
+      if(buttonDownP1Left) {
+        moveLeft(gObjs[PLAYER1]);
+        buttonDownP1Left = false;
+      }
 
-  if(buttonDownP2Left) {
-    moveLeft(gObjs[PLAYER2]);
-    buttonDownP2Left = false;
-  }
+      if(buttonDownP1Right) {
+        moveRight(gObjs[PLAYER1]);
+        buttonDownP1Right = false;
+      }
 
-  if(buttonDownP2Right) {
-    moveRight(gObjs[PLAYER2]);
-    buttonDownP2Right = false;
+      if(buttonDownP2Left) {
+        moveLeft(gObjs[PLAYER2]);
+        buttonDownP2Left = false;
+      }
+
+      if(buttonDownP2Right) {
+        moveRight(gObjs[PLAYER2]);
+        buttonDownP2Right = false;
+      }
+      break;
+
+    case POSTMATCH:
+      break;
   }
 }
