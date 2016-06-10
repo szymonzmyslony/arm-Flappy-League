@@ -60,6 +60,13 @@
 |  in again:                                                                  |
 | $ sudo usermod -a -G video,audio <username>                                 |
 |                                                                             |
-| Compile the using the following. The order of some flags matter:            |
-| $ gcc <filename>.c `sdl-config --libs --cflags` -o <output> -lSDL_image     |
+| Compile using make on a pi:                                                 |
+| $ make pi                                                                   |
+|                                                                             |
+| Or, if not on a pi:                                                         |
+| $ make                                                                      |
+|                                                                             |
+| If you are getting pi-related errors whilst not on a pi, the program may    |
+| have been compiled improperly. Do the following and try again:              |
+| $ make clean                                                                |
 -------------------------------------------------------------------------------
