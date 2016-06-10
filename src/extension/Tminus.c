@@ -51,10 +51,16 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Error allocating memory\n");
     exit(EXIT_FAILURE);
   }
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    gObjs[i] = (GameObject*)calloc(1, sizeof(GameObject));
+    if(gObjs[i] == NULL) {
+      fprintf(stderr, "Error allocating memory\n");
+      exit(EXIT_FAILURE);
+    }
+  }
 
   Mix_PlayMusic(music_crowd, -1);
 
-  //TODO remove test code
   initGame();
 
   // -- Initialise Loop variables
@@ -102,7 +108,15 @@ int main(int argc, char **argv) {
   }
 
   // Cleanup
-  free(gObjs);
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    if(gObjs[i] != NULL) {
+      free(gObjs[i]);
+    }
+  }
+  if(gObjs != NULL) {
+    free(gObjs);
+  }
+
   // Free Sound Resources
   Mix_FreeMusic(music_crowd);
 
@@ -128,6 +142,7 @@ int main(int argc, char **argv) {
 
   // Release Initialised SDL Systems
   Mix_CloseAudio();
+  IMG_Quit();
   SDL_Quit();
 
   printf("Exiting T-\n");
