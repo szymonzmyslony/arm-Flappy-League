@@ -11,6 +11,10 @@
 #define upVelocity   10.0
 #define sideVelocity  5.0
 
+enum gameSettings {
+  MATCH_TIMER 120 * SECOND
+};
+
 enum sizesAndPositions {
   PLAYER_SIZE = 64,
   BALL_SIZE = 64,
