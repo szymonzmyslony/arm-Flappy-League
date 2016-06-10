@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "Control.h"
-#include "Structs.h"
+#include "Common.h"
 #include "CircleObj.h"
 #include "SquareObj.h"
 #include "UtilObj.h"

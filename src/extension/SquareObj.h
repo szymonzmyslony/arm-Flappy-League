@@ -1,7 +1,7 @@
 #ifndef NETOBJ_H
 #define NETOBJ_H
 #include <stdbool.h>
-#include "Structs.h"
+#include "Common.h"
 #include "UtilObj.h"
 #include "Debug.h"
 

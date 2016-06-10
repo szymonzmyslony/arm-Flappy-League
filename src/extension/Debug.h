@@ -3,7 +3,7 @@
 
 #include <SDL/SDL.h>
 #include <stdint.h>
-#include "Structs.h"
+#include "Common.h"
 
 void debugDrawPixel(int x, int y, uint32_t pixel);
 void debugDrawCircle(int x, int y, int r);

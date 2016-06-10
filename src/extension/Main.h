@@ -1,10 +1,10 @@
-#ifndef TMINUS_H
-#define TMINUS_H
+#ifndef MAIN_H
+#define MAIN_H
 
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_mixer.h>
 #include <wiringPi.h>
-#include "Structs.h"
+#include "Common.h"
 #include "CircleObj.h"
 #include "UtilObj.h"
 #include "collisions.h"

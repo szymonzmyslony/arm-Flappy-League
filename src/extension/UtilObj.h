@@ -1,7 +1,7 @@
 #ifndef UTILOBJ_H
 #define UTILOBJ_H
 
-#include "Structs.h"
+#include "Common.h"
 #include "collisions.h"
 
 void timerObjAddTime(GameObject *timerObj);

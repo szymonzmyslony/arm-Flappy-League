@@ -10,8 +10,8 @@ PIFLAG =
 
 all: FlappyLeague
 
-FlappyLeague: GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o
-	$(CC) GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o FlappyLeague $(LIBS)
+FlappyLeague: GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Main.o collisions.o
+	$(CC) GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Main.o collisions.o $(CFLAGS) -o FlappyLeague $(LIBS)
 
 GameEdit.o : GameEdit.c GameEdit.h
 	$(CC) $(CFLAGS) GameEdit.c -c -o GameEdit.o $(LIBS)
@@ -28,8 +28,8 @@ CircleObj.o : CircleObj.c CircleObj.h
 linkedList.o : linkedList.c linkedList.h
 	$(CC) $(CFLAGS) linkedList.c -c -o linkedList.o $(LIBS)
 
-Tminus.o : Tminus.c Tminus.h
-	$(CC) $(CFLAGS) $(PIFLAG) Tminus.c -c -o Tminus.o $(LIBS)
+Main.o : Main.c Main.h
+	$(CC) $(CFLAGS) $(PIFLAG) Main.c -c -o Main.o $(LIBS)
 
 Debug.o : Debug.c Debug.h
 	$(CC) $(CFLAGS) Debug.c -c -o Debug.o $(LIBS)
@@ -48,4 +48,4 @@ clean:
 	rm -f FlappyLeague
 
 #Use this if you want to compile it manually
-#gcc UtilObj.c Debug.c CircleObj.c linkedList.c Tminus.c `sdl-config --libs --cflags` -std=c99 -o daGame -lSDL_image -lSDL_mixer
+#gcc UtilObj.c Debug.c CircleObj.c linkedList.c Main.c `sdl-config --libs --cflags` -std=c99 -o daGame -lSDL_image -lSDL_mixer
