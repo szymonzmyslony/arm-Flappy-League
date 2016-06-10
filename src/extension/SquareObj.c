@@ -42,12 +42,8 @@ void setCollFunc(GameObject *squareObj, void (*func)(GameObject*)) {
 /** An object which has a square collider. A sprite attached will be drawn
 * upon the top-left corner of the squareObj.
 */
-GameObject *initSquareObj(float x, float y, float w, float h, bool isSolid) {
-  GameObject *squareObj = (GameObject*)calloc(1, sizeof(GameObject));
-  if(squareObj == NULL) {
-    printf("Error allocating gameObj memory.");
-  }
-
+void *initSquareObj(GameObject *squareObj, float x, float y, float w,
+  float h, bool isSolid) {
   squareObj->colliderType = isSolid? COL_BOX : COL_NET;
 
   sx = x;
@@ -55,7 +51,6 @@ GameObject *initSquareObj(float x, float y, float w, float h, bool isSolid) {
   sw = w;
   sh = h;
 
+  squareObj->update = NULL;
   squareObj->draw = &drawSquareObj;
-
-  return squareObj;
 }
