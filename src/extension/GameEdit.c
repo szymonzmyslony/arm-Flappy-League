@@ -10,9 +10,12 @@ void initMenu(void) {
 
 void initEnd(void) {
   gameState = POSTMATCH;
-  gObjs[GOAL1] = NULL;
-  gObjs[GOAL2] = NULL;
-  gObjs[BALL] = NULL;
+  gObjs[GOAL1] = initTimerObj(0 * SECOND, true, &updateTimerAlarm,
+                          &playWhistleSound);
+  gObjs[GOAL2] = initTimerObj((1 * SECOND), true, &updateTimerAlarm,
+                          &playWhistleSound);
+  gObjs[BALL] = initTimerObj(2 * SECOND, true, &updateTimerAlarm,
+                          &playWhistleSound);
 }
 
 void initGame(void) {
