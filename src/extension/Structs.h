@@ -28,7 +28,8 @@ enum ids {
   PLAYER2 = 3,
   BALL = 4,
   GOAL1 = 5,
-  GOAL2 = 6
+  GOAL2 = 6,
+  MAINMENU = 7
 };
 
 typedef struct vector {

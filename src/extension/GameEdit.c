@@ -2,9 +2,11 @@
 
 enum gameStates { MENU, MATCH, POSTMATCH };
 static int gameState;
+static bool soundEnabled;
 
 void initMenu(void) {
   gameState = MENU;
+  initMenu(gObjs[MAINMENU]);
   initSetup();
 }
 
