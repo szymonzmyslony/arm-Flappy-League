@@ -39,7 +39,7 @@ void updateCircleObj(GameObject *circObj) {
 /** An object which has a circle collider. A sprite attached will be centred
 * upon the centre of the circle
 */
-void *initCircleObj(GameObject *circObj, float r, float x, float y, float vx,
+void initCircleObj(GameObject *circObj, float r, float x, float y, float vx,
   float vy) {
   circObj->colliderType = COL_CIRCLE;
 

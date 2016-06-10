@@ -42,7 +42,7 @@ void setCollFunc(GameObject *squareObj, void (*func)(GameObject*)) {
 /** An object which has a square collider. A sprite attached will be drawn
 * upon the top-left corner of the squareObj.
 */
-void *initSquareObj(GameObject *squareObj, float x, float y, float w,
+void initSquareObj(GameObject *squareObj, float x, float y, float w,
   float h, bool isSolid) {
   squareObj->colliderType = isSolid? COL_BOX : COL_NET;
 
