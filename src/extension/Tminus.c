@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   // -- Initialise SDL, Graphical Interfaces
   initSDL();
   // -- Initialise Pins
-  initPins();
+  //TODO uncomment for pi initPins();
   // Get the console's screen for drawing
   screen = getConsoleScreen();
   // Set the window bar data. For non-console use only.
@@ -281,16 +281,15 @@ inline void initSDL(void) {
 }
 
 inline void initPins(void){
-  int i;
-
   if(wiringPiSetup() == -1) {
       fprintf(stderr, "Failed to setup controllers");
       exit(EXIT_FAILURE);
   }
 
-  for(i = LeftFirstPlayer; i<=LeftSecondPlayer; i++){
+  for(int i = LeftFirstPlayer; i<=LeftSecondPlayer; i++) {
     pinMode(i, OUTPUT);
-    digitalWrite(i, HIGH);}
+    digitalWrite(i, HIGH);
+  }
 }
 
 /** Attempts to load an image. The image is unoptimised.
