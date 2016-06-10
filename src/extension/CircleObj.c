@@ -39,25 +39,16 @@ void updateCircleObj(GameObject *circObj) {
 /** An object which has a circle collider. A sprite attached will be centred
 * upon the centre of the circle
 */
-GameObject *initCircleObj(float r, float x, float y, float vx, float vy) {
-  GameObject *circObj = (GameObject*)calloc(1, sizeof(GameObject));
-  if(circObj == NULL) {
-    printf("Error allocating gameObj memory.");
-    //TODO do for all
-  }
-
+void *initCircleObj(GameObject *circObj, float r, float x, float y, float vx,
+  float vy) {
   circObj->colliderType = COL_CIRCLE;
 
   radius = r;
-
   cx = x;
   cy = y;
-
   cvx = vx;
   cvy = vy;
 
   circObj->draw = &drawCircleObj;
   circObj->update = &updateCircleObj;
-
-  return circObj;
 }

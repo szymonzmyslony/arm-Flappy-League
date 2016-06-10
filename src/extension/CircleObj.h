@@ -6,7 +6,8 @@
 #include "collisions.h"
 #include "UtilObj.h"
 
-GameObject *initCircleObj(float r, float x, float y, float vx, float vy);
+void *initCircleObj(GameObject *circObj, float r, float x, float y, float vx,
+  float vy);
 void drawCircleObj(GameObject *circObj);
 void updateCircleObj(GameObject *circObj);
 

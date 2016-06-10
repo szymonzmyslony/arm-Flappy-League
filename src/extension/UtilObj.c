@@ -65,17 +65,15 @@ void updateTimerConstant(GameObject *timerObj) {
   }
 }
 
-GameObject *initTimerObj(uint32_t duration, bool enable,
+void *initTimerObj(GameObject *timerObj, uint32_t duration, bool enable,
                  void (*updateMode)(GameObject*), void (*endAction)(void)) {
-  GameObject *timerObj = (GameObject*)calloc(1, sizeof(GameObject));
   lastTime = SDL_GetTicks();
   elapsed = 0;
   activationTime = duration;
   enabled = enable;
   runAction = endAction;
   timerObj->update = updateMode;
-
-  return timerObj;
+  timerObj->draw = NULL;
 }
 
 //================= Timer Actions

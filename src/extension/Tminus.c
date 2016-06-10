@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
   // -- Initialise SDL, Graphical Interfaces
   initSDL();
   // -- Initialise Pins
-  initPins();
+  //TODO uncomment for pi initPins();
   // Get the console's screen for drawing
   screen = getConsoleScreen();
   // Set the window bar data. For non-console use only.
@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
   surf_bird4 = loadImage("gfx/PunkSilly.png");
   surf_datboi = loadImage("gfx/DatBoi.png");
   surf_flappybird = loadImage("gfx/FlappyBird.png");
+  surf_scoring = loadImage("gfx/scoring.png");
 
   // -- Load Sounds
   music_crowd = loadMusic("sound/stadium_noise.wav");
@@ -50,10 +51,16 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Error allocating memory\n");
     exit(EXIT_FAILURE);
   }
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    gObjs[i] = (GameObject*)calloc(1, sizeof(GameObject));
+    if(gObjs[i] == NULL) {
+      fprintf(stderr, "Error allocating memory\n");
+      exit(EXIT_FAILURE);
+    }
+  }
 
   Mix_PlayMusic(music_crowd, -1);
 
-  //TODO remove test code
   initGame();
 
   // -- Initialise Loop variables
@@ -101,7 +108,15 @@ int main(int argc, char **argv) {
   }
 
   // Cleanup
-  free(gObjs);
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    if(gObjs[i] != NULL) {
+      free(gObjs[i]);
+    }
+  }
+  if(gObjs != NULL) {
+    free(gObjs);
+  }
+
   // Free Sound Resources
   Mix_FreeMusic(music_crowd);
 
@@ -123,9 +138,11 @@ int main(int argc, char **argv) {
   SDL_FreeSurface(surf_bird2);
   SDL_FreeSurface(surf_bird3);
   SDL_FreeSurface(surf_bird4);
+  SDL_FreeSurface(surf_scoring);
 
   // Release Initialised SDL Systems
   Mix_CloseAudio();
+  IMG_Quit();
   SDL_Quit();
 
   printf("Exiting T-\n");
@@ -279,10 +296,15 @@ inline void initSDL(void) {
 }
 
 inline void initPins(void){
-  int i;
-  for(i = LeftFirstPlayer; i<=LeftSecondPlayer; i++){
+  if(wiringPiSetup() == -1) {
+      fprintf(stderr, "Failed to setup controllers");
+      exit(EXIT_FAILURE);
+  }
+
+  for(int i = LeftFirstPlayer; i<=LeftSecondPlayer; i++) {
     pinMode(i, OUTPUT);
-    digitalWrite(i, HIGH);}
+    digitalWrite(i, HIGH);
+  }
 }
 
 /** Attempts to load an image. The image is unoptimised.
