@@ -8,10 +8,10 @@ PIFLAG =
 
 .PHONY: all clean pi
 
-all: daGame
+all: FlappyLeague
 
-daGame: GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o
-	$(CC) GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
+FlappyLeague: GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o
+	$(CC) GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o FlappyLeague $(LIBS)
 
 GameEdit.o : GameEdit.c GameEdit.h
 	$(CC) $(CFLAGS) GameEdit.c -c -o GameEdit.o $(LIBS)
@@ -45,7 +45,7 @@ pi:
 
 clean:
 	rm -f $(wildcard *.o)
-	rm -f daGame
+	rm -f FlappyLeague
 
 #Use this if you want to compile it manually
 #gcc UtilObj.c Debug.c CircleObj.c linkedList.c Tminus.c `sdl-config --libs --cflags` -std=c99 -o daGame -lSDL_image -lSDL_mixer
