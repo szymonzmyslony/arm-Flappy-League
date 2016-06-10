@@ -4,7 +4,7 @@
 /** The screen must be locked before calling.
  */
 void debugDrawPixel(int x, int y, uint32_t pixel) {
-  if(x < 0 || x > screen->w || y < 0 || y > screen->h) {
+  if(x < 0 || x >= screen->w || y < 0 || y >= screen->h) {
     return;
   }
 
