@@ -1,5 +1,5 @@
-#ifndef STRUCTS_H
-#define STRUCTS_H
+#ifndef COMMON_H
+#define COMMON_H
 #include <stdbool.h>
 #include <stdint.h>
 #include <SDL/SDL.h>
@@ -94,8 +94,8 @@ SDL_Surface *surf_bird4;
 SDL_Surface *surf_ball;
 SDL_Surface *surf_goal;
 SDL_Surface *surf_bg;
-SDL_Surface *surf_scoring; 
 SDL_Surface *main_menu_sprite; 
+SDL_Surface *surf_scoring;
 
 Mix_Music *music_crowd;
 

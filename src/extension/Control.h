@@ -1,7 +1,7 @@
 #ifndef CONTROL_H
 #define CONTROL_H
-#include "Structs.h"
-#include "Tminus.h"
+#include "Common.h"
+#include "Main.h"
 
 void updateButtonsStatus(void);
 void updateButtonDownP1Left(void);

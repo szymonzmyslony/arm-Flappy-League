@@ -4,6 +4,8 @@ enum gameStates { MENU, MATCH, POSTMATCH };
 static int gameState;
 static bool soundEnabled;
 
+//========================= Init Game States ===============================
+
 void initMenu(void) {
   gameState = MENU;
   initMenuObj(gObjs[MAINMENU]);
@@ -76,6 +78,8 @@ void initSetup(void) {
                           &playWhistleSound);
 }
 
+//==================== GameObject Altering Functions =========================
+
 void scorePlayer1(GameObject *colObj) {
   if(colObj == gObjs[BALL]) {
     gObjs[SCOREBOARD1]->v4.i++;
@@ -92,6 +96,30 @@ void scorePlayer2(GameObject *colObj) {
   }
 }
 
+void addAllVelocity(void) {
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
+      gObjs[i]->v2.vec.y += 5;
+    }
+  }
+}
+
+void applyAllGravity(void) {
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
+      gObjs[i]->v2.vec.y += 0.5;
+    }
+  }
+}
+
+void applyAllAirResistance(void) {
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
+      gObjs[i]->v2.vec.x *= 0.99;
+    }
+  }
+}
+
 void moveLeft(GameObject *circObj) {
   circObj->v2.vec.x = -sideVelocity;
   circObj->v2.vec.y = -upVelocity;
@@ -101,10 +129,13 @@ void moveRight(GameObject *circObj) {
   circObj->v2.vec.x = +sideVelocity;
   circObj->v2.vec.y = -upVelocity;
 }
+
 void drawScoreboard(GameObject *board){
   animate(board->sprite, board->v4.i%10, 0, 62.5, 73, board->v1.vec.x, 
           board->v1.vec.y);
 }
+
+//=========================== IO Effectors ==================================
 
 void handleButtonStatus(void) {
   switch(gameState) {

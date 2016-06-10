@@ -4,9 +4,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "Control.h"
-#include "Structs.h"
+#include "Common.h"
 #include "CircleObj.h"
 #include "SquareObj.h"
+#include "TimerObj.h"
 #include "UtilObj.h"
 #include "Menu.h"
 
@@ -35,6 +36,10 @@ void initMenu(void);
 void initEnd(void);
 void initGame(void);
 void initSetup(void);
+
+void addAllVelocity(void);
+void applyAllGravity(void);
+void applyAllAirResistance(void);
 
 void scorePlayer1(GameObject *colObj);
 void scorePlayer2(GameObject *colObj);

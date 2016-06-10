@@ -1,4 +1,4 @@
-#include "Tminus.h"
+#include "Main.h"
 
 #define FPS 60
 #define SPF SECOND / FPS
@@ -17,7 +17,9 @@ int main(int argc, char **argv) {
   // -- Initialise SDL, Graphical Interfaces
   initSDL();
   // -- Initialise Pins
-  //TODO uncomment for pi initPins();
+  #ifdef RPI
+  initPins();
+  #endif
   // Get the console's screen for drawing
   screen = getConsoleScreen();
   // Set the window bar data. For non-console use only.
@@ -74,10 +76,9 @@ int main(int argc, char **argv) {
 
   // Game Loop
   while(running) {
-
     // Process SDL keyboard input events. For non-Pi only.
     processKeyboardInput(&event, &running);
-    //TODO Process GPIO pins
+    // Process GPIO pins
     updateButtonsStatus();
 
     // Draw background between frames, too intensive
@@ -144,6 +145,7 @@ int main(int argc, char **argv) {
 
   // Release Initialised SDL Systems
   Mix_CloseAudio();
+  Mix_Quit();
   IMG_Quit();
   SDL_Quit();
 
@@ -326,6 +328,7 @@ SDL_Surface *loadImage(char *path) {
     return loadedSurface;
   }
 
+  SDL_FreeSurface(loadedSurface);
   return formattedSurface;
 }
 

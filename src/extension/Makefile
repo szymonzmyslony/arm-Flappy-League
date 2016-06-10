@@ -1,49 +1,27 @@
 CC      = gcc
 CFLAGS  = `sdl-config --libs --cflags` -std=c99 -lm -Wall -pedantic
 LIBS = -lSDL_image -lSDL_mixer -lwiringPi
+PIFLAG = #Intentionally blank
 
 
 .SUFFIXES: .c .o
 
-.PHONY: all clean
+.PHONY: all clean pi
 
-all: daGame
+all: FlappyLeague
 
-daGame: GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o Menu.o
-	$(CC) GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o Menu.o $(CFLAGS) -o daGame $(LIBS)
+FlappyLeague: GameEdit.o Control.o TimerObj.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Main.o Menu.o collisions.o
+	$(CC) $^ $(CFLAGS) $(PIFLAG) -o FlappyLeague $(LIBS)
 
-GameEdit.o : GameEdit.c GameEdit.h
-	$(CC) $(CFLAGS) GameEdit.c -c -o GameEdit.o $(LIBS)
+%.o : %.c %.h
+	$(CC) $(CFLAGS) $(patsubst %.o, %.c, $@) -c -o $@ $(LIBS)
 
-Control.o : Control.c Control.h
-	$(CC) $(CFLAGS) Control.c -c -o Control.o $(LIBS)
+pi:
+	make all PIFLAG="-DRPI"
 
-SquareObj.o : SquareObj.c SquareObj.h
-	$(CC) $(CFLAGS) SquareObj.c -c -o SquareObj.o $(LIBS)
-
-CircleObj.o : CircleObj.c CircleObj.h
-	$(CC) $(CFLAGS) CircleObj.c -c -o CircleObj.o $(LIBS)
-
-linkedList.o : linkedList.c linkedList.h
-	$(CC) $(CFLAGS) linkedList.c -c -o linkedList.o $(LIBS)
-
-Tminus.o : Tminus.c Tminus.h
-	$(CC) $(CFLAGS) Tminus.c -c -o Tminus.o $(LIBS)
-
-Debug.o : Debug.c Debug.h
-	$(CC) $(CFLAGS) Debug.c -c -o Debug.o $(LIBS)
-
-UtilObj.o : UtilObj.c UtilObj.h
-	$(CC) $(CFLAGS) UtilObj.c -c -o UtilObj.o $(LIBS)
-
-collisions.o : collisions.c collisions.h
-	$(CC) $(CFLAGS) collisions.c -c -o collisions.o $(LIBS)
-
-Menu.o : Menu.c Menu.h
-	$(CC) $(CFLAGS) Menu.c -c -o Menu.o $(LIBS)
 clean:
 	rm -f $(wildcard *.o)
-	rm -f daGame
+	rm -f FlappyLeague
 
 #Use this if you want to compile it manually
-#gcc UtilObj.c Debug.c CircleObj.c linkedList.c Tminus.c `sdl-config --libs --cflags` -std=c99 -o daGame -lSDL_image -lSDL_mixer
+#gcc UtilObj.c Debug.c CircleObj.c linkedList.c Main.c `sdl-config --libs --cflags` -std=c99 -o daGame -lSDL_image -lSDL_mixer

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <math.h>
-#include "Structs.h"
+#include "Common.h"
 
 enum colliderTypes {
   COL_CIRCLE = 1,
