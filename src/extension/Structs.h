@@ -29,7 +29,11 @@ enum ids {
   BALL = 4,
   GOAL1 = 5,
   GOAL2 = 6,
-  MAINMENU = 7
+  MAINMENU = 7,
+  GRAVITY_TIMER = 9,
+  AIR_RES_TIMER = 10,
+  WHISTLE_TIMER = 11,
+  MATCH_TIMER = 12
 };
 
 typedef struct vector {
@@ -91,6 +95,7 @@ SDL_Surface *surf_ball;
 SDL_Surface *surf_goal;
 SDL_Surface *surf_bg;
 SDL_Surface *surf_scoring; 
+SDL_Surface *main_menu_sprite; 
 
 Mix_Music *music_crowd;
 

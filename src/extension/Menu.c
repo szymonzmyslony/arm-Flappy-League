@@ -1,15 +1,16 @@
 #include "Menu.h"
 
-#define index     menuObj->v1.i
-#define numElems  menuObj->v2.i
-void initMenu(GameObject *menuObj) {
-  initMenu->index = 0;
-  initMenu->numElems = 2;
+#define index     v1.i
+#define numElems  v2.i
+
+void initMenuObj(GameObject *menuObj) {
+  menuObj->index = 0;
+  menuObj->numElems = 2;
   /* first 'element' is new game 
   /  second 'element' is toggle sound */
-
-  initMenu->draw = &drawMenu;
-  initMenu->update = &updateMenu;
+ 
+  menuObj->draw = &drawMenu;
+  menuObj->update = &updateMenu;
 }
 
 void drawMenu(GameObject *menuObj) {
@@ -18,4 +19,22 @@ void drawMenu(GameObject *menuObj) {
 
 void updateMenu(GameObject *menuObj) {
   return;
+}
+
+void incrementMenu(GameObject *menuObj) {
+  menuObj->index = (menuObj->index + 1) % menuObj->numElems;
+  return;
+}
+
+void selectMenu(GameObject *menuObj) {
+  switch (menuObj->index) {
+    case 0:
+      initGame();
+      break;
+    case 1:
+      toggleSound();
+      break;
+    default:
+      fprintf("stderr", "Error: Unsupported menu option\n");
+  }
 }

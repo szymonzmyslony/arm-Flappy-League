@@ -1,17 +1,19 @@
 #ifndef GAMEEDIT_H
 #define GAMEEDIT_H
 #include <stdint.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include "Control.h"
 #include "Structs.h"
 #include "CircleObj.h"
 #include "SquareObj.h"
 #include "UtilObj.h"
+#include "Menu.h"
 
 #define upVelocity   10.0
 #define sideVelocity  5.0
 
-#define MATCH_TIMER 120 * SECOND
+#define MATCH_LENGTH 120 * SECOND
 
 enum sizesAndPositions {
   PLAYER_SIZE = 64,
@@ -37,5 +39,6 @@ void initSetup(void);
 void scorePlayer1(GameObject *colObj);
 void scorePlayer2(GameObject *colObj);
 void drawScoreboard(GameObject *board);
+void toggleSound(void);
 
 #endif

@@ -6,7 +6,8 @@ static bool soundEnabled;
 
 void initMenu(void) {
   gameState = MENU;
-  // initMenuObj(gObjs[MAINMENU]);
+  initMenuObj(gObjs[MAINMENU]);
+  setSprite(gObjs[MAINMENU], main_menu_sprite);
   initSetup();
 }
 
@@ -46,13 +47,13 @@ void initGame(void) {
   setCollFunc(gObjs[GOAL2], &scorePlayer2);
 
   //Init Physics
-  initTimerObj(gObjs[9], UINT32_MAX, true, &updateTimerConstant,
+  initTimerObj(gObjs[GRAVITY_TIMER], UINT32_MAX, true, &updateTimerConstant,
     &applyAllGravity);
-  initTimerObj(gObjs[10], UINT32_MAX, true, &updateTimerConstant,
+  initTimerObj(gObjs[AIR_RES_TIMER], UINT32_MAX, true, &updateTimerConstant,
     &applyAllAirResistance);
 
   //Match Timer
-  initTimerObj(gObjs[12], MATCH_TIMER, true, &updateTimerAlarm,
+  initTimerObj(gObjs[MATCH_TIMER], MATCH_LENGTH, true, &updateTimerAlarm,
     &initEnd);
 
   initSetup();
@@ -71,7 +72,7 @@ void initSetup(void) {
   setSprite(gObjs[BALL], surf_ball);
 
   //Init Countdown
-  initTimerObj(gObjs[11], 1 * SECOND, true, &updateTimerAlarm,
+  initTimerObj(gObjs[WHISTLE_TIMER], 1 * SECOND, true, &updateTimerAlarm,
                           &playWhistleSound);
 }
 
@@ -101,12 +102,29 @@ void moveRight(GameObject *circObj) {
   circObj->v2.vec.y = -upVelocity;
 }
 void drawScoreboard(GameObject *board){
-  animate(board->sprite, board->v4.i%10, 0, 62.5, 73, board->v1.vec.x, board->v1.vec.y);
+  animate(board->sprite, board->v4.i%10, 0, 62.5, 73, board->v1.vec.x, 
+          board->v1.vec.y);
 }
 
 void handleButtonStatus(void) {
   switch(gameState) {
     case MENU:
+      if (buttonDownP1Left) {
+        incrementMenu(gObjs[MAINMENU]);
+        buttonDownP1Left = false;
+      }
+
+      if (buttonDownP1Right) {
+        selectMenu(gObjs[MAINMENU]);
+        buttonDownP1Right = false;
+      }
+      if(buttonDownP2Left) {
+        buttonDownP2Left = false;
+      }
+
+      if(buttonDownP2Right) {
+        buttonDownP2Right = false;
+      }
       break;
 
     case MATCH:
@@ -134,4 +152,8 @@ void handleButtonStatus(void) {
     case POSTMATCH:
       break;
   }
+}
+
+void toggleSound(void) {
+  soundEnabled = !soundEnabled;
 }

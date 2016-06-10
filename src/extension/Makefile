@@ -9,8 +9,8 @@ LIBS = -lSDL_image -lSDL_mixer -lwiringPi
 
 all: daGame
 
-daGame: GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o
-	$(CC) GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o $(CFLAGS) -o daGame $(LIBS)
+daGame: GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o Menu.o
+	$(CC) GameEdit.o Control.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Tminus.o collisions.o Menu.o $(CFLAGS) -o daGame $(LIBS)
 
 GameEdit.o : GameEdit.c GameEdit.h
 	$(CC) $(CFLAGS) GameEdit.c -c -o GameEdit.o $(LIBS)
@@ -39,6 +39,8 @@ UtilObj.o : UtilObj.c UtilObj.h
 collisions.o : collisions.c collisions.h
 	$(CC) $(CFLAGS) collisions.c -c -o collisions.o $(LIBS)
 
+Menu.o : Menu.c Menu.h
+	$(CC) $(CFLAGS) Menu.c -c -o Menu.o $(LIBS)
 clean:
 	rm -f $(wildcard *.o)
 	rm -f daGame

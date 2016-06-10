@@ -34,6 +34,8 @@ int main(int argc, char **argv) {
   surf_datboi = loadImage("gfx/DatBoi.png");
   surf_flappybird = loadImage("gfx/FlappyBird.png");
   surf_scoring = loadImage("gfx/scoring.png");
+  main_menu_sprite = NULL;
+  // main_menu_sprite = loadImage("gfx/mainMenu.png");
 
   // -- Load Sounds
   music_crowd = loadMusic("sound/stadium_noise.wav");
@@ -61,7 +63,7 @@ int main(int argc, char **argv) {
 
   Mix_PlayMusic(music_crowd, -1);
 
-  initGame();
+  initMenu();
 
   // -- Initialise Loop variables
   // A union capable of holding all input events
