@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
   surf_bird4 = loadImage("gfx/PunkSilly.png");
   surf_datboi = loadImage("gfx/DatBoi.png");
   surf_flappybird = loadImage("gfx/FlappyBird.png");
+  surf_scoring = loadImage("gfx/scoring.png");
 
   // -- Load Sounds
   music_crowd = loadMusic("sound/stadium_noise.wav");
@@ -123,6 +124,7 @@ int main(int argc, char **argv) {
   SDL_FreeSurface(surf_bird2);
   SDL_FreeSurface(surf_bird3);
   SDL_FreeSurface(surf_bird4);
+  SDL_FreeSurface(surf_scoring);
 
   // Release Initialised SDL Systems
   Mix_CloseAudio();
