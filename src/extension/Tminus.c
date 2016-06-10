@@ -60,6 +60,7 @@ int main(int argc, char **argv) {
   // A union capable of holding all input events
   SDL_Event event;
   bool running = true;
+  bool bgDrawn = false;
   uint32_t lastUpdate = SDL_GetTicks();
 
   // Game Loop
@@ -70,14 +71,18 @@ int main(int argc, char **argv) {
     //TODO Process GPIO pins
     updateButtonsStatus();
 
-    uint32_t now = SDL_GetTicks();
-    if(now - lastUpdate > SPF) {
-      lastUpdate = now;
-
-      // Draw background
+    // Draw background between frames, too intensive
+    if(!bgDrawn) {
       SDL_BlitSurface(surf_bg, NULL, screen, NULL);
       //SDL_FillRect(screen, NULL,
       //  SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
+
+      bgDrawn = true;
+    }
+
+    uint32_t now = SDL_GetTicks();
+    if(now - lastUpdate > SPF) {
+      lastUpdate = now;
 
       //Convert input to real effects
       handleButtonStatus();
@@ -91,6 +96,7 @@ int main(int argc, char **argv) {
       // Swap the back buffer's contents with the front buffer's
       // Update the screen
       SDL_Flip(screen);
+      bgDrawn = false;
     }
   }
 
@@ -282,6 +288,7 @@ inline void initPins(void){
 /** Attempts to load an image. The image is unoptimised.
 */
 SDL_Surface *loadImage(char *path) {
+  SDL_Surface *formattedSurface = NULL;
   SDL_Surface *loadedSurface = IMG_Load(path);
 
   if(loadedSurface == NULL) {
@@ -289,7 +296,13 @@ SDL_Surface *loadImage(char *path) {
     exit(EXIT_FAILURE);
   }
 
-  return loadedSurface;
+  formattedSurface = SDL_DisplayFormatAlpha(loadedSurface);
+  if(formattedSurface == NULL) {
+    fprintf(stderr, "Error formatting %s\n", path);
+    return loadedSurface;
+  }
+
+  return formattedSurface;
 }
 
 /** Attempts to load a music file, in .wav format
