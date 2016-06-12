@@ -37,8 +37,7 @@ int main(int argc, char **argv) {
   surf_flappybird = loadImage("gfx/FlappyBird.png");
   surf_scoring = loadImage("gfx/scoring.png");
   surf_main_menu = loadImage("gfx/Menu/MenuObjectsGrid.png");
-  surf_menu_bg = loadImage("gfx/Menu/Crowd.png");
-  // main_menu_sprite = loadImage("gfx/mainMenu.png");
+  surf_end_menu = loadImage("gfx/Menu/EndGameGrid.png");
 
   // -- Load Sounds
   music_crowd = loadMusic("sound/stadium_noise.wav");

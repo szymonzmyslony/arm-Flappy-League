@@ -23,7 +23,7 @@ void initEndScreenObj(GameObject *endObj) {
   // First and only element is new game
 
   //TODO update these function pointers
-  endObj->draw = &drawMenu;
+  endObj->draw = &drawEndMenu;
   endObj->update = &updateMenu;
 }
 
@@ -47,6 +47,26 @@ void drawMenu(GameObject *menuObj) {
     }
     
     animate(menuObj->sprite, i, spriteNo, 250, 50, screenX, screenY);
+    screenY += 50;
+  }
+  return;
+}
+
+void drawEndMenu(GameObject *endObj) {
+  if (endObj->sprite == NULL) {
+    return;
+  }
+  int screenX = 387;
+  int screenY = 130;
+  int spriteNo;
+  for (int i = 0; i < endObj->numElems; i++) {
+    if (i == endObj->index) {
+      spriteNo = 1;
+    } else {
+      spriteNo = 0;
+    }
+    
+    animate(endObj->sprite, i, spriteNo, 250, 50, screenX, screenY);
     screenY += 50;
   }
   return;

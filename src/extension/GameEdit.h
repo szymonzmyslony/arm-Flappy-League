@@ -47,6 +47,5 @@ void scorePlayer2(GameObject *colObj);
 void drawScoreboard(GameObject *board);
 void toggleSound(void);
 bool getSoundState(void);
-void drawBackground(void);
 
 #endif
