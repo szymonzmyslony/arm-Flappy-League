@@ -10,6 +10,7 @@ void setSprite(GameObject *gameObj, SDL_Surface *sprite);
 void playWhistleSound(void);
 void drawCentredObj(GameObject *collObj);
 void setCollFunc(GameObject *collObj, void (*gFunc)(GameObject*));
-void playCollKickSound(GameObject *collObj);
+void collPlayKickSound(GameObject *collObj);
+void collDoNothing(GameObject *collObj);
 
 #endif

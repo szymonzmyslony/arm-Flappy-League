@@ -55,4 +55,6 @@ void initCircleObj(GameObject *circObj, float r, float x, float y, float vx,
 
   circObj->draw = &drawCircleObj;
   circObj->update = &updateCircleObj;
+
+  circObj->v6.gFunc = &collDoNothing;
 }
