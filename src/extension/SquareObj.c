@@ -5,7 +5,8 @@
 #define sw       squareObj->v2.vec.x
 #define sh       squareObj->v2.vec.y
 
-void animate(SDL_Surface *animationSource, int i, int j, int width, int height, int x, int y){
+void animate(SDL_Surface *animationSource, int i, int j, int width, int height, 
+             int x, int y){
   SDL_Rect srcrect;
   int startx = i * width;
   int starty = j * height;
