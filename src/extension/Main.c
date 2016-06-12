@@ -147,12 +147,26 @@ int main(int argc, char **argv) {
 }
 
 inline void drawBackground(void) {
-  //#ifdef RPI
-  SDL_FillRect(screen, NULL,
-    SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
-  /*#else
+  #ifdef RPI
+  SDL_Rect sky = {
+    .x = 0,
+    .y = 0,
+    .w = WINDOW_WIDTH,
+    .h = WINDOW_HEIGHT * 3 / 4
+  };
+  SDL_FillRect(screen, &sky,
+    SDL_MapRGB(screen->format, 0xAF, 0xAF, 0xFF));
+  SDL_Rect grass = {
+    .x = 0,
+    .y = WINDOW_HEIGHT * 3 / 4,
+    .w = WINDOW_WIDTH,
+    .h = WINDOW_HEIGHT * 1 / 4
+  };
+  SDL_FillRect(screen, &grass,
+    SDL_MapRGB(screen->format, 0x0A, 0xCF, 0x0A));
+  #else
   SDL_BlitSurface(surf_bg, NULL, screen, NULL);
-  #endif*/
+  #endif
 }
 
 inline void updateObjs() {
