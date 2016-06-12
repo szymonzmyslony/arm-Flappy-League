@@ -41,7 +41,7 @@ void drawSquareObj(GameObject *squareObj) {
 void initSquareObj(GameObject *squareObj, float x, float y, float w,
   float h, bool isSolid) {
   clearObj(squareObj);
-  squareObj->colliderType = isSolid? COL_BOX : COL_NET;
+  squareObj->objType = isSolid? COL_BOX : COL_NET;
 
   sx = x;
   sy = y;
