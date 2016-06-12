@@ -128,7 +128,7 @@ void scorePlayer2(GameObject *colObj) {
 
 void addAllVelocity(void) {
   for(int i = 0; i < MAX_OBJECTS; i++) {
-    if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
+    if(gObjs[i] != NULL && gObjs[i]->objType == COL_CIRCLE) {
       gObjs[i]->v2.vec.y += 5;
     }
   }
@@ -136,7 +136,7 @@ void addAllVelocity(void) {
 
 void applyAllGravity(void) {
   for(int i = 0; i < MAX_OBJECTS; i++) {
-    if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
+    if(gObjs[i] != NULL && gObjs[i]->objType == COL_CIRCLE) {
       gObjs[i]->v2.vec.y += 0.5;
     }
   }
@@ -144,7 +144,7 @@ void applyAllGravity(void) {
 
 void applyAllAirResistance(void) {
   for(int i = 0; i < MAX_OBJECTS; i++) {
-    if(gObjs[i] != NULL && gObjs[i]->colliderType == COL_CIRCLE) {
+    if(gObjs[i] != NULL && gObjs[i]->objType == COL_CIRCLE) {
       gObjs[i]->v2.vec.x *= 0.99;
     }
   }
