@@ -36,6 +36,7 @@ void initMenu(void);
 void initEnd(void);
 void initGame(void);
 void initSetup(void);
+void initPhysics(void);
 
 void addAllVelocity(void);
 void applyAllGravity(void);
