@@ -27,7 +27,7 @@ void collPlayKickSound(GameObject *collObj) {
   }
 }
 
-void collDoNothing(GameObject *collObj) { }
+void collDoNothing(GameObject *collObj) {}
 
 /** Pre: The GameObject must have v1 set to a position
 *  Post: The GameObject will have its sprite centred on that position
