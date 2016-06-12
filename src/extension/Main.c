@@ -74,6 +74,9 @@ int main(int argc, char **argv) {
   bool running = true;
   uint32_t lastUpdate = SDL_GetTicks();
 
+  // Draw the background fully for the first time.
+  drawBackground();
+
   // Game Loop
   while(running) {
     // Process SDL keyboard input events. For non-Pi only.
@@ -90,6 +93,10 @@ int main(int argc, char **argv) {
 
       // Update each gameObject that has an update function
       updateObjs();
+
+      // Minimal background redraw.
+      redrawBackground();
+
       handleCollisions();
       // Draw all gameObjects onto screen that have a sprite
       drawSprites();
@@ -97,9 +104,6 @@ int main(int argc, char **argv) {
       // Swap the back buffer's contents with the front buffer's
       // Update the screen
       SDL_Flip(screen);
-
-      // Draw the background at the end, too intensive.
-      drawBackground();
     }
   }
 
@@ -147,8 +151,33 @@ int main(int argc, char **argv) {
   return 0;
 }
 
+inline void redrawBackground(void) {
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    if(gObjs[i] != NULL && gObjs[i]->draw != NULL) {
+      if(gObjs[i]->colliderType == COL_CIRCLE) {
+        float extendedR = 2 * gObjs[i]->v3.f;
+        SDL_Rect src = {
+          .x = gObjs[i]->v1.vec.x - extendedR,
+          .y = gObjs[i]->v1.vec.y - extendedR,
+          .w = 2 * extendedR,
+          .h = 2 * extendedR
+        };
+        SDL_BlitSurface(surf_bg, &src, screen, &src);
+      } else {
+        SDL_Rect src = {
+          .x = gObjs[i]->v1.vec.x,
+          .y = gObjs[i]->v1.vec.y,
+          .w = gObjs[i]->v2.vec.x,
+          .h = gObjs[i]->v2.vec.y,
+        };
+        SDL_BlitSurface(surf_bg, &src, screen, &src);
+      }
+    }
+  }
+}
+
 inline void drawBackground(void) {
-  #ifdef RPI
+  /*#ifdef RPI
   SDL_Rect sky = {
     .x = 0,
     .y = 0,
@@ -167,7 +196,8 @@ inline void drawBackground(void) {
     SDL_MapRGB(screen->format, 0x0A, 0xCF, 0x0A));
   #else
   SDL_BlitSurface(surf_bg, NULL, screen, NULL);
-  #endif
+  #endif */
+  SDL_BlitSurface(surf_bg, NULL, screen, NULL);
 }
 
 inline void updateObjs() {
