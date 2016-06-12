@@ -2,10 +2,10 @@
 
 #define MINBOUNCE 15.0
 
-#define cx     circObj->v1.vec.x
-#define cy     circObj->v1.vec.y
-#define cvx    circObj->v2.vec.x
-#define cvy    circObj->v2.vec.y
+#define cx       circObj->v1.vec.x
+#define cy       circObj->v1.vec.y
+#define cvx      circObj->v2.vec.x
+#define cvy      circObj->v2.vec.y
 #define radius     circObj->v3.f
 
 void drawCircleObj(GameObject *circObj) {
@@ -21,13 +21,16 @@ void updateCircleObj(GameObject *circObj) {
   cy += cvy;
 
   if((cx - radius < 0 && cvx < 0) || (cx + radius > screen->w && cvx > 0)) {
+    circObj->v6.gFunc(NULL);
     cvx = -cvx;
   }
 
   if((cy - radius < 0 && cvy < 0)) {
+    circObj->v6.gFunc(NULL);
     cvy = 0;
   }
   if(cy + radius > screen->h && cvy > 0) {
+    circObj->v6.gFunc(NULL);
     if(cvy <= MINBOUNCE) {
       cvy = -MINBOUNCE;
     } else {
@@ -41,6 +44,7 @@ void updateCircleObj(GameObject *circObj) {
 */
 void initCircleObj(GameObject *circObj, float r, float x, float y, float vx,
   float vy) {
+  clearObj(circObj);
   circObj->colliderType = COL_CIRCLE;
 
   radius = r;
