@@ -174,12 +174,8 @@ inline void handleCollisions(void) {
                                    1, 1,
                                    &(circObj->v1.vec), &(gObjs[j]->v1.vec),
                                   COEFF_OF_RESTITUTION);
-          if(circObj->v6.gFunc != NULL) {
-          circObj->v6.gFunc(gObjs[j]);
-          }
-          if(gObjs[j]->v6.gFunc != NULL) {
-            gObjs[j]->v6.gFunc(circObj);
-          }
+          circObj->v6.gFunc(gObjs[j]);  
+          gObjs[j]->v6.gFunc(circObj);
         }
       }
 
@@ -196,8 +192,7 @@ inline void handleCollisions(void) {
             break;
 
           case COL_NET:
-            if(gObjs[j]->v6.gFunc != NULL
-               && circleNetCollided(circObj, gObjs[j])) {
+            if(circleNetCollided(circObj, gObjs[j])) {
               gObjs[j]->v6.gFunc(circObj);
             }
             break;
