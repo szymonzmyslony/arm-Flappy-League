@@ -147,6 +147,15 @@ int main(int argc, char **argv) {
   return 0;
 }
 
+inline void drawBackground(void) {
+  //#ifdef RPI
+  SDL_FillRect(screen, NULL,
+    SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
+  /*#else
+  SDL_BlitSurface(surf_bg, NULL, screen, NULL);
+  #endif*/
+}
+
 inline void updateObjs() {
   for(int i = 0; i < MAX_OBJECTS; i++) {
     if(gObjs[i] != NULL && gObjs[i]->update != NULL) {
