@@ -223,6 +223,3 @@ void toggleSound(void) {
 bool getSoundState(void) {
   return soundEnabled;
 }
-
-void drawBackground(void) {
-}
