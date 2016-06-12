@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "Common.h"
+#include "UtilObj.h"
 
 void timerObjAddTime(GameObject *timerObj);
 uint32_t timerObjElapsed(GameObject *timerObj);
