@@ -7,6 +7,7 @@ static bool soundEnabled;
 //========================= Init Game States ===============================
 
 void initMenu(void) {
+  drawBackground();
   gameState = MENU;
   initMenuObj(gObjs[MAINMENU]);
   setSprite(gObjs[MAINMENU], surf_main_menu);
@@ -21,6 +22,7 @@ void initMenu(void) {
 }
 
 void initEnd(void) {
+  drawBackground();
   gameState = POSTMATCH;
   setSprite(gObjs[ENDSCREEN], surf_end_menu);
   setSprite(gObjs[SCOREBOARD1], NULL);
@@ -36,6 +38,7 @@ void initEnd(void) {
 }
 
 void initGame(void) {
+  drawBackground();
   // Stops redrawing of menu during the game
   setSprite(gObjs[MAINMENU], NULL);
   setSprite(gObjs[ENDSCREEN], NULL);
@@ -75,6 +78,7 @@ void initGame(void) {
 }
 
 void initSetup(void) {
+  drawBackground();
   soundEnabled = true;
   //Init Players
   initCircleObj(gObjs[PLAYER1], PLAYER_SIZE / 2, 100, 300, 0,  0);
@@ -98,6 +102,30 @@ void initPhysics(void) {
     &applyAllGravity);
   initTimerObj(gObjs[AIR_RES_TIMER], UINT32_MAX, true, &updateTimerConstant,
     &applyAllAirResistance);
+}
+
+void drawBackground(void) {
+  /*#ifdef RPI
+  SDL_Rect sky = {
+    .x = 0,
+    .y = 0,
+    .w = WINDOW_WIDTH,
+    .h = WINDOW_HEIGHT * 3 / 4
+  };
+  SDL_FillRect(screen, &sky,
+    SDL_MapRGB(screen->format, 0xAF, 0xAF, 0xFF));
+  SDL_Rect grass = {
+    .x = 0,
+    .y = WINDOW_HEIGHT * 3 / 4,
+    .w = WINDOW_WIDTH,
+    .h = WINDOW_HEIGHT * 1 / 4
+  };
+  SDL_FillRect(screen, &grass,
+    SDL_MapRGB(screen->format, 0x0A, 0xCF, 0x0A));
+  #else
+  SDL_BlitSurface(surf_bg, NULL, screen, NULL);
+  #endif */
+  SDL_BlitSurface(surf_bg, NULL, screen, NULL);
 }
 
 //==================== GameObject Altering Functions =========================
