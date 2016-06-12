@@ -24,6 +24,7 @@ void updateObjs(void);
 void handleCollisions(void);
 void drawSprites(void);
 void drawBackground(void);
+void redrawBackground(void);
 
 void initPins(void);
 
