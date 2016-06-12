@@ -48,4 +48,6 @@ void initSquareObj(GameObject *squareObj, float x, float y, float w,
 
   squareObj->update = NULL;
   squareObj->draw = &drawSquareObj;
+
+  squareObj->v6.gFunc = &collDoNothing;
 }
