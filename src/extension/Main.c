@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
 inline void redrawBackground(void) {
   for(int i = 0; i < MAX_OBJECTS; i++) {
     if(gObjs[i] != NULL && gObjs[i]->draw != NULL) {
-      if(gObjs[i]->colliderType == COL_CIRCLE) {
+      if(gObjs[i]->objType == COL_CIRCLE) {
         float extendedR = 2 * gObjs[i]->v3.f;
         SDL_Rect src = {
           .x = gObjs[i]->v1.vec.x - extendedR,
@@ -160,12 +160,20 @@ inline void redrawBackground(void) {
           .h = 2 * extendedR
         };
         SDL_BlitSurface(surf_bg, &src, screen, &src);
-      } else {
+      } else if(gObjs[i]->objType == COL_NET) {
         SDL_Rect src = {
           .x = gObjs[i]->v1.vec.x,
           .y = gObjs[i]->v1.vec.y,
           .w = gObjs[i]->v2.vec.x,
           .h = gObjs[i]->v2.vec.y,
+        };
+        SDL_BlitSurface(surf_bg, &src, screen, &src);
+      } else if(gObjs[i]->objType == OBJ_MENU) {
+        SDL_Rect src = {
+          .x = gObjs[i]->v3.vec.x,
+          .y = gObjs[i]->v3.vec.y,
+          .w = 250,
+          .h = 100 * gObjs[i]->v2.i
         };
         SDL_BlitSurface(surf_bg, &src, screen, &src);
       }
@@ -187,8 +195,8 @@ inline void handleCollisions(void) {
     for(int j = i + 1; j < MAX_OBJECTS; j++) {
 
       GameObject *circObj = gObjs[i];
-      if(circObj != NULL && circObj->colliderType == COL_CIRCLE
-         && gObjs[j] != NULL && gObjs[j]->colliderType == COL_CIRCLE) {
+      if(circObj != NULL && circObj->objType == COL_CIRCLE
+         && gObjs[j] != NULL && gObjs[j]->objType == COL_CIRCLE) {
 
         if(circlesCollided(circObj, gObjs[j])) {
           resolveCollisionAdvanced(&(circObj->v2.vec), &(gObjs[j]->v2.vec),
@@ -206,9 +214,9 @@ inline void handleCollisions(void) {
   for(int i = 0; i < MAX_OBJECTS; i++) {
     for(int j = 0; j < MAX_OBJECTS; j++) {
       GameObject *circObj = gObjs[i];
-      if(circObj != NULL && circObj->colliderType == COL_CIRCLE
+      if(circObj != NULL && circObj->objType == COL_CIRCLE
          && gObjs[j] != NULL) {
-        switch(gObjs[j]->colliderType) {
+        switch(gObjs[j]->objType) {
           case COL_BOX:
             break;
 
