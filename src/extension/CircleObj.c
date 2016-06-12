@@ -6,7 +6,7 @@
 #define cy       circObj->v1.vec.y
 #define cvx      circObj->v2.vec.x
 #define cvy      circObj->v2.vec.y
-#define radius     circObj->v3.f
+#define radius   circObj->v3.f
 
 void drawCircleObj(GameObject *circObj) {
   if(circObj->sprite != NULL) {
