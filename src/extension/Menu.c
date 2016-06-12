@@ -18,7 +18,7 @@ void initMenuObj(GameObject *menuObj) {
 
 void initEndScreenObj(GameObject *endObj) {
   endObj->index = 0;
-  endObj->numElems = NUMBER_OF_OPTIONS_E;
+  endObj->numElems = 2;
   
   // First and only element is new game
 

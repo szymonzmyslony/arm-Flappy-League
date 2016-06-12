@@ -7,7 +7,7 @@
 #include "GameEdit.h"
 
 void initMenuObj(GameObject *menuObj);
-void initEndScreen(GameObject *endObj);
+void initEndScreenObj(GameObject *endObj);
 void drawMenu(GameObject *menuObj);
 void drawEndMenu(GameObject *endObj);
 void updateMenu(GameObject *menuObj);
