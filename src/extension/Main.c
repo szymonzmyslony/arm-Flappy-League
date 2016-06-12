@@ -259,9 +259,14 @@ inline void processKeyboardInput(SDL_Event *eventPtr, bool *running) {
 * buffer
 */
 inline SDL_Surface *getConsoleScreen(void) {
+  #ifdef RPI
   SDL_Surface *screenPtr = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT,
                                           0, SDL_SWSURFACE);
-                                          //SDL_HWSURFACE | SDL_DOUBLEBUF );
+  #else
+  SDL_Surface *screenPtr = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT,
+                                          0, SDL_HWSURFACE | SDL_DOUBLEBUF);
+  #endif
+
   if(screenPtr == NULL) {
     fprintf(stderr, "Error setting SDL Video Mode\n");
     exit(EXIT_FAILURE);
