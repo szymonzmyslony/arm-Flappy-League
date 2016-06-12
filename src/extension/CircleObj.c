@@ -45,7 +45,7 @@ void updateCircleObj(GameObject *circObj) {
 void initCircleObj(GameObject *circObj, float r, float x, float y, float vx,
   float vy) {
   clearObj(circObj);
-  circObj->colliderType = COL_CIRCLE;
+  circObj->objType = COL_CIRCLE;
 
   radius = r;
   cx = x;
