@@ -41,6 +41,7 @@ void initEnd(void);
 void initGame(void);
 void initSetup(void);
 void initPhysics(void);
+void drawBackground(void);
 
 void addAllVelocity(void);
 void applyAllGravity(void);
