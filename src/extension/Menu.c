@@ -1,5 +1,7 @@
 #include "Menu.h"
 
+#define mx        v3.vec.x
+#define my        v3.vec.y
 #define index     v1.i
 #define numElems  v2.i
 
@@ -7,19 +9,25 @@ enum MenuOptions { START_GAME, SOUND_SELECT, NUMBER_OF_OPTIONS_M };
 enum EndMenuOptions { NEW_GAME, RETURN_TO_MAIN, NUMBER_OF_OPTIONS_E };
 
 void initMenuObj(GameObject *menuObj) {
+  menuObj->objType = OBJ_MENU;
   menuObj->index = 0;
+  menuObj->mx = 387;
+  menuObj->my = 130;
   menuObj->numElems = NUMBER_OF_OPTIONS_M;
-  /* First 'element' is new game 
+  /* First 'element' is new game
   /  Second 'element' is toggle sound */
- 
+
   menuObj->draw = &drawMenu;
   menuObj->update = &updateMenu;
 }
 
 void initEndScreenObj(GameObject *endObj) {
+  endObj->objType = OBJ_MENU;
   endObj->index = 0;
   endObj->numElems = 2;
-  
+  endObj->mx = 387;
+  endObj->my = 300;
+
   // First and only element is new game
 
   //TODO update these function pointers
@@ -31,8 +39,10 @@ void drawMenu(GameObject *menuObj) {
   if (menuObj->sprite == NULL) {
     return;
   }
-  int screenX = 387;
-  int screenY = 130;
+
+  int screenX = menuObj->mx;
+  int screenY = menuObj->my;
+
   int spriteNo;
   for (int i = 0; i < menuObj->numElems; i++) {
     if (i == menuObj->index) {
@@ -45,7 +55,7 @@ void drawMenu(GameObject *menuObj) {
         spriteNo += 2;
       }
     }
-    
+
     animate(menuObj->sprite, i, spriteNo, 250, 50, screenX, screenY);
     screenY += 50;
   }
@@ -56,8 +66,10 @@ void drawEndMenu(GameObject *endObj) {
   if (endObj->sprite == NULL) {
     return;
   }
-  int screenX = 387;
-  int screenY = 300;
+
+  int screenX = endObj->mx;
+  int screenY = endObj->my;
+
   int spriteNo;
   for (int i = 0; i < endObj->numElems; i++) {
     if (i == endObj->index) {
@@ -65,7 +77,7 @@ void drawEndMenu(GameObject *endObj) {
     } else {
       spriteNo = 0;
     }
-    
+
     animate(endObj->sprite, i, spriteNo, 250, 50, screenX, screenY);
     screenY += 50;
   }
