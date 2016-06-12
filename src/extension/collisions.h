@@ -6,13 +6,6 @@
 #include <math.h>
 #include "Common.h"
 
-enum colliderTypes {
-  COL_CIRCLE = 1,
-  COL_LINE   = 2,
-  COL_NET    = 3,
-  COL_BOX    = 4
-};
-
 void resolveCollision(Vector *v1, Vector *v2, int m1, int m2, float e);
 void resolveCollisionAdvanced(Vector *v1, Vector *v2, int m1, int m2,
                               Vector *c1, Vector *c2, float e);

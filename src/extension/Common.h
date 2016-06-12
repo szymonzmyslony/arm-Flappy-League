@@ -43,6 +43,14 @@ typedef struct vector {
   float y;
 } Vector;
 
+enum objTypes {
+  COL_CIRCLE = 1,
+  COL_LINE   = 2,
+  COL_NET    = 3,
+  COL_BOX    = 4,
+  OBJ_MENU   = 5
+};
+
 typedef struct gameObject GameObject;
 /** A union that represents a generic variable, allowing the GameObject struct
 * to be more versatile and extremely generic, at the cost of taking up more
@@ -68,7 +76,7 @@ typedef union var {
 * called.
 */
 struct gameObject {
-  uint8_t colliderType;
+  uint8_t objType;
   Var v1, v2, v3, v4, v5, v6;
   SDL_Surface *sprite;
   // Only circles collide, called from a circle's update
@@ -96,7 +104,7 @@ SDL_Surface *surf_bird4;
 SDL_Surface *surf_ball;
 SDL_Surface *surf_goal;
 SDL_Surface *surf_bg;
-SDL_Surface *surf_main_menu; 
+SDL_Surface *surf_main_menu;
 SDL_Surface *surf_scoring;
 SDL_Surface *surf_end_menu;
 SDL_Surface *surf_title;
