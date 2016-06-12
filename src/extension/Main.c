@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
   IMG_Quit();
   SDL_Quit();
 
-  printf("Exiting T-\n");
+  printf("Exiting FlappyLeague\n");
 
   return 0;
 }
@@ -174,6 +174,8 @@ inline void handleCollisions(void) {
                                    1, 1,
                                    &(circObj->v1.vec), &(gObjs[j]->v1.vec),
                                   COEFF_OF_RESTITUTION);
+          circObj->v6.gFunc(gObjs[j]);
+          gObjs[j]->v6.gFunc(circObj);
         }
       }
 
@@ -190,9 +192,9 @@ inline void handleCollisions(void) {
             break;
 
           case COL_NET:
-            if(gObjs[j]->v3.func != NULL
+            if(gObjs[j]->v6.gFunc != NULL
                && circleNetCollided(circObj, gObjs[j])) {
-              gObjs[j]->v3.gFunc(circObj);
+              gObjs[j]->v6.gFunc(circObj);
             }
             break;
 
