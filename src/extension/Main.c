@@ -38,6 +38,7 @@ int main(int argc, char **argv) {
   surf_scoring = loadImage("gfx/scoring.png");
   surf_main_menu = loadImage("gfx/Menu/MenuObjectsGrid.png");
   surf_end_menu = loadImage("gfx/Menu/EndGameGrid.png");
+  surf_title = loadImage("gfx/Menu/FlappyLeagueNormal.png");
 
   // -- Load Sounds
   music_crowd = loadMusic("sound/stadium_noise.wav");
