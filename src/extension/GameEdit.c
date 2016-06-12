@@ -72,7 +72,7 @@ void initSetup(void) {
   //Init Ball
   initCircleObj(gObjs[BALL], BALL_SIZE / 2, screen->w/2, 300, 0, 0);
   setSprite(gObjs[BALL], surf_ball);
-  setCollFunc(gObjs[BALL], &playCollKickSound);
+  setCollFunc(gObjs[BALL], &collPlayKickSound);
 
   //Init Countdown
   initTimerObj(gObjs[11], 1 * SECOND, true, &updateTimerAlarm,
