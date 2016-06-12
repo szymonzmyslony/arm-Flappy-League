@@ -72,7 +72,6 @@ int main(int argc, char **argv) {
   // A union capable of holding all input events
   SDL_Event event;
   bool running = true;
-  bool bgDrawn = false;
   uint32_t lastUpdate = SDL_GetTicks();
 
   // Game Loop
@@ -81,15 +80,6 @@ int main(int argc, char **argv) {
     processKeyboardInput(&event, &running);
     // Process GPIO pins
     updateButtonsStatus();
-
-    // Draw background between frames, too intensive
-    if(!bgDrawn) {
-      drawBackground();
-      //SDL_FillRect(screen, NULL,
-      //  SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
-
-      bgDrawn = true;
-    }
 
     uint32_t now = SDL_GetTicks();
     if(now - lastUpdate > SPF) {
@@ -107,7 +97,9 @@ int main(int argc, char **argv) {
       // Swap the back buffer's contents with the front buffer's
       // Update the screen
       SDL_Flip(screen);
-      bgDrawn = false;
+
+      // Draw the background at the end, too intensive.
+      drawBackground();
     }
   }
 
@@ -307,9 +299,9 @@ inline void initPins(void){
       exit(EXIT_FAILURE);
   }
 
-  for(int i = LeftFirstPlayer; i<=LeftSecondPlayer; i++) {
-    pinMode(i, OUTPUT);
+  for(int i = RightFirstPlayer; i<=LeftSecondPlayer; i++) {
     digitalWrite(i, HIGH);
+    pinMode(i, OUTPUT);
   }
 }
 
