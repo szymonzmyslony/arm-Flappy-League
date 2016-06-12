@@ -3,13 +3,17 @@
 enum gameStates { MENU, MATCH, POSTMATCH };
 static int gameState;
 static bool soundEnabled;
+static SDL_Surface *curr_bg;
 
 //========================= Init Game States ===============================
 
 void initMenu(void) {
   gameState = MENU;
+  curr_bg = surf_menu_bg;
   initMenuObj(gObjs[MAINMENU]);
-  setSprite(gObjs[MAINMENU], main_menu_sprite);
+  setSprite(gObjs[MAINMENU], surf_main_menu);
+  setSprite(gObjs[SCOREBOARD1], NULL);
+  setSprite(gObjs[SCOREBOARD2], NULL);
   initSetup();
 }
 
@@ -30,6 +34,7 @@ void initGame(void) {
   setSprite(gObjs[MAINMENU], NULL);
 
   gameState = MATCH;
+  curr_bg = surf_bg;
   // Setup score counters
   initSquareObj(gObjs[SCOREBOARD1], SCORE1_OFFSET_X, SCORE_OFFSET_Y,
                                       SCORE_WIDTH, SCORE_HEIGHT, false);
@@ -213,4 +218,8 @@ void toggleSound(void) {
 
 bool getSoundState(void) {
   return soundEnabled;
+}
+
+void drawBackground(void) {
+  SDL_BlitSurface(curr_bg, NULL, screen, NULL);
 }

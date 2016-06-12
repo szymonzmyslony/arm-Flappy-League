@@ -36,7 +36,8 @@ int main(int argc, char **argv) {
   surf_datboi = loadImage("gfx/DatBoi.png");
   surf_flappybird = loadImage("gfx/FlappyBird.png");
   surf_scoring = loadImage("gfx/scoring.png");
-  main_menu_sprite = loadImage("gfx/Menu/MenuObjectsGrid.png");
+  surf_main_menu = loadImage("gfx/Menu/MenuObjectsGrid.png");
+  surf_menu_bg = loadImage("gfx/Menu/Crowd.png");
   // main_menu_sprite = loadImage("gfx/mainMenu.png");
 
   // -- Load Sounds
@@ -83,7 +84,7 @@ int main(int argc, char **argv) {
 
     // Draw background between frames, too intensive
     if(!bgDrawn) {
-      SDL_BlitSurface(surf_bg, NULL, screen, NULL);
+      drawBackground();
       //SDL_FillRect(screen, NULL,
       //  SDL_MapRGB(screen->format, 0x00, 0x00, 0x00));
 

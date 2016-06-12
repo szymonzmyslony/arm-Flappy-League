@@ -95,7 +95,8 @@ SDL_Surface *surf_bird4;
 SDL_Surface *surf_ball;
 SDL_Surface *surf_goal;
 SDL_Surface *surf_bg;
-SDL_Surface *main_menu_sprite; 
+SDL_Surface *surf_menu_bg;
+SDL_Surface *surf_main_menu; 
 SDL_Surface *surf_scoring;
 
 Mix_Music *music_crowd;
