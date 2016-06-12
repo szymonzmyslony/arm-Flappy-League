@@ -11,10 +11,10 @@ PIFLAG = #Intentionally blank
 all: FlappyLeague
 
 FlappyLeague: GameEdit.o Control.o TimerObj.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Main.o collisions.o
-	$(CC) $^ $(CFLAGS) $(PIFLAG) -o FlappyLeague $(LIBS)
+	$(CC) $^ $(CFLAGS) -o FlappyLeague $(LIBS)
 
 %.o : %.c %.h
-	$(CC) $(CFLAGS) $(patsubst %.o, %.c, $@) -c -o $@ $(LIBS)
+	$(CC) $(CFLAGS) $(PIFLAG) $(patsubst %.o, %.c, $@) -c -o $@ $(LIBS)
 
 pi:
 	make all PIFLAG="-DRPI"
