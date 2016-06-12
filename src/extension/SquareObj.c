@@ -5,7 +5,7 @@
 #define sw       squareObj->v2.vec.x
 #define sh       squareObj->v2.vec.y
 
-void animate(SDL_Surface *animationSource, int i, int j, int width, int height, 
+void animate(SDL_Surface *animationSource, int i, int j, int width, int height,
              int x, int y){
   SDL_Rect srcrect;
   int startx = i * width;
@@ -35,7 +35,8 @@ void drawSquareObj(GameObject *squareObj) {
 }
 
 /** An object which has a square collider. A sprite attached will be drawn
-* upon the top-left corner of the squareObj.
+* upon the top-left corner of the squareObj. The sprite should have a width
+* <= w, and a height <= h
 */
 void initSquareObj(GameObject *squareObj, float x, float y, float w,
   float h, bool isSolid) {
