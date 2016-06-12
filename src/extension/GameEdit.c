@@ -31,7 +31,7 @@ void initEnd(void) {
                           &playWhistleSound);
   initTimerObj(gObjs[BALL], (2 * SECOND), true, &updateTimerAlarm,
                           &playWhistleSound);
-  initMenuObj(gObjs[ENDSCREEN]);
+  initEndScreenObj(gObjs[ENDSCREEN]);
 }
 
 void initGame(void) {
