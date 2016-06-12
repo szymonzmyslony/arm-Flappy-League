@@ -14,6 +14,7 @@ void initMenu(void) {
   setSprite(gObjs[MAINMENU], surf_main_menu);
   setSprite(gObjs[SCOREBOARD1], NULL);
   setSprite(gObjs[SCOREBOARD2], NULL);
+  initPhysics();
   initSetup();
 }
 
@@ -58,11 +59,7 @@ void initGame(void) {
   setSprite(gObjs[GOAL2], surf_goal);
   setCollFunc(gObjs[GOAL2], &scorePlayer2);
 
-  //Init Physics
-  initTimerObj(gObjs[GRAVITY_TIMER], UINT32_MAX, true, &updateTimerConstant,
-    &applyAllGravity);
-  initTimerObj(gObjs[AIR_RES_TIMER], UINT32_MAX, true, &updateTimerConstant,
-    &applyAllAirResistance);
+  initPhysics();
 
   //Match Timer
   initTimerObj(gObjs[MATCH_TIMER], MATCH_LENGTH, true, &updateTimerAlarm,
@@ -88,6 +85,13 @@ void initSetup(void) {
   //Init Countdown
   initTimerObj(gObjs[WHISTLE_TIMER], 1 * SECOND, true, &updateTimerAlarm,
                           &playWhistleSound);
+}
+
+void initPhysics(void) {
+  initTimerObj(gObjs[GRAVITY_TIMER], UINT32_MAX, true, &updateTimerConstant,
+    &applyAllGravity);
+  initTimerObj(gObjs[AIR_RES_TIMER], UINT32_MAX, true, &updateTimerConstant,
+    &applyAllAirResistance);
 }
 
 //==================== GameObject Altering Functions =========================
@@ -143,7 +147,7 @@ void moveRight(GameObject *circObj) {
 }
 
 void drawScoreboard(GameObject *board){
-  animate(board->sprite, board->v4.i%10, 0, 62.5, 73, board->v1.vec.x, 
+  animate(board->sprite, board->v4.i%10, 0, 62.5, 73, board->v1.vec.x,
           board->v1.vec.y);
 }
 
