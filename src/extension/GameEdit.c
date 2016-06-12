@@ -10,14 +10,18 @@ void initMenu(void) {
   gameState = MENU;
   initMenuObj(gObjs[MAINMENU]);
   setSprite(gObjs[MAINMENU], surf_main_menu);
+  initSquareObj(gObjs[TITLE], TITLE_OFFSET_X, TITLE_OFFSET_Y, TITLE_WIDTH,
+                TITLE_HEIGHT, false);
+  setSprite(gObjs[TITLE], surf_title);
   setSprite(gObjs[SCOREBOARD1], NULL);
   setSprite(gObjs[SCOREBOARD2], NULL);
+  setSprite(gObjs[ENDSCREEN], NULL);
   initSetup();
 }
 
 void initEnd(void) {
   gameState = POSTMATCH;
-  setSprite(gObjs[ENDSCREEN], surf_main_menu);
+  setSprite(gObjs[ENDSCREEN], surf_end_menu);
   setSprite(gObjs[SCOREBOARD1], NULL);
   setSprite(gObjs[SCOREBOARD2], NULL);
   // Clear the Goal and ball objects
@@ -33,6 +37,8 @@ void initEnd(void) {
 void initGame(void) {
   // Stops redrawing of menu during the game
   setSprite(gObjs[MAINMENU], NULL);
+  setSprite(gObjs[ENDSCREEN], NULL);
+  gObjs[TITLE]->draw = NULL;
 
   gameState = MATCH;
   // Setup score counters

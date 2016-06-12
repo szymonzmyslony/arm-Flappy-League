@@ -34,7 +34,8 @@ enum ids {
   GRAVITY_TIMER = 9,
   AIR_RES_TIMER = 10,
   WHISTLE_TIMER = 11,
-  MATCH_TIMER = 12
+  MATCH_TIMER = 12,
+  TITLE = 13
 };
 
 typedef struct vector {
@@ -98,6 +99,7 @@ SDL_Surface *surf_bg;
 SDL_Surface *surf_main_menu; 
 SDL_Surface *surf_scoring;
 SDL_Surface *surf_end_menu;
+SDL_Surface *surf_title;
 
 Mix_Music *music_crowd;
 

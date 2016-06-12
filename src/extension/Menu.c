@@ -3,8 +3,8 @@
 #define index     v1.i
 #define numElems  v2.i
 
-enum MenuOptions { START_GAME, SOUND_SELECT, NUMBER_OF_OPTIONS_M};
-enum EndMenuOptions { NEW_GAME, RETURN_TO_MAIN, NUMBER_OF_OPTIONS_E};
+enum MenuOptions { START_GAME, SOUND_SELECT, NUMBER_OF_OPTIONS_M };
+enum EndMenuOptions { NEW_GAME, RETURN_TO_MAIN, NUMBER_OF_OPTIONS_E };
 
 void initMenuObj(GameObject *menuObj) {
   menuObj->index = 0;
@@ -57,7 +57,7 @@ void drawEndMenu(GameObject *endObj) {
     return;
   }
   int screenX = 387;
-  int screenY = 130;
+  int screenY = 300;
   int spriteNo;
   for (int i = 0; i < endObj->numElems; i++) {
     if (i == endObj->index) {
