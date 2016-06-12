@@ -15,11 +15,12 @@ void initMenu(void) {
 
 void initEnd(void) {
   gameState = POSTMATCH;
-  initTimerObj(gObjs[GOAL1], 0 * SECOND, true, &updateTimerAlarm,
+  // Clear the Goal and ball objects
+  initTimerObj(gObjs[GOAL1], (0 * SECOND), true, &updateTimerAlarm,
                           &playWhistleSound);
   initTimerObj(gObjs[GOAL2], (1 * SECOND), true, &updateTimerAlarm,
                           &playWhistleSound);
-  initTimerObj(gObjs[BALL], 2 * SECOND, true, &updateTimerAlarm,
+  initTimerObj(gObjs[BALL], (2 * SECOND), true, &updateTimerAlarm,
                           &playWhistleSound);
   initMenuObj(gObjs[ENDSCREEN]);
 }
@@ -73,6 +74,7 @@ void initSetup(void) {
   //Init Ball
   initCircleObj(gObjs[BALL], BALL_SIZE / 2, screen->w/2, 300, 0, 0);
   setSprite(gObjs[BALL], surf_ball);
+  setCollFunc(gObjs[BALL], &playCollKickSound);
 
   //Init Countdown
   initTimerObj(gObjs[WHISTLE_TIMER], 1 * SECOND, true, &updateTimerAlarm,
