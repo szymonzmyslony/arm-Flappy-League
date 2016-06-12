@@ -30,6 +30,7 @@ enum ids {
   GOAL1 = 5,
   GOAL2 = 6,
   MAINMENU = 7,
+  ENDSCREEN = 8,
   GRAVITY_TIMER = 9,
   AIR_RES_TIMER = 10,
   WHISTLE_TIMER = 11,

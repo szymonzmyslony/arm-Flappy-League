@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
   surf_datboi = loadImage("gfx/DatBoi.png");
   surf_flappybird = loadImage("gfx/FlappyBird.png");
   surf_scoring = loadImage("gfx/scoring.png");
-  main_menu_sprite = NULL;
+  main_menu_sprite = loadImage("gfx/Menu/MenuObjectsGrid.png");
   // main_menu_sprite = loadImage("gfx/mainMenu.png");
 
   // -- Load Sounds

@@ -3,9 +3,12 @@
 #define index     v1.i
 #define numElems  v2.i
 
+enum MenuOptions { START_GAME, SOUND_SELECT, NUMBER_OF_OPTIONS_M};
+enum EndMenuOptions { NEW_GAME, RETURN_TO_MAIN, NUMBER_OF_OPTIONS_E};
+
 void initMenuObj(GameObject *menuObj) {
   menuObj->index = 0;
-  menuObj->numElems = 2;
+  menuObj->numElems = NUMBER_OF_OPTIONS_M;
   /* First 'element' is new game 
   /  Second 'element' is toggle sound */
  
@@ -15,7 +18,7 @@ void initMenuObj(GameObject *menuObj) {
 
 void initEndScreenObj(GameObject *endObj) {
   endObj->index = 0;
-  endObj->numElems = 2;
+  endObj->numElems = NUMBER_OF_OPTIONS_E;
   
   // First and only element is new game
 
@@ -25,6 +28,27 @@ void initEndScreenObj(GameObject *endObj) {
 }
 
 void drawMenu(GameObject *menuObj) {
+  if (menuObj->sprite == NULL) {
+    return;
+  }
+  int screenX = 387;
+  int screenY = 130;
+  int spriteNo;
+  for (int i = 0; i < menuObj->numElems; i++) {
+    if (i == menuObj->index) {
+      spriteNo = 1;
+    } else {
+      spriteNo = 0;
+    }
+    if (i == SOUND_SELECT) {
+      if (getSoundState()){
+        spriteNo += 2;
+      }
+    }
+    
+    animate(menuObj->sprite, i, spriteNo, 250, 50, screenX, screenY);
+    screenY += 50;
+  }
   return;
 }
 
@@ -39,26 +63,26 @@ void incrementMenu(GameObject *menuObj) {
 
 void selectMenu(GameObject *menuObj) {
   switch (menuObj->index) {
-    case 0:
+    case START_GAME:
       initGame();
       break;
-    case 1:
+    case SOUND_SELECT:
       toggleSound();
       break;
     default:
-      fprintf("stderr", "Error: Unsupported menu option\n");
+      fprintf(stderr, "Error: Unsupported menu option\n");
   }
 }
 
 void selectEndMenu(GameObject *menuObj) {
   switch (menuObj->index) {
-    case 0:
+    case NEW_GAME:
       initGame();
       break;
-    case 1:
+    case RETURN_TO_MAIN:
       initMenu();
       break;
     default:
-      fprintf("stderr", "Error: Unsupported menu option\n");
+      fprintf(stderr, "Error: Unsupported menu option\n");
   }
 }

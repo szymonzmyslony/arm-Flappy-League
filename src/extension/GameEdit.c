@@ -26,6 +26,9 @@ void initEnd(void) {
 }
 
 void initGame(void) {
+  // Stops redrawing of menu during the game
+  setSprite(gObjs[MAINMENU], NULL);
+
   gameState = MATCH;
   // Setup score counters
   initSquareObj(gObjs[SCOREBOARD1], SCORE1_OFFSET_X, SCORE_OFFSET_Y,
@@ -64,6 +67,7 @@ void initGame(void) {
 }
 
 void initSetup(void) {
+  soundEnabled = true;
   //Init Players
   initCircleObj(gObjs[PLAYER1], PLAYER_SIZE / 2, 100, 300, 0,  0);
   setSprite(gObjs[PLAYER1], surf_bird1);
@@ -205,4 +209,8 @@ void handleButtonStatus(void) {
 
 void toggleSound(void) {
   soundEnabled = !soundEnabled;
+}
+
+bool getSoundState(void) {
+  return soundEnabled;
 }
