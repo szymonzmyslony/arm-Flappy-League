@@ -174,7 +174,7 @@ inline void handleCollisions(void) {
                                    1, 1,
                                    &(circObj->v1.vec), &(gObjs[j]->v1.vec),
                                   COEFF_OF_RESTITUTION);
-          circObj->v6.gFunc(gObjs[j]);  
+          circObj->v6.gFunc(gObjs[j]);
           gObjs[j]->v6.gFunc(circObj);
         }
       }
