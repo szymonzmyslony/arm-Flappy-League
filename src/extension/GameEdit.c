@@ -237,6 +237,13 @@ void handleButtonStatus(void) {
 }
 
 void toggleSound(void) {
+  if(soundEnabled) {
+    Mix_Volume(-1, MIX_MAX_VOLUME);
+    Mix_VolumeMusic(MIX_MAX_VOLUME);
+  } else {
+    Mix_Volume(-1, 0);
+    Mix_VolumeMusic(0);
+  }
   soundEnabled = !soundEnabled;
 }
 
