@@ -92,7 +92,7 @@ void initSetup(void) {
   //Init Ball
   initCircleObj(gObjs[BALL], BALL_SIZE / 2, screen->w/2, 300, 0, 0);
   setSprite(gObjs[BALL], surf_ball);
-  setCollFunc(gObjs[BALL], &collPlayKickSound);
+  setCollFunc(gObjs[BALL], &collBall);
 
   //Init Countdown
   initTimerObj(gObjs[WHISTLE_TIMER], 1 * SECOND, true, &updateTimerAlarm,
@@ -193,25 +193,25 @@ void handleButtonStatus(void) {
     case MATCH:
       if(buttonDownP1Left) {
         moveLeft(gObjs[PLAYER1]);
-        stat_flap_p1++;
+        gObjs[STATS]->flapsP1++;
         buttonDownP1Left = false;
       }
 
       if(buttonDownP1Right) {
         moveRight(gObjs[PLAYER1]);
-        stat_flap_p1++;
+        gObjs[STATS]->flapsP1++;
         buttonDownP1Right = false;
       }
 
       if(buttonDownP2Left) {
         moveLeft(gObjs[PLAYER2]);
-        stat_flap_p2++;
+        gObjs[STATS]->flapsP2++;
         buttonDownP2Left = false;
       }
 
       if(buttonDownP2Right) {
         moveRight(gObjs[PLAYER2]);
-        stat_flap_p2++;
+        gObjs[STATS]->flapsP2++;
         buttonDownP2Right = false;
       }
       break;

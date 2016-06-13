@@ -9,6 +9,7 @@
 #include "SquareObj.h"
 #include "TimerObj.h"
 #include "UtilObj.h"
+#include "Stats.h"
 #include "Menu.h"
 
 #define upVelocity   10.0
