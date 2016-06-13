@@ -16,23 +16,9 @@ void initMenu(void) {
   setSprite(gObjs[TITLE], surf_title);
   setSprite(gObjs[SCOREBOARD1], NULL);
   setSprite(gObjs[SCOREBOARD2], NULL);
+  setSprite(gObjs[TIMEBOARD], NULL);
   setSprite(gObjs[ENDSCREEN], NULL);
   initPhysics();
-
-  //Init Players
-  initCircleObj(gObjs[PLAYER1], PLAYER_SIZE / 2,
-    PLAYER_OFFSET_X, PLAYER_OFFSET_Y, 0,  0);
-    setSprite(gObjs[PLAYER1], surf_bird1);
-
-  initCircleObj(gObjs[PLAYER2], PLAYER_SIZE / 2,
-    screen->w - PLAYER_OFFSET_X, PLAYER_OFFSET_Y, 0,  0);
-    setSprite(gObjs[PLAYER2], surf_bird2);
-
-  //Init Ball
-  initCircleObj(gObjs[BALL], BALL_SIZE / 2,
-    screen->w / 2, BALL_OFFSET_Y, 0, 0);
-    setSprite(gObjs[BALL], surf_ball);
-    setCollFunc(gObjs[BALL], &collBall);
 
   initSetup();
 }
@@ -41,8 +27,6 @@ void initEnd(void) {
   drawBackground();
   gameState = POSTMATCH;
   setSprite(gObjs[ENDSCREEN], surf_end_menu);
-  setSprite(gObjs[SCOREBOARD1], NULL);
-  setSprite(gObjs[SCOREBOARD2], NULL);
   // Clear the Goal and ball objects by overwriting them
   initTimerObj(gObjs[GOAL1], (0 * SECOND), true, &updateTimerAlarm,
     &playWhistleSound);
@@ -60,11 +44,7 @@ void initGame(void) {
   setSprite(gObjs[ENDSCREEN], NULL);
   gObjs[TITLE]->draw = NULL;
 
-  // Randomly assign the player sprites
-  setSprite(gObjs[PLAYER1], getRandomBirdSprite());
-  do {
-    setSprite(gObjs[PLAYER2], getRandomBirdSprite());
-  } while(gObjs[PLAYER2]->sprite == gObjs[PLAYER1]->sprite);
+  initSetup();
 
   gameState = MATCH;
   // Setup score counters
@@ -102,11 +82,35 @@ void initGame(void) {
   setSprite(gObjs[TIMEBOARD], surf_timing);
   gObjs[TIMEBOARD]->draw = &drawTimer;
   gObjs[TIMEBOARD]->v3.g = gObjs[MATCH_TIMER];
-
-  initSetup();
 }
 
+/** Called when a new match has started. Initialises the ball and players.
+*/
 void initSetup(void) {
+  //Init Players
+  initCircleObj(gObjs[PLAYER1], PLAYER_SIZE / 2,
+    PLAYER_OFFSET_X, PLAYER_OFFSET_Y, 0,  0);
+
+  initCircleObj(gObjs[PLAYER2], PLAYER_SIZE / 2,
+    screen->w - PLAYER_OFFSET_X, PLAYER_OFFSET_Y, 0,  0);
+
+  // Randomly assign the player sprites
+  setSprite(gObjs[PLAYER1], getRandomBirdSprite());
+  do {
+    setSprite(gObjs[PLAYER2], getRandomBirdSprite());
+  } while(gObjs[PLAYER2]->sprite == gObjs[PLAYER1]->sprite);
+
+  //Init Ball
+  initCircleObj(gObjs[BALL], BALL_SIZE / 2,
+    screen->w / 2, BALL_OFFSET_Y, 0, 0);
+    setSprite(gObjs[BALL], surf_ball);
+    setCollFunc(gObjs[BALL], &collBall);
+}
+
+/** Called after a goal is scored. Moves the ball and players to their
+* start positions.
+*/
+void reinitSetup(void) {
   drawBackground();
   soundEnabled = true;
 
@@ -143,7 +147,7 @@ void drawBackground(void) {
 void scorePlayer1(GameObject *colObj) {
   if(colObj == gObjs[BALL]) {
     gObjs[SCOREBOARD1]->v4.i++;
-    initSetup();
+    reinitSetup();
     Mix_PlayChannel(-1, sound_goal, 0);
   }
 }
@@ -151,7 +155,7 @@ void scorePlayer1(GameObject *colObj) {
 void scorePlayer2(GameObject *colObj) {
   if(colObj == gObjs[BALL]) {
     gObjs[SCOREBOARD2]->v4.i++;
-    initSetup();
+    reinitSetup();
     Mix_PlayChannel(-1, sound_goal, 0);
   }
 }
