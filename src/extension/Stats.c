@@ -13,9 +13,9 @@ void showStats(GameObject *statsObj) {
 }
 
 void drawStats(GameObject *statsObj) {
-
+  
 }
 
 void updateStats(GameObject *statsObj) {
-  
+
 }
