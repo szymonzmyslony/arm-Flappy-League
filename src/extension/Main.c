@@ -160,7 +160,7 @@ inline void redrawBackground(void) {
   for(int i = 0; i < MAX_OBJECTS; i++) {
     if(gObjs[i] != NULL && gObjs[i]->draw != NULL) {
       if(gObjs[i]->objType == COL_CIRCLE) {
-        float extendedR = 2 * gObjs[i]->v3.f;
+        float extendedR = REDRAWSCALE * gObjs[i]->v3.f;
         SDL_Rect src = {
           .x = gObjs[i]->v1.vec.x - extendedR,
           .y = gObjs[i]->v1.vec.y - extendedR,

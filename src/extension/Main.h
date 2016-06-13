@@ -13,6 +13,7 @@
 #include "Control.h"
 #include "GameEdit.h"
 
+#define REDRAWSCALE 1.8
 
 SDL_Surface *getConsoleScreen(void);
 SDL_Surface *loadImage(char *path);
