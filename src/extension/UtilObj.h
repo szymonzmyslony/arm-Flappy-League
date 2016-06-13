@@ -7,6 +7,9 @@
 
 void clearAllObjs(void);
 void clearObj(GameObject *gameObj);
+void clearVar(Var *var);
+
+SDL_Surface *getRandomBirdSprite(void);
 void setSprite(GameObject *gameObj, SDL_Surface *sprite);
 void playWhistleSound(void);
 void drawCentredObj(GameObject *collObj);

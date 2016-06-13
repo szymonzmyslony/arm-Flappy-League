@@ -12,8 +12,22 @@ void clearObj(GameObject *gameObj) {
   memset(gameObj, 0, sizeof(GameObject));
 }
 
+void clearVar(Var *var) {
+  memset(var, 0, sizeof(Var));
+}
+
 void setSprite(GameObject *gameObj, SDL_Surface *newSprite) {
   gameObj->sprite = newSprite;
+}
+
+SDL_Surface *getRandomBirdSprite(void) {
+  switch(rand() % 4) {
+    case 0: return surf_bird1;
+    case 1: return surf_bird2;
+    case 2: return surf_bird3;
+    case 3: return surf_bird4;
+    default: return surf_datboi;
+  }
 }
 
 void setCollFunc(GameObject *collObj, void (*gFunc)(GameObject*)) {
