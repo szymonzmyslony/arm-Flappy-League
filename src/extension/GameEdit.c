@@ -12,12 +12,28 @@ void initMenu(void) {
   initMenuObj(gObjs[MAINMENU]);
   setSprite(gObjs[MAINMENU], surf_main_menu);
   initSquareObj(gObjs[TITLE], TITLE_OFFSET_X, TITLE_OFFSET_Y, TITLE_WIDTH,
-                TITLE_HEIGHT, false);
+    TITLE_HEIGHT, false);
   setSprite(gObjs[TITLE], surf_title);
   setSprite(gObjs[SCOREBOARD1], NULL);
   setSprite(gObjs[SCOREBOARD2], NULL);
   setSprite(gObjs[ENDSCREEN], NULL);
   initPhysics();
+
+  //Init Players
+  initCircleObj(gObjs[PLAYER1], PLAYER_SIZE / 2,
+    PLAYER_OFFSET_X, PLAYER_OFFSET_Y, 0,  0);
+    setSprite(gObjs[PLAYER1], surf_bird1);
+
+  initCircleObj(gObjs[PLAYER2], PLAYER_SIZE / 2,
+    screen->w - PLAYER_OFFSET_X, PLAYER_OFFSET_Y, 0,  0);
+    setSprite(gObjs[PLAYER2], surf_bird2);
+
+  //Init Ball
+  initCircleObj(gObjs[BALL], BALL_SIZE / 2,
+    screen->w / 2, BALL_OFFSET_Y, 0, 0);
+    setSprite(gObjs[BALL], surf_ball);
+    setCollFunc(gObjs[BALL], &collBall);
+
   initSetup();
 }
 
@@ -27,13 +43,13 @@ void initEnd(void) {
   setSprite(gObjs[ENDSCREEN], surf_end_menu);
   setSprite(gObjs[SCOREBOARD1], NULL);
   setSprite(gObjs[SCOREBOARD2], NULL);
-  // Clear the Goal and ball objects
+  // Clear the Goal and ball objects by overwriting them
   initTimerObj(gObjs[GOAL1], (0 * SECOND), true, &updateTimerAlarm,
-                          &playWhistleSound);
+    &playWhistleSound);
   initTimerObj(gObjs[GOAL2], (1 * SECOND), true, &updateTimerAlarm,
-                          &playWhistleSound);
+    &playWhistleSound);
   initTimerObj(gObjs[BALL], (2 * SECOND), true, &updateTimerAlarm,
-                          &playWhistleSound);
+    &playWhistleSound);
   initEndScreenObj(gObjs[ENDSCREEN]);
 }
 
@@ -44,26 +60,32 @@ void initGame(void) {
   setSprite(gObjs[ENDSCREEN], NULL);
   gObjs[TITLE]->draw = NULL;
 
+  // Randomly assign the player sprites
+  setSprite(gObjs[PLAYER1], getRandomBirdSprite());
+  do {
+    setSprite(gObjs[PLAYER2], getRandomBirdSprite());
+  } while(gObjs[PLAYER2]->sprite == gObjs[PLAYER1]->sprite);
+
   gameState = MATCH;
   // Setup score counters
   initSquareObj(gObjs[SCOREBOARD1], SCORE1_OFFSET_X, SCORE_OFFSET_Y,
-                                      SCORE_WIDTH, SCORE_HEIGHT, false);
+    SCORE_WIDTH, SCORE_HEIGHT, false);
   gObjs[SCOREBOARD1]->v4.i = 0;
   gObjs[SCOREBOARD1]->draw = &drawScoreboard;
-  gObjs[SCOREBOARD1]->sprite = surf_scoring;
+  setSprite(gObjs[SCOREBOARD1], surf_scoring);
   initSquareObj(gObjs[SCOREBOARD2], SCORE2_OFFSET_X, SCORE_OFFSET_Y,
-                                      SCORE_WIDTH, SCORE_HEIGHT, false);
+    SCORE_WIDTH, SCORE_HEIGHT, false);
   gObjs[SCOREBOARD2]->v4.i = 0;
   gObjs[SCOREBOARD2]->draw = &drawScoreboard;
-  gObjs[SCOREBOARD2]->sprite = surf_scoring;
+  setSprite(gObjs[SCOREBOARD2], surf_scoring);
 
   //Init Goals
-  initSquareObj(gObjs[GOAL1], 0, GOAL_OFFSET,
+  initSquareObj(gObjs[GOAL1], 0, GOAL_OFFSET_Y,
     GOAL_WIDTH, GOAL_HEIGHT, false);
   setSprite(gObjs[GOAL1], surf_goal);
   setCollFunc(gObjs[GOAL1], &scorePlayer1);
 
-  initSquareObj(gObjs[GOAL2], WINDOW_WIDTH - GOAL_WIDTH, GOAL_OFFSET,
+  initSquareObj(gObjs[GOAL2], WINDOW_WIDTH - GOAL_WIDTH, GOAL_OFFSET_Y,
     GOAL_WIDTH, GOAL_HEIGHT, false);
   setSprite(gObjs[GOAL2], surf_goal);
   setCollFunc(gObjs[GOAL2], &scorePlayer2);
@@ -75,6 +97,11 @@ void initGame(void) {
   //Match Timer
   initTimerObj(gObjs[MATCH_TIMER], MATCH_LENGTH, true, &updateTimerAlarm,
     &initEnd);
+  initSquareObj(gObjs[TIMEBOARD], MT_OFFSET_X, MT_OFFSET_Y,
+    MT_WIDTH, MT_HEIGHT, true);
+  setSprite(gObjs[TIMEBOARD], surf_timing);
+  gObjs[TIMEBOARD]->draw = &drawTimer;
+  gObjs[TIMEBOARD]->v3.g = gObjs[MATCH_TIMER];
 
   initSetup();
 }
@@ -82,21 +109,22 @@ void initGame(void) {
 void initSetup(void) {
   drawBackground();
   soundEnabled = true;
-  //Init Players
-  initCircleObj(gObjs[PLAYER1], PLAYER_SIZE / 2, 100, 300, 0,  0);
-  setSprite(gObjs[PLAYER1], surf_bird1);
 
-  initCircleObj(gObjs[PLAYER2], PLAYER_SIZE / 2, screen->w - 100, 300, 0,  0);
-  setSprite(gObjs[PLAYER2], surf_bird2);
+  gObjs[PLAYER1]->v1.vec.x = PLAYER_OFFSET_X;
+  gObjs[PLAYER1]->v1.vec.y = PLAYER_OFFSET_Y;
+  clearVar(&gObjs[PLAYER1]->v2);
 
-  //Init Ball
-  initCircleObj(gObjs[BALL], BALL_SIZE / 2, screen->w/2, 300, 0, 0);
-  setSprite(gObjs[BALL], surf_ball);
-  setCollFunc(gObjs[BALL], &collBall);
+  gObjs[PLAYER2]->v1.vec.x = screen->w - PLAYER_OFFSET_X;
+  gObjs[PLAYER2]->v1.vec.y = PLAYER_OFFSET_Y;
+  clearVar(&gObjs[PLAYER2]->v2);
+
+  gObjs[BALL]->v1.vec.x = screen->w / 2;
+  gObjs[BALL]->v1.vec.y = BALL_OFFSET_Y;
+  clearVar(&gObjs[BALL]->v2);
 
   //Init Countdown
   initTimerObj(gObjs[WHISTLE_TIMER], 1 * SECOND, true, &updateTimerAlarm,
-                          &playWhistleSound);
+    &playWhistleSound);
 }
 
 void initPhysics(void) {
@@ -163,8 +191,40 @@ void moveRight(GameObject *circObj) {
 }
 
 void drawScoreboard(GameObject *board){
-  animate(board->sprite, board->v4.i%10, 0, 62.5, 73, board->v1.vec.x,
-          board->v1.vec.y);
+  // (board->v4.i / 10) % 10, % 10 ensure the index stays bounded
+  animate(board->sprite, (board->v4.i / 10 ) % 10, 0,
+    SCORE_NWIDTH, board->v2.vec.y,
+    board->v1.vec.x, board->v1.vec.y);
+
+  animate(board->sprite, board->v4.i % 10, 0,
+    SCORE_NWIDTH, board->v2.vec.y,
+    board->v1.vec.x + SCORE_NWIDTH + SCORE_XGAP, board->v1.vec.y);
+}
+
+void drawTimer(GameObject *squareObj){
+  int secondsLeft = (squareObj->v3.g->v3.u - squareObj->v3.g->v2.u) / SECOND;
+  int mm = secondsLeft / 60;
+  int ss = secondsLeft % 60;
+
+  animate(squareObj->sprite, (mm / 10) % 10, 0,
+    MT_NWIDTH, MT_HEIGHT,
+    squareObj->v1.vec.x, MT_OFFSET_Y);
+
+  animate(squareObj->sprite, mm % 10, 0,
+    MT_NWIDTH, MT_HEIGHT,
+    squareObj->v1.vec.x + MT_NWIDTH + MT_XGAP, MT_OFFSET_Y);
+
+  animate(squareObj->sprite, 10, 0,
+    MT_NWIDTH, MT_HEIGHT,
+    squareObj->v1.vec.x + 2 * (MT_NWIDTH + MT_XGAP), MT_OFFSET_Y);
+
+  animate(squareObj->sprite, ss / 10, 0,
+    MT_NWIDTH, MT_HEIGHT,
+    squareObj->v1.vec.x + 3 * (MT_NWIDTH + MT_XGAP), MT_OFFSET_Y);
+
+  animate(squareObj->sprite, ss % 10, 0,
+    MT_NWIDTH, MT_HEIGHT,
+    squareObj->v1.vec.x + 4 * (MT_NWIDTH + MT_XGAP), MT_OFFSET_Y);
 }
 
 //=========================== IO Effectors ==================================
