@@ -18,12 +18,21 @@ void playWhistleSound(void) {
   Mix_PlayChannel(-1, sound_whistle, 0);
 }
 
-void collPlayKickSound(GameObject *collObj) {
+/* Collision function for the ball. Plays a kick sound and tracks stats.
+*/
+void collBall(GameObject *collObj) {
   switch((int)(gObjs[BALL]->v1.vec.x) % 4) {
     case 0: Mix_PlayChannel(-1, sound_kick1, 0); break;
     case 1: Mix_PlayChannel(-1, sound_kick2, 0); break;
     case 2: Mix_PlayChannel(-1, sound_kick3, 0); break;
     case 3: Mix_PlayChannel(-1, sound_kick4, 0); break;
+  }
+
+  // Collided with a circObj
+  if(collObj == gObjs[PLAYER1]) {
+    gObjs[STATS]->v1.vec.x++;
+  } else if(collObj == gObjs[PLAYER2]) {
+    gObjs[STATS]->v1.vec.y++;
   }
 }
 
