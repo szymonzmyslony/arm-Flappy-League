@@ -80,7 +80,6 @@ struct gameObject {
   uint8_t objType;
   Var v1, v2, v3, v4, v5, v6;
   SDL_Surface *sprite;
-  // Only circles collide, called from a circle's update
   void (*draw)(GameObject *gObj);
   // A function called every frame, if it is not NULL
   void (*update)(GameObject *gObj);
