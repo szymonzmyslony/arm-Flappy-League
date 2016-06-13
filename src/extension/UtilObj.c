@@ -2,6 +2,12 @@
 
 #define collFunc collObj->v6.gFunc
 
+void clearAllObjs(void) {
+  for(int i = 0; i < MAX_OBJECTS; i++) {
+    clearObj(gObjs[i]);
+  }
+}
+
 void clearObj(GameObject *gameObj) {
   memset(gameObj, 0, sizeof(GameObject));
 }

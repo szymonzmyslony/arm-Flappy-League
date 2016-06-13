@@ -5,6 +5,7 @@
 #include "Common.h"
 #include "collisions.h"
 
+void clearAllObjs(void);
 void clearObj(GameObject *gameObj);
 void setSprite(GameObject *gameObj, SDL_Surface *sprite);
 void playWhistleSound(void);
