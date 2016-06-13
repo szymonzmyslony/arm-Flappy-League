@@ -4,6 +4,8 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_mixer.h>
 #include <wiringPi.h>
+#include <stdlib.h>
+#include <time.h>
 #include "Common.h"
 #include "CircleObj.h"
 #include "UtilObj.h"

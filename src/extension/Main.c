@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
 #endif
   // -- Initialise SDL, Graphical Interfaces
   initSDL();
+  SDL_ShowCursor(SDL_DISABLE);
   // -- Initialise Pins
   #ifdef RPI
   initPins();
@@ -35,7 +36,9 @@ int main(int argc, char **argv) {
   surf_bird4 = loadImage("gfx/PunkSilly.png");
   surf_datboi = loadImage("gfx/DatBoi.png");
   surf_flappybird = loadImage("gfx/FlappyBird.png");
-  surf_scoring = loadImage("gfx/scoring.png");
+  surf_scoring = loadImage("gfx/SpritesGrid/ScoreNumbers.png");
+  surf_timing = loadImage("gfx/SpritesGrid/TimerCharacters.png");
+  surf_numbers = loadImage("gfx/SpritesGrid/Numbers.png");
   surf_main_menu = loadImage("gfx/Menu/MenuObjectsGrid.png");
   surf_end_menu = loadImage("gfx/Menu/EndGameGrid.png");
   surf_title = loadImage("gfx/Menu/FlappyLeagueNormal.png");
@@ -50,6 +53,7 @@ int main(int argc, char **argv) {
   sound_goal = loadSound("sound/goal.wav");
 
   // -- Initialise Game Variables
+  srand(time(NULL));
 
   gObjs = (GameObject**)calloc(MAX_OBJECTS, sizeof(GameObject*));
   if(gObjs == NULL) {
@@ -128,6 +132,8 @@ int main(int argc, char **argv) {
   SDL_FreeSurface(surf_bird3);
   SDL_FreeSurface(surf_bird4);
   SDL_FreeSurface(surf_scoring);
+  SDL_FreeSurface(surf_timing);
+  SDL_FreeSurface(surf_numbers);
 
   // Free Sound Resources
   Mix_CloseAudio();
@@ -162,7 +168,8 @@ inline void redrawBackground(void) {
           .h = 2 * extendedR
         };
         SDL_BlitSurface(surf_bg, &src, screen, &src);
-      } else if(gObjs[i]->objType == COL_NET) {
+      } else if(gObjs[i]->objType == COL_NET
+                || gObjs[i]->objType == COL_BOX) {
         SDL_Rect src = {
           .x = gObjs[i]->v1.vec.x,
           .y = gObjs[i]->v1.vec.y,
