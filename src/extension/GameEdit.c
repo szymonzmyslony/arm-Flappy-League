@@ -68,6 +68,8 @@ void initGame(void) {
   setSprite(gObjs[GOAL2], surf_goal);
   setCollFunc(gObjs[GOAL2], &scorePlayer2);
 
+  initStatsObj(gObjs[STATS]);
+
   initPhysics();
 
   //Match Timer
@@ -191,21 +193,25 @@ void handleButtonStatus(void) {
     case MATCH:
       if(buttonDownP1Left) {
         moveLeft(gObjs[PLAYER1]);
+        stat_flap_p1++;
         buttonDownP1Left = false;
       }
 
       if(buttonDownP1Right) {
         moveRight(gObjs[PLAYER1]);
+        stat_flap_p1++;
         buttonDownP1Right = false;
       }
 
       if(buttonDownP2Left) {
         moveLeft(gObjs[PLAYER2]);
+        stat_flap_p2++;
         buttonDownP2Left = false;
       }
 
       if(buttonDownP2Right) {
         moveRight(gObjs[PLAYER2]);
+        stat_flap_p2++;
         buttonDownP2Right = false;
       }
       break;
