@@ -35,7 +35,8 @@ enum ids {
   AIR_RES_TIMER = 10,
   WHISTLE_TIMER = 11,
   MATCH_TIMER = 12,
-  TITLE = 13
+  TITLE = 13,
+  STATS = 14
 };
 
 typedef struct vector {
