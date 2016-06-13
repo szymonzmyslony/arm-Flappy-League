@@ -10,7 +10,7 @@ PIFLAG = #Intentionally blank
 
 all: FlappyLeague
 
-FlappyLeague: GameEdit.o Control.o TimerObj.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Main.o Menu.o collisions.o
+FlappyLeague: Stats.o GameEdit.o Control.o TimerObj.o UtilObj.o Debug.o SquareObj.o CircleObj.o linkedList.o Main.o Menu.o collisions.o
 	$(CC) $^ $(CFLAGS) -o FlappyLeague $(LIBS)
 
 %.o : %.c %.h
