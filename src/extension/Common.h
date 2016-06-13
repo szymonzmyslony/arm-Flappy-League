@@ -10,33 +10,25 @@
 enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 540 };
 enum Game { MAX_OBJECTS = 20 };
 
-/** GPIO pins
-*/
-enum Pins {
-  RightSecondPlayer = 12,
-  RightFirstPlayer = 1,
-  LeftFirstPlayer = 4,
-  LeftSecondPlayer = 13
-};
-
 /** These IDs also correspond to the drawing order
 */
 enum ids {
   SCOREBOARD1 = 0,
   SCOREBOARD2 = 1,
-  PLAYER1 = 2,
-  PLAYER2 = 3,
-  BALL = 4,
-  GOAL1 = 5,
-  GOAL2 = 6,
-  MAINMENU = 7,
-  ENDSCREEN = 8,
-  GRAVITY_TIMER = 9,
-  AIR_RES_TIMER = 10,
-  WHISTLE_TIMER = 11,
-  MATCH_TIMER = 12,
-  TITLE = 13,
-  STATS = 14
+  TIMEBOARD = 2,
+  PLAYER1 = 3,
+  PLAYER2 = 4,
+  BALL = 5,
+  GOAL1 = 6,
+  GOAL2 = 7,
+  MAINMENU = 8,
+  ENDSCREEN = 9,
+  GRAVITY_TIMER = 10,
+  AIR_RES_TIMER = 11,
+  WHISTLE_TIMER = 12,
+  MATCH_TIMER = 13,
+  TITLE = 14,
+  STATS = 15
 };
 
 typedef struct vector {
@@ -49,7 +41,7 @@ enum objTypes {
   COL_LINE   = 2,
   COL_NET    = 3,
   COL_BOX    = 4,
-  OBJ_MENU   = 5
+  OBJ_MENU   = 5,
 };
 
 typedef struct gameObject GameObject;
@@ -106,8 +98,10 @@ SDL_Surface *surf_goal;
 SDL_Surface *surf_bg;
 SDL_Surface *surf_main_menu;
 SDL_Surface *surf_scoring;
+SDL_Surface *surf_timing;
 SDL_Surface *surf_end_menu;
 SDL_Surface *surf_title;
+SDL_Surface *surf_numbers;
 
 Mix_Music *music_crowd;
 
