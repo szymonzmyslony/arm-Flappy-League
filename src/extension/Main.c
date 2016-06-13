@@ -63,8 +63,10 @@ int main(int argc, char **argv) {
       exit(EXIT_FAILURE);
     }
   }
-
+  // Set the ambiant sound, mute audio by default
   Mix_PlayMusic(music_crowd, -1);
+  Mix_Volume(-1, 0);
+  Mix_VolumeMusic(0);
 
   initMenu();
 
@@ -114,16 +116,6 @@ int main(int argc, char **argv) {
     free(gObjs);
   }
 
-  // Free Sound Resources
-  Mix_FreeMusic(music_crowd);
-
-  Mix_FreeChunk(sound_whistle);
-  Mix_FreeChunk(sound_kick1);
-  Mix_FreeChunk(sound_kick2);
-  Mix_FreeChunk(sound_kick3);
-  Mix_FreeChunk(sound_kick4);
-  Mix_FreeChunk(sound_goal);
-
   //Free Graphical Resources
   SDL_FreeSurface(screen);
   SDL_FreeSurface(surf_bg);
@@ -137,8 +129,18 @@ int main(int argc, char **argv) {
   SDL_FreeSurface(surf_bird4);
   SDL_FreeSurface(surf_scoring);
 
-  // Release Initialised SDL Systems
+  // Free Sound Resources
   Mix_CloseAudio();
+  Mix_FreeMusic(music_crowd);
+
+  Mix_FreeChunk(sound_whistle);
+  Mix_FreeChunk(sound_kick1);
+  Mix_FreeChunk(sound_kick2);
+  Mix_FreeChunk(sound_kick3);
+  Mix_FreeChunk(sound_kick4);
+  Mix_FreeChunk(sound_goal);
+
+  // Release Initialised SDL Systems
   Mix_Quit();
   IMG_Quit();
   SDL_Quit();
