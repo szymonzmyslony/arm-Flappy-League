@@ -2,7 +2,8 @@
 
 enum gameStates { MENU, MATCH, POSTMATCH };
 static int gameState;
-static bool soundEnabled;
+static bool soundEnabled = false;
+static bool inputEnabled = false;
 
 //========================= Init Game States ===============================
 
@@ -23,6 +24,7 @@ void initMenu(void) {
 }
 
 void initEnd(void) {
+  toggleInputEnabled();
   drawBackground();
 
   gameState = POSTMATCH;
@@ -38,6 +40,8 @@ void initEnd(void) {
     &playWhistleSound);
   initTimerObj(gObjs[BALL], (2 * SECOND), true, &updateTimerAlarm,
     &playWhistleSound);
+  initTimerObj(gObjs[TITLE], (3 * SECOND), true, &updateTimerAlarm,
+    &toggleInputEnabled);
 }
 
 void initGame(void) {
@@ -252,6 +256,13 @@ void drawTimer(GameObject *squareObj){
 //=========================== IO Effectors ==================================
 
 void handleButtonStatus(void) {
+  if (!inputEnabled) {
+    buttonDownP1Left = false;
+    buttonDownP1Right = false;
+    buttonDownP2Left = false;
+    buttonDownP2Right = false;
+    return;
+  }
   switch(gameState) {
     case MENU:
       if (buttonDownP1Left) {
@@ -331,4 +342,8 @@ void toggleSound(void) {
 
 bool getSoundState(void) {
   return soundEnabled;
+}
+
+void toggleInputEnabled(void) {
+  inputEnabled = !inputEnabled; 
 }

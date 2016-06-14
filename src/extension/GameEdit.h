@@ -64,5 +64,6 @@ void drawScoreboard(GameObject *board);
 void drawTimer(GameObject *matchTimer);
 void toggleSound(void);
 bool getSoundState(void);
+void toggleInputEnabled(void);
 
 #endif
