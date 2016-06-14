@@ -115,6 +115,8 @@ void initSetup(void) {
   setCollFunc(gObjs[BALL], &collBall);
   gObjs[BALL]->v4.vec.x = 0;
   gObjs[BALL]->v4.vec.y = 0;
+  gObjs[BALL]->v5.f = 0;
+  gObjs[BALL]->update = &updateBall;
   gObjs[BALL]->draw = &drawAnimCircObj;
 }
 
@@ -135,6 +137,7 @@ void reinitSetup(void) {
 
   gObjs[BALL]->v1.vec.x = screen->w / 2;
   gObjs[BALL]->v1.vec.y = BALL_OFFSET_Y;
+  gObjs[BALL]->v5.f = 0;
   clearVar(&gObjs[BALL]->v2);
 
   //Init Countdown
