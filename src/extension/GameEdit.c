@@ -8,43 +8,45 @@ static bool soundEnabled;
 
 void initMenu(void) {
   drawBackground();
+  clearAllObjs();
+
   gameState = MENU;
   initMenuObj(gObjs[MAINMENU]);
   setSprite(gObjs[MAINMENU], surf_main_menu);
+
   initSquareObj(gObjs[TITLE], TITLE_OFFSET_X, TITLE_OFFSET_Y, TITLE_WIDTH,
     TITLE_HEIGHT, false);
   setSprite(gObjs[TITLE], surf_title);
-  setSprite(gObjs[SCOREBOARD1], NULL);
-  setSprite(gObjs[SCOREBOARD2], NULL);
-  setSprite(gObjs[TIMEBOARD], NULL);
-  setSprite(gObjs[ENDSCREEN], NULL);
-  initPhysics();
 
+  initPhysics();
   initSetup();
 }
 
 void initEnd(void) {
   drawBackground();
+
   gameState = POSTMATCH;
+  initEndScreenObj(gObjs[ENDSCREEN]);
   setSprite(gObjs[ENDSCREEN], surf_end_menu);
-  // Clear the Goal and ball objects by overwriting them
+
+  showStats(gObjs[STATS]);
+
+  // Clear the Goal objects by overwriting them
   initTimerObj(gObjs[GOAL1], (0 * SECOND), true, &updateTimerAlarm,
     &playWhistleSound);
   initTimerObj(gObjs[GOAL2], (1 * SECOND), true, &updateTimerAlarm,
     &playWhistleSound);
   initTimerObj(gObjs[BALL], (2 * SECOND), true, &updateTimerAlarm,
     &playWhistleSound);
-  initEndScreenObj(gObjs[ENDSCREEN]);
 }
 
 void initGame(void) {
   drawBackground();
-  // Stops redrawing of menu during the game
-  setSprite(gObjs[MAINMENU], NULL);
-  setSprite(gObjs[ENDSCREEN], NULL);
-  gObjs[TITLE]->draw = NULL;
+  clearAllObjs();
 
+  initPhysics();
   initSetup();
+  initStatsObj(gObjs[STATS]);
 
   gameState = MATCH;
   // Setup score counters
@@ -69,10 +71,6 @@ void initGame(void) {
     GOAL_WIDTH, GOAL_HEIGHT, false);
   setSprite(gObjs[GOAL2], surf_goal);
   setCollFunc(gObjs[GOAL2], &scorePlayer2);
-
-  initStatsObj(gObjs[STATS]);
-
-  initPhysics();
 
   //Match Timer
   initTimerObj(gObjs[MATCH_TIMER], MATCH_LENGTH, true, &updateTimerAlarm,
