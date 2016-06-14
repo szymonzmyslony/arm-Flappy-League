@@ -86,6 +86,13 @@ bool buttonDownP1Right;
 bool buttonDownP2Left;
 bool buttonDownP2Right;
 
+enum spriteTileSizes {
+  SURF_NUMBERS_TWIDTH = 42,
+  SURF_NUMBERS_HEIGHT = 56,
+  SURF_TIMING_TWIDTH = 14,
+  SURF_SCORING_TWIDTH = 41
+};
+
 // Resources
 SDL_Surface *surf_flappybird;
 SDL_Surface *surf_datboi;
