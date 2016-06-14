@@ -58,6 +58,19 @@ void collBall(GameObject *collObj) {
   }
 }
 
+void updateBall(GameObject *circObj) {
+  updateCircleObj(circObj);
+
+  circObj->v5.f += circObj->v2.vec.x;
+  if(circObj->v5.f < 0) {
+    circObj->v5.f = 9001;
+  }
+
+  if(circObj->v5.f > 0) {
+    circObj->v4.vec.x = (int)(circObj->v5.f / ROT_SCALE) % 4;
+  }
+}
+
 void updatePlayer(GameObject *circObj) {
   updateCircleObj(circObj);
 

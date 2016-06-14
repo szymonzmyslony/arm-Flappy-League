@@ -6,6 +6,8 @@
 #include "collisions.h"
 #include "CircleObj.h"
 
+#define ROT_SCALE 12.0
+
 enum utilSizes {
   NUM_XGAP = 8,
   NUM_WIDTH = SURF_NUMBERS_TWIDTH,
@@ -19,6 +21,7 @@ void clearVar(Var *var);
 
 SDL_Surface *getRandomBirdSprite(void);
 void updatePlayer(GameObject *circObj);
+void updateBall(GameObject *circObj);
 void setSprite(GameObject *gameObj, SDL_Surface *sprite);
 void playWhistleSound(void);
 void setCollFunc(GameObject *collObj, void (*gFunc)(GameObject*));
