@@ -68,3 +68,41 @@ void drawCentredObj(GameObject *posObj) {
                    .h = 0 };
   SDL_BlitSurface(posObj->sprite, NULL, screen, &pos);
 }
+
+/** Draws a single tile in a grid of sprites at index i, j.
+*/
+void animate(SDL_Surface *animationSource, int i, int j, int width, int height,
+             int x, int y){
+  SDL_Rect srcrect;
+  int startx = i * width;
+  int starty = j * height;
+  srcrect.x = startx;
+  srcrect.y = starty;
+  srcrect.w = width;
+  srcrect.h = height;
+  SDL_Rect destrec;
+  destrec.x = x;
+  destrec.y = y;
+  destrec.w = width;
+  destrec.h = height;
+  SDL_BlitSurface(animationSource, &srcrect, screen, &destrec);
+}
+
+
+void drawNum(int num, int x, int y) {
+  if(num > 99) {
+    animate(surf_numbers, (num / 100) % 10, 0,
+      NUM_WIDTH, NUM_HEIGHT,
+      x, y);
+  }
+
+  if(num > 9) {
+    animate(surf_numbers, (num / 10) % 10, 0,
+      NUM_WIDTH, NUM_HEIGHT,
+      x + NUM_XGAP + NUM_WIDTH, y);
+  }
+
+  animate(surf_numbers, num % 10, 0,
+    NUM_WIDTH, NUM_HEIGHT,
+    x + 2 * (NUM_XGAP + NUM_WIDTH), y);
+}
