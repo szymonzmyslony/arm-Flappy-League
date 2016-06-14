@@ -28,8 +28,8 @@ int main(int argc, char **argv) {
 
   // -- Load Images
   surf_bg = loadImage("gfx/Crowd.png");
-  surf_ball = loadImage("gfx/Ball.png");
   surf_goal = loadImage("gfx/Goal.png");
+  surf_ball = loadImage("gfx/SpritesGrid/BallGrid.png");
   surf_bird1 = loadImage("gfx/SpritesGrid/ClumsyGrid.png");
   surf_bird2 = loadImage("gfx/SpritesGrid/FlappyGrid.png");
   surf_bird3 = loadImage("gfx/SpritesGrid/JumpyGrid.png");
