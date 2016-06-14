@@ -51,8 +51,30 @@ void collBall(GameObject *collObj) {
   // Collided with a circObj
   if(collObj == gObjs[PLAYER1]) {
     gObjs[STATS]->v1.vec.x++;
+    collObj->v4.vec.x = 2;
   } else if(collObj == gObjs[PLAYER2]) {
     gObjs[STATS]->v1.vec.y++;
+    collObj->v4.vec.x = 2;
+  }
+}
+
+void updatePlayer(GameObject *circObj) {
+  updateCircleObj(circObj);
+
+  if(circObj->v4.vec.x != 2) {
+    if(circObj->v2.vec.y < 5) {
+      circObj->v4.vec.x = 0;
+    } else if(circObj->v2.vec.y > 5) {
+      circObj->v4.vec.x = 3;
+    } else {
+      circObj->v4.vec.x = 1;
+    }
+  }
+}
+
+void collPlayer(GameObject *collObj) {
+  if(collObj == gObjs[PLAYER1] || collObj == gObjs[PLAYER2]) {
+    collObj->v4.vec.x = 2;
   }
 }
 
@@ -88,6 +110,12 @@ void animate(SDL_Surface *animationSource, int i, int j, int width, int height,
   SDL_BlitSurface(animationSource, &srcrect, screen, &destrec);
 }
 
+void drawAnimCircObj(GameObject *circObj) {
+  animate(circObj->sprite, circObj->v4.vec.x, circObj->v4.vec.y,
+    SURF_BALL_TWIDTH, SURF_BALL_TWIDTH,
+    circObj->v1.vec.x - SURF_BALL_TWIDTH / 2,
+    circObj->v1.vec.y - SURF_BALL_TWIDTH / 2);
+}
 
 void drawNum(int num, int x, int y) {
   if(num > 99) {

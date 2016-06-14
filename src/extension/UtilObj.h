@@ -4,6 +4,7 @@
 #include <string.h>
 #include "Common.h"
 #include "collisions.h"
+#include "CircleObj.h"
 
 enum utilSizes {
   NUM_XGAP = 8,
@@ -17,12 +18,15 @@ void clearObj(GameObject *gameObj);
 void clearVar(Var *var);
 
 SDL_Surface *getRandomBirdSprite(void);
+void updatePlayer(GameObject *circObj);
 void setSprite(GameObject *gameObj, SDL_Surface *sprite);
 void playWhistleSound(void);
 void setCollFunc(GameObject *collObj, void (*gFunc)(GameObject*));
 void collBall(GameObject *collObj);
 void collDoNothing(GameObject *collObj);
+void collPlayer(GameObject *collObj);
 void drawCentredObj(GameObject *collObj);
+void drawAnimCircObj(GameObject *collObj);
 void animate(SDL_Surface *animationSource, int i, int j, int width, int height,
   int x, int y);
 
