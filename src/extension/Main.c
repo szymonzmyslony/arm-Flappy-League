@@ -30,10 +30,10 @@ int main(int argc, char **argv) {
   surf_bg = loadImage("gfx/Crowd.png");
   surf_ball = loadImage("gfx/Ball.png");
   surf_goal = loadImage("gfx/Goal.png");
-  surf_bird1 = loadImage("gfx/KingClumsy.png");
-  surf_bird2 = loadImage("gfx/SirFlappy.png");
-  surf_bird3 = loadImage("gfx/FighterJumpy.png");
-  surf_bird4 = loadImage("gfx/PunkSilly.png");
+  surf_bird1 = loadImage("gfx/SpritesGrid/ClumsyGrid.png");
+  surf_bird2 = loadImage("gfx/SpritesGrid/FlappyGrid.png");
+  surf_bird3 = loadImage("gfx/SpritesGrid/JumpyGrid.png");
+  surf_bird4 = loadImage("gfx/SpritesGrid/SillyGrid.png");
   surf_datboi = loadImage("gfx/DatBoi.png");
   surf_flappybird = loadImage("gfx/FlappyBird.png");
   surf_scoring = loadImage("gfx/SpritesGrid/ScoreNumbers.png");
