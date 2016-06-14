@@ -73,6 +73,7 @@ int main(int argc, char **argv) {
   Mix_VolumeMusic(0);
 
   initMenu();
+  toggleInputEnabled();
 
   // -- Initialise Loop variables
   // A union capable of holding all input events
