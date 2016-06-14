@@ -65,12 +65,12 @@ void initGame(void) {
   initSquareObj(gObjs[GOAL1], 0, GOAL_OFFSET_Y,
     GOAL_WIDTH, GOAL_HEIGHT, false);
   setSprite(gObjs[GOAL1], surf_goal);
-  setCollFunc(gObjs[GOAL1], &scorePlayer1);
+  setCollFunc(gObjs[GOAL1], &scorePlayer2);
 
   initSquareObj(gObjs[GOAL2], WINDOW_WIDTH - GOAL_WIDTH, GOAL_OFFSET_Y,
     GOAL_WIDTH, GOAL_HEIGHT, false);
   setSprite(gObjs[GOAL2], surf_goal);
-  setCollFunc(gObjs[GOAL2], &scorePlayer2);
+  setCollFunc(gObjs[GOAL2], &scorePlayer1);
 
   //Match Timer
   initTimerObj(gObjs[MATCH_TIMER], MATCH_LENGTH, true, &updateTimerAlarm,
@@ -88,9 +88,19 @@ void initSetup(void) {
   //Init Players
   initCircleObj(gObjs[PLAYER1], PLAYER_SIZE / 2,
     PLAYER_OFFSET_X, PLAYER_OFFSET_Y, 0,  0);
+  gObjs[PLAYER1]->v4.vec.x = 0;
+  gObjs[PLAYER1]->v4.vec.y = 0;
+  gObjs[PLAYER1]->draw = &drawAnimCircObj;
+  setCollFunc(gObjs[PLAYER1], &collPlayer);
+  gObjs[PLAYER1]->update = &updatePlayer;
 
   initCircleObj(gObjs[PLAYER2], PLAYER_SIZE / 2,
-    screen->w - PLAYER_OFFSET_X, PLAYER_OFFSET_Y, 0,  0);
+    screen->w - PLAYER_OFFSET_X, PLAYER_OFFSET_Y, 0, 0);
+  gObjs[PLAYER2]->v4.vec.x = 0;
+  gObjs[PLAYER2]->v4.vec.y = 0;
+  gObjs[PLAYER2]->draw = &drawAnimCircObj;
+  setCollFunc(gObjs[PLAYER2], &collPlayer);
+  gObjs[PLAYER2]->update = &updatePlayer;
 
   // Randomly assign the player sprites
   setSprite(gObjs[PLAYER1], getRandomBirdSprite());
@@ -101,8 +111,11 @@ void initSetup(void) {
   //Init Ball
   initCircleObj(gObjs[BALL], BALL_SIZE / 2,
     screen->w / 2, BALL_OFFSET_Y, 0, 0);
-    setSprite(gObjs[BALL], surf_ball);
-    setCollFunc(gObjs[BALL], &collBall);
+  setSprite(gObjs[BALL], surf_ball);
+  setCollFunc(gObjs[BALL], &collBall);
+  gObjs[BALL]->v4.vec.x = 0;
+  gObjs[BALL]->v4.vec.y = 0;
+  gObjs[BALL]->draw = &drawAnimCircObj;
 }
 
 /** Called after a goal is scored. Moves the ball and players to their
@@ -185,11 +198,15 @@ void applyAllAirResistance(void) {
 void moveLeft(GameObject *circObj) {
   circObj->v2.vec.x = -sideVelocity;
   circObj->v2.vec.y = -upVelocity;
+  circObj->v4.vec.x = 0;
+  circObj->v4.vec.y = 1;
 }
 
 void moveRight(GameObject *circObj) {
   circObj->v2.vec.x = +sideVelocity;
   circObj->v2.vec.y = -upVelocity;
+  circObj->v4.vec.x = 0;
+  circObj->v4.vec.y = 0;
 }
 
 void drawScoreboard(GameObject *board){
