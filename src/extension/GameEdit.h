@@ -14,11 +14,6 @@
 #include "Menu.h"
 #include "GameChangers.h"
 
-#define upVelocity   10.0
-#define sideVelocity  5.0
-
-#define MATCH_LENGTH 120 * SECOND
-
 enum gameSizesAndPositions {
   PLAYER_SIZE = 64,
   BALL_SIZE = 64,
