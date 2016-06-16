@@ -6,6 +6,7 @@
 #include <SDL/SDL_mixer.h>
 
 #define SECOND 1000
+#define MATCH_LENGTH 120 * SECOND
 
 enum Display { WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 540 };
 enum Game { MAX_OBJECTS = 20 };
@@ -87,8 +88,8 @@ bool buttonDownP2Left;
 bool buttonDownP2Right;
 
 enum spriteTileSizes {
-  SURF_NUMBERS_TWIDTH = 42,
-  SURF_NUMBERS_HEIGHT = 56,
+  SURF_NUMBERS_TWIDTH = 22,
+  SURF_NUMBERS_HEIGHT = 29,
   SURF_TIMING_TWIDTH = 14,
   SURF_SCORING_TWIDTH = 41,
   SURF_BALL_TWIDTH = 64,
@@ -96,7 +97,6 @@ enum spriteTileSizes {
 };
 
 // Resources
-SDL_Surface *surf_flappybird;
 SDL_Surface *surf_datboi;
 SDL_Surface *surf_bird1;
 SDL_Surface *surf_bird2;
@@ -104,6 +104,8 @@ SDL_Surface *surf_bird3;
 SDL_Surface *surf_bird4;
 SDL_Surface *surf_ball;
 SDL_Surface *surf_goal;
+SDL_Surface *surf_flaps;
+SDL_Surface *surf_kicks;
 SDL_Surface *surf_bg;
 SDL_Surface *surf_main_menu;
 SDL_Surface *surf_scoring;
