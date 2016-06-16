@@ -21,6 +21,10 @@ void initMenu(void) {
 
   initPhysics();
   initSetup();
+  gObjs[PLAYER1]->v2.vec.x = 20;
+  gObjs[PLAYER1]->v2.vec.y = 10;
+  gObjs[PLAYER2]->v2.vec.x = -20;
+  gObjs[PLAYER2]->v2.vec.y = -10;
 }
 
 void initEnd(void) {
@@ -345,5 +349,5 @@ bool getSoundState(void) {
 }
 
 void toggleInputEnabled(void) {
-  inputEnabled = !inputEnabled; 
+  inputEnabled = !inputEnabled;
 }
