@@ -2,8 +2,6 @@
 
 #define FPS 60
 #define SPF SECOND / FPS
-#define COEFF_OF_RESTITUTION 1
-
 //TODO consider SDL 2.0
 
 /** SDL_main is used for Windows / Mac, we will just use Linux
@@ -24,7 +22,7 @@ int main(int argc, char **argv) {
   // Get the console's screen for drawing
   screen = getConsoleScreen();
   // Set the window bar data. For non-console use only.
-  SDL_WM_SetCaption("window mcwindowface", NULL);
+  SDL_WM_SetCaption("Flappy League", NULL);
 
   // -- Load Images
   surf_bg = loadImage("gfx/Crowd.png");
@@ -35,13 +33,14 @@ int main(int argc, char **argv) {
   surf_bird3 = loadImage("gfx/SpritesGrid/JumpyGrid.png");
   surf_bird4 = loadImage("gfx/SpritesGrid/SillyGrid.png");
   surf_datboi = loadImage("gfx/DatBoi.png");
-  surf_flappybird = loadImage("gfx/FlappyBird.png");
   surf_scoring = loadImage("gfx/SpritesGrid/ScoreNumbers.png");
   surf_timing = loadImage("gfx/SpritesGrid/TimerCharacters.png");
-  surf_numbers = loadImage("gfx/SpritesGrid/Numbers.png");
+  surf_numbers = loadImage("gfx/Menu/SmallNumbersNormal.png");
   surf_main_menu = loadImage("gfx/Menu/MenuObjectsGrid.png");
   surf_end_menu = loadImage("gfx/Menu/EndGameGrid.png");
   surf_title = loadImage("gfx/Menu/FlappyLeagueNormal.png");
+  surf_flaps = loadImage("gfx/Menu/FlapsNormal.png");
+  surf_kicks = loadImage("gfx/Menu/KicksNormal.png");
 
   // -- Load Sounds
   music_crowd = loadMusic("sound/stadium_noise.wav");
@@ -69,8 +68,6 @@ int main(int argc, char **argv) {
   }
   // Set the ambiant sound, mute audio by default
   Mix_PlayMusic(music_crowd, -1);
-  Mix_Volume(-1, 0);
-  Mix_VolumeMusic(0);
 
   initMenu();
   toggleInputEnabled();
@@ -126,7 +123,6 @@ int main(int argc, char **argv) {
   SDL_FreeSurface(surf_bg);
   SDL_FreeSurface(surf_ball);
   SDL_FreeSurface(surf_goal);
-  SDL_FreeSurface(surf_flappybird);
   SDL_FreeSurface(surf_datboi);
   SDL_FreeSurface(surf_bird1);
   SDL_FreeSurface(surf_bird2);
@@ -135,6 +131,8 @@ int main(int argc, char **argv) {
   SDL_FreeSurface(surf_scoring);
   SDL_FreeSurface(surf_timing);
   SDL_FreeSurface(surf_numbers);
+  SDL_FreeSurface(surf_kicks);
+  SDL_FreeSurface(surf_flaps);
 
   // Free Sound Resources
   Mix_CloseAudio();
