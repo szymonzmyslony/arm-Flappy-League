@@ -6,6 +6,9 @@
 */
 // Minimum rebounce velocity
 #define MINBOUNCE 15.0
+#define COEFF_OF_RESTITUTION 1
+#define upVelocity   10.0
+#define sideVelocity  5.0
 
 enum positions {
   PLAYER_OFFSET_X = 100,
