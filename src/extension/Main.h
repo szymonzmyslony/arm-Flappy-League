@@ -12,6 +12,7 @@
 #include "collisions.h"
 #include "Control.h"
 #include "GameEdit.h"
+#include "GameChangers.h"
 
 #define REDRAWSCALE 1.8
 
